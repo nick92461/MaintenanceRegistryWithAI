@@ -1,3 +1,6 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -25,9 +28,10 @@ model User {
   name         String
   email        String   @unique
   passwordHash String
-  role         Role     @default(TECHNICIAN)
+  role         Role     @default(GUEST)
   createdAt    DateTime @default(now())
 
+  sessions    Session[]
   checkouts   Checkout[]
   adjustments InventoryAdjustment[]
 }
@@ -38,6 +42,8 @@ model Session {
   userId    String
   expiresAt DateTime
   createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
 }
 
 model Tool {
