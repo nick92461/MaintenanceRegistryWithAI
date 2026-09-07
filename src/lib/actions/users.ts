@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { getCurrentUserAndRenewSession } from "@/lib/auth/sessions";
 import { Role } from "@/generated/prisma/enums";
+import { revalidatePath } from "next/cache";
 
 export async function updateUserRole(targetUserId: string, newRole: Role) {
     const currentUser = await getCurrentUserAndRenewSession();
@@ -32,5 +33,6 @@ export async function updateUserRole(targetUserId: string, newRole: Role) {
         data: { role: newRole },
     });
 
+    revalidatePath("/dashboard");
     return { success: true };
 }
