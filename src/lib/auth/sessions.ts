@@ -51,56 +51,68 @@ export async function createSession(userId: string) {
 }
 
 
-// this function is for any part of the app that need to know who is currently logged in
-// first it gets browser cookies and looks for the cookie called "session_token" (originally applied via the shared const SESSION_COOKIES_NAME ion the createSession method)
-// if no such cookie exists token is assigned undefined and null is returned to the caller.
-// otherwise, it then has the session token, and it looks for the Session record row matching that token as well as the related User row via the relation defined in the schema
-// and attaches it as a nested user property. this is what actually amkes you get all the user data the caller needs rather than just the raw Session fields.
-// then, if no session exists at all (bad/forged token) or if it exists but has expired, retrun null
-// Next is the sliding expiration. in practice every time an action is done, it will need to run getCurrentUser to know who is running that action.
-// That means everytime an action is done, it will run this function, we can take advantage of that by creating a new expiration date every time an action is
-// committed on a valid session, and replacing expiresAt with newExpiresAt. Effectively this means all successful actions by a user resets the 12 hour expiration clock on the session.
-// Since the cookie holds expiration value, you need to run setSessionCookie again to update the cookie. 
-// finally it returns session.user. session.user is an object. "const session ... " performed a query that pulled the token field from the corresponding Session record
-// and select fields from the corresponding User. return session.user; essentially means "build an object out of the user data we pulled from that Session record, nothing else, and return it to the caller"
+async function findValidSession(token: string) {
+	const session = await prisma.session.findUnique({
+		where: { token },
+		include: {
+			user: {
+				select: {
+					id: true,
+					name: true,
+					email: true,
+					role: true,
+					createdAt: true,
+				},
+			},
+		},
+	});
+
+	if (!session || session.expiresAt < new Date()) {
+		if (session) {
+			await prisma.session.delete({ where: { id: session.id } }).catch(() => {});
+		}
+		return null;
+	}
+
+	return session;
+}
+
+
 export async function getCurrentUser() {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(SESSION_COOKIES_NAME)?.value;
+	const cookieStore = await cookies();
+	const token = cookieStore.get(SESSION_COOKIES_NAME)?.value;
 
-    if (!token) {
-        return null;
-    }
+	if (!token) {
+		return null;
+	}
 
-    const session = await prisma.session.findUnique({
-        where: { token },
-        include: {
-            user: {
-                select: {
-                    id: true,
-                    name: true,
-                    email: true,
-                    role: true,
-                    createdAt: true,
-                },
-            },
-        },
-    });
+	const session = await findValidSession(token);
 
-    if (!session || session.expiresAt < new Date()) {
-        if (session) {
-            await prisma.session.delete({ where: { id: session.id } }).catch(() => {});
-        }
-        return null;
-    }
+	return session?.user ?? null;
+}
 
-    const newExpiresAt = new Date(Date.now() + SESSION_IDLE_TIMEOUT_MS);
-    await prisma.session.update({
-        where: { token },
-        data: { expiresAt: newExpiresAt },
-    });
-    await setSessionCookie(token, newExpiresAt);
+export async function getCurrentUserAndRenewSession() {
+	const cookieStore = await cookies();
+	const token = cookieStore.get(SESSION_COOKIES_NAME)?.value;
 
-    return session.user;
+	if (!token) {
+		return null;
+	}
+
+	const session = await findValidSession(token);
+
+	if (!session) {
+		return null;
+	}
+
+	const newExpiresAt = new Date(Date.now() + SESSION_IDLE_TIMEOUT_MS);
+	await prisma.session.update({
+		where: { token },
+		data: { expiresAt: newExpiresAt },
+	});
+	await setSessionCookie(token, newExpiresAt);
+
+	return session.user;
 }
 
 

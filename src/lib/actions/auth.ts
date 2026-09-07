@@ -43,10 +43,11 @@ Promise<AuthActionState> {
 
     await createSession(user.id);
 
-    return { success: true };
+    redirect("/pending-approval");
 }
 
-export async function login(formData: FormData) {
+export async function login(prevState: AuthActionState, formData: FormData):
+Promise<AuthActionState> {
     const email = formData.get("email");
     const password = formData.get("password");
 
@@ -68,7 +69,11 @@ export async function login(formData: FormData) {
 
     await createSession(user.id);
 
-    redirect("/pending-approval")
+    if (user.role === "GUEST") {
+        redirect("/pending-approval");
+    }
+
+    redirect("/dashboard")
 }
 
 export async function logout() {

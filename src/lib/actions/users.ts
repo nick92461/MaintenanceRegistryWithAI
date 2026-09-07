@@ -1,11 +1,11 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { getCurrentUser } from "@/lib/auth/sessions";
+import { getCurrentUserAndRenewSession } from "@/lib/auth/sessions";
 import { Role } from "@/generated/prisma/enums";
 
 export async function updateUserRole(targetUserId: string, newRole: Role) {
-    const currentUser = await getCurrentUser();
+    const currentUser = await getCurrentUserAndRenewSession();
 
     if (!currentUser) {
         return { error: "You must be logged in" };
