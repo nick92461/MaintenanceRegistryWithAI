@@ -23,7 +23,7 @@ export async function updateUserRole(targetUserId: string, newRole: Role) {
 
     if (currentUser.role === Role.SUPERVISOR) {
         if (targetUser.role !== Role.GUEST || newRole !== Role.TECHNICIAN) {
-            return { error: "Supervisors can only apporve pending accounts as Technician" };
+            return { error: "Supervisors can only approve pending accounts as Technician" };
         }
     }
 

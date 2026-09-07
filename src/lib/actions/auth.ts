@@ -1,10 +1,18 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { hashPassword, verifyPassword, destroySession } from "@/lib/auth/passwords";
-import { createSession } from "@/lib/auth/sessions";
+import { hashPassword, verifyPassword } from "@/lib/auth/passwords";
+import { createSession, destroySession } from "@/lib/auth/sessions";
+import { redirect } from "next/navigation";
 
-export async function createAccount(formData: FormData) {
+export type AuthActionState = {
+    error?: string;
+    success?: boolean;
+};
+
+
+export async function createAccount(prevState: unknown, formData: FormData):
+Promise<AuthActionState> {
     const name = formData.get("name");
     const email = formData.get("email");
     const password = formData.get("password");
@@ -60,9 +68,9 @@ export async function login(formData: FormData) {
 
     await createSession(user.id);
 
-    return { success: true };
+    redirect("/pending-approval")
 }
 
 export async function logout() {
-    await destroySession;
+    await destroySession();
 }
