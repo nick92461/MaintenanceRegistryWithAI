@@ -6,7 +6,7 @@ import { Role } from "@/generated/prisma/enums";
 import { revalidatePath } from "next/cache";
 import { InventoryItem } from "../domain/InventoryItem";
 
-export async function createInventoryItem(formData: FormData) {
+export async function createInventoryItem(prevState: unknown, formData: FormData) {
     const currentUser = await getCurrentUserAndRenewSession();
 
     if (!currentUser) {
