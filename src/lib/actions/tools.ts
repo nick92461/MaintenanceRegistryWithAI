@@ -76,6 +76,11 @@ export async function checkOutTool(toolId: string) {
         return { error: err instanceof Error ? err.message : "Unable to check out tool" };
     }
 
+    await prisma.tool.update({
+        where: { id: toolId },
+        data: { status: tool.getStatus() },
+    });
+
     await prisma.checkout.create({
         data: {
             toolId,
@@ -121,12 +126,16 @@ export async function checkInTool(toolId: string) {
         row.location,
         row.status
     );
-
     tool.checkIn();
 
     await prisma.tool.update({
         where: { id: toolId },
         data: { status: tool.getStatus() },
+    });
+
+    await prisma.checkout.update({
+        where: { id: openCheckout.id },
+        data: { returnedAt: new Date() }
     });
 
     revalidatePath("/tools");
