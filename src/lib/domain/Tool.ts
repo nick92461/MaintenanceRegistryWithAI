@@ -23,6 +23,11 @@ export class Tool extends AssetRecord {
         if (this.status === ToolStatus.CHECKED_OUT) {
             throw new Error(`${this.name} is already checked out.`);
         }
+        
+        if (this.status === ToolStatus.MAINTENANCE) {
+            throw new Error(`${this.name} is under maintenance and cannot be checked out.`);
+        }
+        
         this.status = ToolStatus.CHECKED_OUT;
     }
 
