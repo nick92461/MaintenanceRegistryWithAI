@@ -2,7 +2,7 @@ import { getCurrentUser } from "@/lib/auth/sessions";
 import { prisma } from "@/lib/prisma";
 import { Role } from "@/generated/prisma/enums";
 import ApproveButton from "@/components/dashboard/ApproveButton";
-import PromoteUserButton from "@/components/dashboard/PromoteUserButton.tsx";
+import PromoteUserButton from "@/components/dashboard/PromoteUserButton";
 import DeleteUserButton from "@/components/dashboard/DeleteUserButton";
 import DemoteUserButton from "@/components/dashboard/DemoteUserButton";
 
@@ -50,10 +50,10 @@ export default async function DashboardPage() {
                             <p className="text-sm text-gray-500">{user.email}</p>
                         </div>
                         <div className="flex items-center gap-2">
-                            {(currentUser.role === Role.MANAGER && user.role !== Role.GUEST) && <DemoteUserButton userId={user.id} currentRole={user.role} />}
+                            {(currentUser.role === Role.MANAGER && user.role !== Role.GUEST && currentUser.id !== user.id) && <DemoteUserButton userId={user.id} currentRole={user.role} />}
                             {(user.role !== Role.GUEST && user.role !== Role.MANAGER && currentUser.role === Role.MANAGER) && <PromoteUserButton userId={user.id} currentRole={user.role} />}
                             {user.role === Role.GUEST && <ApproveButton userId={user.id} />}
-                            {currentUser.role === Role.MANAGER && <DeleteUserButton userId={user.id} />}
+                            {(currentUser.role === Role.MANAGER && currentUser.id !== user.id) && <DeleteUserButton userId={user.id} />}
                         </div>
                     </li>
                 ))}

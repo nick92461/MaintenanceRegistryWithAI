@@ -24,6 +24,10 @@ export async function updateUserRole(targetUserId: string, newRole: Role) {
         return { error: "You do not have permission to change roles" };
     }
 
+    if (currentUser.id === targetUserId) {
+        return { error: "You cannot change your own role" };
+    }
+
 
     const targetUser = await prisma.user.findUnique({ where: { id: targetUserId } });
 
@@ -58,11 +62,17 @@ export async function deleteUser(targetUserId: string) {
         return { error: "You do not have permission to do that" };
     }
 
+    if (currentUser.id === targetUserId) {
+        return { error: "You cannot delete your own account" };
+    }
+
     const row = await prisma.user.findUnique({ where: { id: targetUserId } });
 
     if (!row) {
         return { error: "User not found" };
     }
+
+    
 
     const user = new User(
         row.id,
@@ -73,6 +83,11 @@ export async function deleteUser(targetUserId: string) {
     user.delete();
 
     await setUserRole(targetUserId, Role.GUEST);
+
+    await prisma.user.update({
+        where: { id: targetUserId },
+        data: { deletedAt: user.getDeletedAt() }
+    })
 
     revalidatePath("/dashboard");
 

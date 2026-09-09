@@ -46,7 +46,7 @@ Promise<AuthActionState> {
     redirect("/pending-approval");
 }
 
-export async function login(prevState: AuthActionState, formData: FormData):
+export async function login(prevState: AuthActionState, formData: FormData ):
 Promise<AuthActionState> {
     const email = formData.get("email");
     const password = formData.get("password");
@@ -58,6 +58,10 @@ Promise<AuthActionState> {
     const user = await prisma.user.findUnique({ where: { email } });
 
     if(!user) {
+        return { error: "Invalid email or password" };
+    }
+
+    if (user.deletedAt) {
         return { error: "Invalid email or password" };
     }
 

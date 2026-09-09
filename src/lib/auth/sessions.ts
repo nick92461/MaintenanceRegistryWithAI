@@ -62,10 +62,13 @@ async function findValidSession(token: string) {
 					email: true,
 					role: true,
 					createdAt: true,
+					deletedAt: true,
 				},
 			},
 		},
 	});
+
+	
 
 	if (!session || session.expiresAt < new Date()) {
 		if (session) {
@@ -73,6 +76,13 @@ async function findValidSession(token: string) {
 		}
 		return null;
 	}
+
+	if (session.user.deletedAt) {
+		await prisma.session.delete({ where: { id: session.id } }).catch(() => {});
+		return null;
+	}
+
+	
 
 	return session;
 }

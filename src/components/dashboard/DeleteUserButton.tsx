@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { deleteUser } from "@/lib/actions/users";
 
-export default function DeleteUserButton({ userId }: { userId: string;}) {
+export default function DeleteUserButton({ userId, }: { userId: string;}) {
     const [isPending, setIsPending] = useState(false);
     const [error, setError] = useState<string | null>(null);
 

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { updateUserRole } from "@/lib/actions/users";
 import { Role } from "@/generated/prisma/enums";
-import { User } from "@/lib/domain/User";
+
 
 const ROLE_HIERARCHY = [Role.GUEST, Role.TECHNICIAN, Role.SUPERVISOR, Role.MANAGER];
 
