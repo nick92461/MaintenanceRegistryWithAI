@@ -167,7 +167,8 @@ export async function checkInTool(toolId: string) {
         row.name,
         row.category,
         row.location,
-        row.status
+        row.status,
+        row.deletedAt,
     );
     tool.checkIn();
 

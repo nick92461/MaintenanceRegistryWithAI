@@ -4,11 +4,13 @@ import { getCurrentUser } from "@/lib/auth/sessions";
 import { Role } from "@/generated/prisma/enums";
 import AddItemForm from "@/components/inventory/AddItemForm";
 import AdjustQuantityForm from "@/components/inventory/AdjustQuantityForm";
+import DeleteItemButton from "@/components/inventory/DeleteItemButton";
 
 export default async function InventoryPage() {
     const user = await getCurrentUser();
 
     const rows = await prisma.inventoryItem.findMany({
+        where: { deletedAt: null },
         orderBy: { name: "asc" },
     });
 
@@ -21,6 +23,7 @@ export default async function InventoryPage() {
                 row.location,
                 row.quantity,
                 row.reorderThreshold,
+                row.deletedAt,
             ),
     );
 
@@ -45,6 +48,7 @@ export default async function InventoryPage() {
                             </p>
                         </div>
                         <div className="flex items-center gap-4">
+                            {(user?.role === Role.SUPERVISOR || user?.role === Role.MANAGER) && <DeleteItemButton itemId={item.getId()} />}
                             <div className="text-right">
                                 <p className="font-medium">{item.getQuantity()}</p>
                                 <p className={item.isLowStock() ? "text-sm text-red-600" : "text-sm text-gray-500"}>

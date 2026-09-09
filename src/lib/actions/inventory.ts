@@ -63,6 +63,45 @@ export async function createInventoryItem(prevState: unknown, formData: FormData
     return { success: true };
 }
 
+export async function deleteInventoryItem(itemId: string) {
+    const currentUser = await getCurrentUserAndRenewSession();
+
+    if (!currentUser) {
+        return { error: "You must be logged in" };
+    }
+
+    if (currentUser.role !== Role.SUPERVISOR && currentUser.role !== Role.MANAGER) {
+        return { error: "You do not have permission to do that" };
+    }
+
+    const row = await prisma.inventoryItem.findUnique({where: { id: itemId } });
+
+    if (!row) {
+        return { error: "Inventory item not found"};
+    }
+
+    const inventoryItem = new InventoryItem(
+            row.id,
+            row.name,
+            row.category,
+            row.location,
+            row.quantity,
+            row.reorderThreshold,
+            row.deletedAt,
+        );
+
+        inventoryItem.delete();
+
+        await prisma.inventoryItem.update({
+            where: { id: itemId },
+            data: {deletedAt: inventoryItem.getDeletedAt()},
+        });
+
+        revalidatePath("/inventory");
+
+        return { success: true };
+}
+
 export async function adjustInventoryQuantity(itemId: string, amount: number, note?: string) {
     const currentUser = await getCurrentUserAndRenewSession();
 
@@ -83,6 +122,7 @@ export async function adjustInventoryQuantity(itemId: string, amount: number, no
         row.location,
         row.quantity,
         row.reorderThreshold,
+        row.deletedAt,
     );
 
     let newQuantity: number;

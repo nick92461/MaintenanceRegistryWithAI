@@ -3,6 +3,7 @@ import { AssetRecord } from "./AssetRecord";
 export class InventoryItem extends AssetRecord {
     private quantity: number;
     private readonly reorderThreshold: number;
+    private deletedAt: Date | null;
 
     constructor(
         id: string,
@@ -11,10 +12,12 @@ export class InventoryItem extends AssetRecord {
         location: string,
         quantity: number,
         reorderThreshold: number,
+        deletedAt: Date | null,
     ) {
         super(id, name, category, location);
         this.quantity = quantity;
         this.reorderThreshold = reorderThreshold;
+        this.deletedAt = deletedAt;
     }
 
     public getQuantity(): number {
@@ -38,5 +41,14 @@ export class InventoryItem extends AssetRecord {
 
     public getStatusLabel(): string {
         return this.isLowStock() ? "Low Stock" : "In Stock";
+    }
+
+    public delete(): void {
+    
+        this.deletedAt = new Date();
+    }
+    
+    public getDeletedAt(): Date | null {
+        return this.deletedAt;
     }
 }

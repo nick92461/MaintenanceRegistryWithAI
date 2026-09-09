@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { deleteTool } from "@/lib/actions/tools";
+import { deleteInventoryItem } from "@/lib/actions/inventory";
 
-export default function DeleteToolButton({ toolId }: { toolId: string;}) {
+export default function DeleteItemButton({ itemId }: { itemId: string;}) {
     const [isPending, setIsPending] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -11,7 +11,7 @@ export default function DeleteToolButton({ toolId }: { toolId: string;}) {
         setIsPending(true);
         setError(null);
 
-        const result = await deleteTool(toolId);
+        const result = await deleteInventoryItem(itemId);
 
         if (result.error) {
             setError(result.error);
@@ -27,7 +27,7 @@ export default function DeleteToolButton({ toolId }: { toolId: string;}) {
                 disabled={isPending}
                 className="rounded bg-blue-600 px-3 py-1 text-sm text-white disabled:opacity-50"
             >
-                {isPending ? "Working..." : "Delete tool" }
+                {isPending ? "Working..." : "Delete item" }
             </button>
             {error && <p className="text-xs text-red-600">{error}</p>}
         </div>
