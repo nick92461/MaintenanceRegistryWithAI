@@ -4,6 +4,14 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentUserAndRenewSession } from "@/lib/auth/sessions";
 import { Role } from "@/generated/prisma/enums";
 import { revalidatePath } from "next/cache";
+import { User } from "@/lib/domain/User";
+
+async function setUserRole(targetUserId: string, newRole: Role){
+    await prisma.user.update({
+        where: { id: targetUserId },
+        data: { role: newRole },
+    });
+}
 
 export async function updateUserRole(targetUserId: string, newRole: Role) {
     const currentUser = await getCurrentUserAndRenewSession();
@@ -15,6 +23,7 @@ export async function updateUserRole(targetUserId: string, newRole: Role) {
     if (currentUser.role !== Role.SUPERVISOR && currentUser.role !== Role.MANAGER) {
         return { error: "You do not have permission to change roles" };
     }
+
 
     const targetUser = await prisma.user.findUnique({ where: { id: targetUserId } });
 
@@ -28,6 +37,7 @@ export async function updateUserRole(targetUserId: string, newRole: Role) {
         }
     }
 
+
     await prisma.user.update({
         where: { id: targetUserId },
         data: { role: newRole },
@@ -35,4 +45,36 @@ export async function updateUserRole(targetUserId: string, newRole: Role) {
 
     revalidatePath("/dashboard");
     return { success: true };
+}
+
+export async function deleteUser(targetUserId: string) {
+    const currentUser = await getCurrentUserAndRenewSession();
+
+    if (!currentUser) {
+        return { error: "You must be logged in" };
+    }
+
+    if (currentUser.role !== Role.MANAGER) {
+        return { error: "You do not have permission to do that" };
+    }
+
+    const row = await prisma.user.findUnique({ where: { id: targetUserId } });
+
+    if (!row) {
+        return { error: "User not found" };
+    }
+
+    const user = new User(
+        row.id,
+        row.role,
+        row.deletedAt,
+    )
+
+    user.delete();
+
+    await setUserRole(targetUserId, Role.GUEST);
+
+    revalidatePath("/dashboard");
+
+    return { success: true };   
 }
