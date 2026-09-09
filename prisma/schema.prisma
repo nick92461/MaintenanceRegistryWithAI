@@ -30,6 +30,7 @@ model User {
   passwordHash String
   role         Role     @default(GUEST)
   createdAt    DateTime @default(now())
+  deletedAt    DateTime?
 
   sessions    Session[]
   checkouts   Checkout[]
@@ -42,6 +43,7 @@ model Session {
   userId    String
   expiresAt DateTime
   createdAt DateTime @default(now())
+  deletedAt DateTime?
 
   user User @relation(fields: [userId], references: [id])
 }
@@ -53,6 +55,7 @@ model Tool {
   location  String
   status    ToolStatus @default(AVAILABLE)
   createdAt DateTime   @default(now())
+  deletedAt DateTime?
 
   checkouts Checkout[]
 }
@@ -77,6 +80,7 @@ model InventoryItem {
   reorderThreshold Int
   location         String
   createdAt        DateTime @default(now())
+  deletedAt        DateTime?
 
   adjustments InventoryAdjustment[]
 }

@@ -3,16 +3,19 @@ import { ToolStatus } from "@/generated/prisma/enums";
 
 export class Tool extends AssetRecord {
     private status: ToolStatus;
-    
+    private deletedAt: Date | null;
+
     constructor(
         id: string,
         name: string,
         category: string,
         location: string,
         status: ToolStatus,
+        deletedAt: Date | null,
     ) {
         super(id, name, category, location);
         this.status = status;
+        this.deletedAt = deletedAt;
     }
 
     public getStatus(): ToolStatus {
@@ -27,7 +30,7 @@ export class Tool extends AssetRecord {
         if (this.status === ToolStatus.MAINTENANCE) {
             throw new Error(`${this.name} is under maintenance and cannot be checked out.`);
         }
-        
+
         this.status = ToolStatus.CHECKED_OUT;
     }
 
@@ -47,4 +50,17 @@ export class Tool extends AssetRecord {
                 return this.status;
         }
     }
+
+    public delete(): void {
+        if (this.status === ToolStatus.CHECKED_OUT) {
+            throw new Error(`${this.name} is currently checked out and cannot be deleted from the system.`);
+        }
+
+        this.deletedAt = new Date();
+    }
+
+    public getDeletedAt(): Date | null {
+        return this.deletedAt;
+    }
+
 }

@@ -4,11 +4,13 @@ import { getCurrentUser } from "@/lib/auth/sessions";
 import { Role, ToolStatus } from "@/generated/prisma/enums";
 import AddToolForm from "@/components/tools/AddToolForm";
 import ToolActionButton from "@/components/tools/ToolActionButton";
+import DeleteToolButton from "@/components/tools/DeleteToolButton";
 
 export default async function ToolsPage() {
     const user = await getCurrentUser();
 
     const rows = await prisma.tool.findMany({
+        where: { deletedAt: null },
         orderBy: { name: "asc" },
         include: {
             checkouts: {
@@ -33,11 +35,13 @@ export default async function ToolsPage() {
                         row.name,
                         row.category,
                         row.location,
-                        row.status
+                        row.status,
+                        row.deletedAt
                     );
                     const openCheckout = row.checkouts[0];
                     const isCheckedOut = tool.getStatus() === ToolStatus.CHECKED_OUT;
                     const isOverDue = isCheckedOut && !!openCheckout && openCheckout.dueAt < new Date();
+
 
                     return (
                         <li
@@ -67,6 +71,7 @@ export default async function ToolsPage() {
                                     {tool.getStatusLabel()}
                                 </span>
                                 <ToolActionButton toolId={tool.getId()} status={tool.getStatus()} />
+                                {(user?.role === Role.SUPERVISOR || user?.role === Role.MANAGER) && <DeleteToolButton toolId={tool.getId()} />}
                             </div>
                         </li>
                     );
