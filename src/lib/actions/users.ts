@@ -47,7 +47,7 @@ export async function updateUserRole(targetUserId: string, newRole: Role) {
         data: { role: newRole },
     });
 
-    revalidatePath("/dashboard");
+    revalidatePath("/users");
     return { success: true };
 }
 
@@ -89,7 +89,7 @@ export async function deleteUser(targetUserId: string) {
         data: { deletedAt: user.getDeletedAt() }
     })
 
-    revalidatePath("/dashboard");
+    revalidatePath("/users");
 
     return { success: true };   
 }
