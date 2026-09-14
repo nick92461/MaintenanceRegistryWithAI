@@ -21,7 +21,7 @@ export default async function DashboardPage() {
                 <h1 className="text-3xl font-display">Dashboard</h1>
 
                 <ul className="grid grid-cols-2 gap-2 sm:flex sm:flex-col">
-                    {DASHBOARD_TILES.map((tile) => (
+                    {DASHBOARD_TILES.filter((tile) => tile.allowedRoles.includes(currentUser.role)).map((tile) => (
                         <li
                             key={tile.label}
                         >

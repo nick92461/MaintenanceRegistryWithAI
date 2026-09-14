@@ -72,9 +72,9 @@ async function findValidSession(token: string) {
 
 	if (!session || session.expiresAt < new Date()) {
 		if (session) {
-			await prisma.session.delete({ where: { id: session.id } }).catch(() => {});
-		}
-		return null;
+			await prisma.session.delete({ where: { id: session.id } }).catch(() => {});//the catch is because multiple of the functions of this file may run nearly (but not exactly) simultaneously
+		}																			   //causing two identical prisma delete calls, in which the first would succeed and the second would not because
+		return null;																   //the query would return nothing back crashing the action (due to the prisma delete() methods own constraints)
 	}
 
 	if (session.user.deletedAt) {
