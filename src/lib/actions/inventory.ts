@@ -109,6 +109,10 @@ export async function adjustInventoryQuantity(itemId: string, amount: number, no
         return { error: "You must be logged in" };
     }
 
+    if (currentUser.role === Role.TECHNICIAN && amount > 0) {
+        return { error: "You may only remove quantity from an item" };
+    }
+
     const row = await prisma.inventoryItem.findUnique({ where: { id: itemId } });
 
     if (!row) {
