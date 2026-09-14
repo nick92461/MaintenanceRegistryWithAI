@@ -94,8 +94,13 @@ export async function deleteTool(toolId: string) {
 export async function checkOutTool(toolId: string) {
     const currentUser = await getCurrentUserAndRenewSession();
 
+
     if (!currentUser) {
         return { error: "You must be logged in" };
+    }
+
+    if (currentUser.role === Role.GUEST) {
+        return { error: "Guests may not perform this action" };
     }
 
     const row = await prisma.tool.findUnique({ where: { id: toolId } });
@@ -143,6 +148,10 @@ export async function checkInTool(toolId: string) {
 
     if (!currentUser) {
         return { error: "You must be logged in" };
+    }
+
+    if (currentUser.role === Role.GUEST) {
+        return { error: "Guests may not perform this action" };
     }
 
     const row = await prisma.tool.findUnique({ where: { id: toolId } });
