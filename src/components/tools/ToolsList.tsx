@@ -68,6 +68,11 @@ export default function ToolsList({ tools, canManage }: { tools: ToolListItem[];
                                     Due {tool.dueAt.toLocaleString([], { dateStyle: "short", timeStyle: "short" })}
                                 </span>
                             )}
+                            {tool.isOverDue && (
+                                <span className="rounded bg-red-600 px-2 py-1 text-xs font-semibold text-white">
+                                    Overdue
+                                </span>
+                            )}
                             <span className="text-sm text-gray-500">{tool.statusLabel}</span>
                             <ToolActionButton toolId={tool.id} status={tool.status} />
                             {canManage && <DeleteToolButton toolId={tool.id} />}
