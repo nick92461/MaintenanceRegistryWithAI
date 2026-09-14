@@ -151,8 +151,9 @@ export async function checkInTool(toolId: string) {
     }
 
     if (currentUser.role === Role.GUEST) {
-        return { error: "Guests may not perform this action" };
+        return { error: "Guests may not perform that action" };
     }
+    
 
     const row = await prisma.tool.findUnique({ where: { id: toolId } });
 

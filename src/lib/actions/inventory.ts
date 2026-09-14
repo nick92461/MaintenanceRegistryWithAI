@@ -109,6 +109,10 @@ export async function adjustInventoryQuantity(itemId: string, amount: number, no
         return { error: "You must be logged in" };
     }
 
+    if (currentUser.role === Role.GUEST) {
+        return { error: "Guests may not perform that action" };
+    }
+
     if (currentUser.role === Role.TECHNICIAN && amount > 0) {
         return { error: "You may only remove quantity from an item" };
     }
