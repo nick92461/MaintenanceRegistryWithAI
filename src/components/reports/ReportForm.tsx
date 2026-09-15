@@ -182,7 +182,7 @@ export default function ReportForm() {
                         {result.type === "TOOLS" ? (
                             <table className="w-full text-left text-sm">
                                 <thead>
-                                    <tr className="border-b bg-gray-50">
+                                    <tr className="border-b bg-gray-50 text-black">
                                         <th className="p-3 font-medium">User</th>
                                         <th className="p-3 font-medium">Tool</th>
                                         <th className="p-3 font-medium">Times Used</th>
@@ -212,7 +212,7 @@ export default function ReportForm() {
                         ) : (
                             <table className="w-full text-left text-sm">
                                 <thead>
-                                    <tr className="border-b bg-gray-50">
+                                    <tr className="border-b bg-gray-50 text-black">
                                         <th className="p-3 font-medium">Item</th>
                                         <th className="p-3 font-medium">Total Used</th>
                                         <th className="p-3 font-medium"># of Withdrawals</th>
