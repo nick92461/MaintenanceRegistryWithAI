@@ -3,7 +3,10 @@
 import { useActionState } from "react";
 import { login, type AuthActionState } from "@/lib/actions/auth";
 
+import Link from "next/link";
+
 const initialState: AuthActionState = {};
+
 
 export default function LoginForm() {
     const [state, formAction, isPending] = useActionState(login, initialState);
@@ -33,7 +36,12 @@ export default function LoginForm() {
             >
                 {isPending ? "Signing in..." : "Sign in"}
             </button>
-
+            <Link
+                href="/signup"
+                className="text-center text-sm text-blue-600 underline"
+            >
+                Create an account
+            </Link>
         </form>
     )
 }
