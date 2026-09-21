@@ -2,9 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useAssistantChat } from "./useAssistantChat";
+import type { AssistantContextKey } from "@/lib/ai/contexts";
 
-export default function AssistantChat({ greeting }: { greeting: string }) {
-    const { messages, isPending, error, send } = useAssistantChat();
+export default function AssistantChat({ greeting, context }: { greeting: string, context: AssistantContextKey }) {
+    const { messages, isPending, error, send } = useAssistantChat(context);
     const [input, setInput] = useState("");
     const bottomRef = useRef<HTMLDivElement>(null);
 

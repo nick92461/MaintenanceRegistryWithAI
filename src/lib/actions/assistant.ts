@@ -1,5 +1,6 @@
 "use server";
 
+import { ASSISTANT_CONTEXTS, isAssistantContextKey, type AssistantContextKey } from "../ai/contexts";
 import { getCurrentUserAndRenewSession } from "../auth/sessions";
 import { Role } from "@/generated/prisma/enums";
 import { askClaude, type ChatMessage } from "../ai/claude";
@@ -25,7 +26,7 @@ function isValidTranscript(messages: unknown): messages is ChatMessage[] {
     return allWellFormed && messages[messages.length - 1].role === "user";
 }
 
-export async function sendAssistantMessage(messages: ChatMessage[]) {
+export async function sendAssistantMessage(context: AssistantContextKey, messages: ChatMessage[]) {
     const currentUser = await getCurrentUserAndRenewSession();
 
     if (!currentUser) {
@@ -36,11 +37,11 @@ export async function sendAssistantMessage(messages: ChatMessage[]) {
         return { error: "You do not have permission to do that" };
     }
 
-    if (!isValidTranscript(messages)) {
-        return { error: "Invalid conversation" };
-    }
+    if (!isAssistantContextKey(context) || !isValidTranscript(messages)) {
+		return { error: "Invalid conversation" };
+	}
 
-    const reply = await askClaude(messages);
+    const reply = await askClaude(messages, ASSISTANT_CONTEXTS[context].systemPrompt);
 
     return { reply };
 }

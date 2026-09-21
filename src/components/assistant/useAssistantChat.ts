@@ -2,9 +2,11 @@
 
 import { useRef, useState } from "react";
 import { sendAssistantMessage } from "@/lib/actions/assistant";
-import { ChatMessage } from "@/lib/ai/claude";
+import type { ChatMessage } from "@/lib/ai/claude";
+import type { AssistantContextKey } from "@/lib/ai/contexts";
 
-export function useAssistantChat() {
+
+export function useAssistantChat(context: AssistantContextKey) {
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [isPending, setIsPending] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -26,7 +28,7 @@ export function useAssistantChat() {
         setIsPending(true);
         setError(null);
 
-        const result = await sendAssistantMessage(nextMessages);
+        const result = await sendAssistantMessage(context, nextMessages);
 
         inFlight.current = false;
         setIsPending(false);

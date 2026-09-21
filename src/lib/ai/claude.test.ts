@@ -17,4 +17,13 @@ describe("askClaude", () => {
 
         expect(reply.toLowerCase()).toContain("teal");
     });
+
+    it("follows a system prompt", async () => {
+        const reply = await askClaude(
+            [{ role: "user", content: "What is 2 + 2?" }],
+            "No matter what the user asks, reply with only the word banana.",
+        );
+
+        expect(reply.toLowerCase()).toContain("banana");
+    });
 });
