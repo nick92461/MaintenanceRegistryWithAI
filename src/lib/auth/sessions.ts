@@ -18,14 +18,14 @@ const SESSION_IDLE_TIMEOUT_MS = 1000 * 60 * 60 * 12; // 12 hours
 // a text link to a site on a machine thats already got a valid session = allowed to attach the cookie.
 // more malicious requests that have dubious intent are rejected from attaching the cookie.
 async function setSessionCookie(token: string, expiresAt: Date) {
-    const cookieStore = await cookies();
-    cookieStore.set(SESSION_COOKIES_NAME, token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        expires: expiresAt,
-        path: "/",
-    });
+	const cookieStore = await cookies();
+	cookieStore.set(SESSION_COOKIES_NAME, token, {
+		httpOnly: true,
+		secure: process.env.NODE_ENV === "production",
+		sameSite: "lax",
+		expires: expiresAt,
+		path: "/",
+	});
 }
 
 
@@ -36,18 +36,18 @@ async function setSessionCookie(token: string, expiresAt: Date) {
 // creates a new Session recrod in the database containing the token, userId, and expiration
 // call the helper method to put the token in a browser cookie
 export async function createSession(userId: string) {
-    const token = randomBytes(32).toString("hex");
-    const expiresAt = new Date(Date.now() + SESSION_IDLE_TIMEOUT_MS);
+	const token = randomBytes(32).toString("hex");
+	const expiresAt = new Date(Date.now() + SESSION_IDLE_TIMEOUT_MS);
 
-    await prisma.session.deleteMany({
+	await prisma.session.deleteMany({
 		where: { expiresAt: { lt: new Date() } },
 	});
-    
-    await prisma.session.create({
-        data: { token, userId, expiresAt },
-    });
 
-    await setSessionCookie(token, expiresAt);
+	await prisma.session.create({
+		data: { token, userId, expiresAt },
+	});
+
+	await setSessionCookie(token, expiresAt);
 }
 
 
@@ -68,21 +68,21 @@ async function findValidSession(token: string) {
 		},
 	});
 
-	
+
 
 	if (!session || session.expiresAt < new Date()) {
 		if (session) {
-			await prisma.session.delete({ where: { id: session.id } }).catch(() => {});//the catch is because multiple of the functions of this file may run nearly (but not exactly) simultaneously
+			await prisma.session.delete({ where: { id: session.id } }).catch(() => { });//the catch is because multiple of the functions of this file may run nearly (but not exactly) simultaneously
 		}																			   //causing two identical prisma delete calls, in which the first would succeed and the second would not because
-		return null;																   //the query would return nothing back crashing the action (due to the prisma delete() methods own constraints)
+		return null;																   //the query would fail crashing the action (due to the prisma delete() methods own constraints)
 	}
 
 	if (session.user.deletedAt) {
-		await prisma.session.delete({ where: { id: session.id } }).catch(() => {});
+		await prisma.session.delete({ where: { id: session.id } }).catch(() => { });
 		return null;
 	}
 
-	
+
 
 	return session;
 }
@@ -130,12 +130,12 @@ export async function getCurrentUserAndRenewSession() {
 // first it gets the cookies from the browser, then it looks for token containing cookie by name and reads the token value
 // if found, tells prisma to delete the DB Session record that matches that token (.catch is there in case the record was already deleted for some reason and prevents a crash)
 export async function destroySession() {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(SESSION_COOKIES_NAME)?.value;
+	const cookieStore = await cookies();
+	const token = cookieStore.get(SESSION_COOKIES_NAME)?.value;
 
-    if (token) {
-        await prisma.session.delete({ where: { token }  }).catch(() => {});
-    }
+	if (token) {
+		await prisma.session.delete({ where: { token } }).catch(() => { });
+	}
 
-    cookieStore.delete(SESSION_COOKIES_NAME);
+	cookieStore.delete(SESSION_COOKIES_NAME);
 }
