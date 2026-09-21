@@ -7,6 +7,7 @@ const DASHBOARD_TILES: { label: string; href: string; allowedRoles: Role[] }[] =
     { label: "Inventory", href: "/inventory", allowedRoles: [Role.TECHNICIAN, Role.SUPERVISOR, Role.MANAGER] },
     { label: "Users", href: "/users", allowedRoles: [Role.SUPERVISOR, Role.MANAGER] },
     { label: "Reports", href: "/reports", allowedRoles: [Role.SUPERVISOR, Role.MANAGER] },
+    { label: "Onboarding Assistant", href: "/assistant", allowedRoles: [Role.SUPERVISOR, Role.MANAGER] },
 ];
 
 export default async function DashboardPage() {
