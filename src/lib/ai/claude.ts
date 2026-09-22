@@ -7,15 +7,32 @@ export type ChatMessage = {
     content: string;
 };
 
-export async function askClaude(messages: ChatMessage[], system?: string) {
+export type ClaudeTurn = {
+    text: string;
+    toolUses: Anthropic.ToolUseBlock[];
+};
+
+export async function askClaude(
+    messages: Anthropic.MessageParam[],
+    options?: { system?: string; tools?: Anthropic.Tool[] },
+): Promise<ClaudeTurn> {
     const response = await anthropic.messages.create({
         model: "claude-sonnet-5",
-        max_tokens: 1024,
-        system,
+        thinking: { type: "disabled" },
+        max_tokens: 16000,
+        system: options?.system,
+        tools: options?.tools,
         messages,
     });
 
-    const textBlock = response.content.find((block) => block.type === "text");
+    const text = response.content
+        .filter((block) => block.type === "text")
+        .map((block) => block.text)
+        .join("\n");
 
-    return textBlock?.text ?? "";
+    const toolUses = response.content.filter(
+        (block): block is Anthropic.ToolUseBlock => block.type === "tool_use",
+    );
+
+    return { text, toolUses };
 }
