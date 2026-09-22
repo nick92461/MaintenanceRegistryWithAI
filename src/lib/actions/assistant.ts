@@ -8,7 +8,7 @@ import { askClaude, type ChatMessage } from "../ai/claude";
 import { executeTool, type Draft } from "../ai/drafts";
 
 const MAX_MESSAGES = 50;
-const MAX_MESSAGE_LENGTH = 4000;
+const MAX_USER_MESSAGE_LENGTH = 50000;
 const MAX_TOOL_ROUNDS = 15;
 
 function isValidTranscript(messages: unknown): messages is ChatMessage[] {
@@ -23,7 +23,7 @@ function isValidTranscript(messages: unknown): messages is ChatMessage[] {
 			(m.role === "user" || m.role === "assistant") &&
 			typeof m.content === "string" &&
 			m.content.trim().length > 0 &&
-			m.content.length <= MAX_MESSAGE_LENGTH,
+			(m.role !== "user" || m.content.length <= MAX_USER_MESSAGE_LENGTH),
 	);
 
 	return allWellFormed && messages[messages.length - 1].role === "user";
