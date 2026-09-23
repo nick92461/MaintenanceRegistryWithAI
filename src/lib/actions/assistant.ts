@@ -5,7 +5,7 @@ import { ASSISTANT_CONTEXTS, isAssistantContextKey, type AssistantContextKey } f
 import { getCurrentUserAndRenewSession } from "../auth/sessions";
 import { Role } from "@/generated/prisma/enums";
 import { askClaude, type ChatMessage } from "../ai/claude";
-import { executeTool, type Draft } from "../ai/drafts";
+import { buildReply, countNewDrafts, executeTool, type Draft } from "../ai/drafts";
 import { formatRecords, type ExistingRecords } from "../ai/records";
 import { getActiveInventoryItems } from "../data/inventory";
 import { getActiveTools } from "../data/tools";
@@ -84,7 +84,7 @@ export async function sendAssistantMessage(
 		const turn = await askClaude(conversation, { system: contextDef.systemPrompt, tools: contextDef.tools });
 
 		if (turn.toolUses.length === 0) {
-			return { reply: turn.text, drafts: workingDrafts };
+			return { reply: buildReply(countNewDrafts(drafts, workingDrafts), turn.text), drafts: workingDrafts };
 		}
 
 		conversation.push({

@@ -224,3 +224,16 @@ export function executeTool(name: string, input: unknown, drafts: Draft[], exist
             return `Error: unknown tool ${name}.`;
     }
 }
+
+export function countNewDrafts(before: Draft[], after: Draft[]): number {
+    const beforeIds = new Set(before.map((d) => d.id));
+
+    return after.filter((d) => !beforeIds.has(d.id)).length;
+}
+
+export function buildReply(addedCount: number, text: string): string {
+    const summary = addedCount > 0 ? `${addedCount} ${addedCount === 1 ? "item" : "items"} added to the draft.` : "";
+    const parts = [summary, text.trim()].filter((part) => part.length > 0);
+
+    return parts.length > 0 ? parts.join("\n\n") : "Done.";
+}

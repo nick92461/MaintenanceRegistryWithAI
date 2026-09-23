@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { executeTool, type Draft } from "./drafts";
+import { buildReply, countNewDrafts, executeTool, type Draft } from "./drafts";
 
 describe("executeTool", () => {
 	it("adds an inventory draft", () => {
@@ -147,5 +147,52 @@ describe("executeTool", () => {
 		expect(drafts).toHaveLength(0);
 		expect(tooMany.toLowerCase()).toContain("error");
 		expect(fractional.toLowerCase()).toContain("error");
+	});
+});
+
+describe("countNewDrafts", () => {
+	const existing: Draft = { id: "a", kind: "tool", name: "Ladder", category: "Access", location: "Shop 1" };
+	const added: Draft = { id: "b", kind: "tool", name: "Drill", category: "Power Tools", location: "Shop 1" };
+
+	it("counts only drafts that were not there before", () => {
+		expect(countNewDrafts([existing], [existing, added])).toBe(1);
+	});
+
+	it("counts zero when nothing was added", () => {
+		expect(countNewDrafts([existing], [existing])).toBe(0);
+	});
+
+	it("does not count an edited draft as new", () => {
+		expect(countNewDrafts([existing], [{ ...existing, name: "Ladder 6ft" }])).toBe(0);
+	});
+
+	it("counts every record a single tool call creates", () => {
+		const after: Draft[] = [];
+
+		executeTool("propose_tool", { name: "Cordless Drill", category: "Power Tools", location: "Shop 1", count: 3 }, after);
+
+		expect(countNewDrafts([], after)).toBe(3);
+	});
+});
+
+describe("buildReply", () => {
+	it("puts the count first and Claude's text after a blank line", () => {
+		expect(buildReply(15, "5 items need clarification.")).toBe("15 items added to the draft.\n\n5 items need clarification.");
+	});
+
+	it("uses the singular for one item", () => {
+		expect(buildReply(1, "")).toBe("1 item added to the draft.");
+	});
+
+	it("returns just Claude's text when nothing was added", () => {
+		expect(buildReply(0, "  9V Batteries already exist.  ")).toBe("9V Batteries already exist.");
+	});
+
+	it("returns just the count when Claude wrote nothing", () => {
+		expect(buildReply(20, "")).toBe("20 items added to the draft.");
+	});
+
+	it("never returns an empty reply", () => {
+		expect(buildReply(0, "")).toBe("Done.");
 	});
 });
