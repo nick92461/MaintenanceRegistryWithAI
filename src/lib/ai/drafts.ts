@@ -1,6 +1,8 @@
 import { randomUUID } from "crypto";
 import type Anthropic from "@anthropic-ai/sdk";
 
+const MAX_TOOLS_PER_CALL = 100;
+
 export type InventoryDraft = {
     id: string;
     kind: "inventory";
@@ -78,11 +80,32 @@ export const DRAFT_TOOLS: Anthropic.Tool[] = [
     },
 ];
 
+function highestTakenNumber(baseName: string, names: string[]): number {
+    const base = baseName.trim().toLowerCase();
+    let highest = 0;
+
+    for (const name of names) {
+        const lower = name.trim().toLowerCase();
+
+        if (lower === base) {
+            highest = Math.max(highest, 1);
+        } else if (lower.startsWith(base + " ")) {
+            const suffix = lower.slice(base.length + 1);
+
+            if (/^\d+$/.test(suffix)) {
+                highest = Math.max(highest, Number(suffix));
+            }
+        }
+    }
+
+    return highest;
+}
+
 function isRecord(value: unknown): value is Record<string, unknown> {
     return typeof value === "object" && value !== null;
 }
 
-export function executeTool(name: string, input: unknown, drafts: Draft[]): string {
+export function executeTool(name: string, input: unknown, drafts: Draft[], existingToolNames: string[] = []): string {
     if (!isRecord(input)) {
         return "Error: missing input";
     }
@@ -117,35 +140,41 @@ export function executeTool(name: string, input: unknown, drafts: Draft[]): stri
         }
 
         case "propose_tool": {
-            const { name: toolName, category, location, count } = input;
+			const { name: toolName, category, location, count } = input;
 
-            if (
-                typeof toolName !== "string" ||
+			if (
+				typeof toolName !== "string" ||
 				typeof category !== "string" ||
 				typeof location !== "string" ||
-				typeof count !== "number" ||
-				count < 1
-            ) {
-                return "Error: propose_tool is missing a required field, or count is less than 1.";
-            }
+				typeof count !== "number"
+			) {
+				return "Error: propose_tool is missing a required field.";
+			}
 
-            const created: ToolDraft[] = [];
+			if (!Number.isInteger(count) || count < 1 || count > MAX_TOOLS_PER_CALL) {
+				return `Error: propose_tool count must be a whole number from 1 to ${MAX_TOOLS_PER_CALL}.`;
+			}
 
-            for (let i = 1; i <= count; i++) {
-                const draft: ToolDraft = {
-                    id: randomUUID(),
-                    kind: "tool",
-                    name: count === 1 ? toolName : `${toolName} ${i}`,
-                    category,
-                    location,
-                };
+			const takenNames = [...existingToolNames, ...drafts.filter((d) => d.kind === "tool").map((d) => d.name)];
+			const highestTaken = highestTakenNumber(toolName, takenNames);
+			const isNumbered = highestTaken > 0 || count > 1;
+			const created: ToolDraft[] = [];
 
-                drafts.push(draft);
-                created.push(draft);
-            }
+			for (let i = 1; i <= count; i++) {
+				const draft: ToolDraft = {
+					id: randomUUID(),
+					kind: "tool",
+					name: isNumbered ? `${toolName} ${highestTaken + i}` : toolName,
+					category,
+					location,
+				};
 
-            return `Added ${created.length} draft tool(s): ${created.map((d) => `${d.id} (${d.name})`).join(", ")}.`;
-        }
+				drafts.push(draft);
+				created.push(draft);
+			}
+
+			return `Added ${created.length} draft tool(s): ${created.map((d) => `${d.id} (${d.name})`).join(", ")}.`;
+		}
         
         case "update_draft": {
             const { draftId } = input;

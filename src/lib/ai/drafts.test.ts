@@ -85,4 +85,67 @@ describe("executeTool", () => {
 
 		expect(result.toLowerCase()).toContain("error");
 	});
+
+		it("continues numbering after existing saved tools", () => {
+		const drafts: Draft[] = [];
+
+		executeTool(
+			"propose_tool",
+			{ name: "Cordless Drill", category: "Power Tools", location: "Shop 1", count: 2 },
+			drafts,
+			["Cordless Drill 1", "Cordless Drill 2", "Cordless Drill 3"],
+		);
+
+		expect(drafts.map((d) => d.name)).toEqual(["Cordless Drill 4", "Cordless Drill 5"]);
+	});
+
+	it("continues numbering after drafts already in the list", () => {
+		const drafts: Draft[] = [];
+
+		executeTool("propose_tool", { name: "Cordless Drill", category: "Power Tools", location: "Shop 1", count: 3 }, drafts);
+		executeTool("propose_tool", { name: "Cordless Drill", category: "Power Tools", location: "Shop 1", count: 2 }, drafts);
+
+		expect(drafts.map((d) => d.name)).toEqual([
+			"Cordless Drill 1",
+			"Cordless Drill 2",
+			"Cordless Drill 3",
+			"Cordless Drill 4",
+			"Cordless Drill 5",
+		]);
+	});
+
+	it("treats an existing unnumbered tool as number 1", () => {
+		const drafts: Draft[] = [];
+
+		executeTool("propose_tool", { name: "Ladder", category: "Access", location: "Shop 1", count: 2 }, drafts, ["Ladder"]);
+
+		expect(drafts.map((d) => d.name)).toEqual(["Ladder 2", "Ladder 3"]);
+	});
+
+	it("numbers a single new tool when one with the same name already exists", () => {
+		const drafts: Draft[] = [];
+
+		executeTool("propose_tool", { name: "Ladder", category: "Access", location: "Shop 1", count: 1 }, drafts, ["Ladder"]);
+
+		expect(drafts[0].name).toBe("Ladder 2");
+	});
+
+	it("does not confuse a longer tool name that starts the same way", () => {
+		const drafts: Draft[] = [];
+
+		executeTool("propose_tool", { name: "Drill", category: "Power Tools", location: "Shop 1", count: 1 }, drafts, ["Drill Press 2"]);
+
+		expect(drafts[0].name).toBe("Drill");
+	});
+
+	it("rejects a tool count above the cap or that is not a whole number", () => {
+		const drafts: Draft[] = [];
+
+		const tooMany = executeTool("propose_tool", { name: "Key", category: "Hardware", location: "Office", count: 101 }, drafts);
+		const fractional = executeTool("propose_tool", { name: "Key", category: "Hardware", location: "Office", count: 2.5 }, drafts);
+
+		expect(drafts).toHaveLength(0);
+		expect(tooMany.toLowerCase()).toContain("error");
+		expect(fractional.toLowerCase()).toContain("error");
+	});
 });

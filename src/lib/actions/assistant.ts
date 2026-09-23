@@ -6,6 +6,9 @@ import { getCurrentUserAndRenewSession } from "../auth/sessions";
 import { Role } from "@/generated/prisma/enums";
 import { askClaude, type ChatMessage } from "../ai/claude";
 import { executeTool, type Draft } from "../ai/drafts";
+import { formatRecords, type ExistingRecords } from "../ai/records";
+import { getActiveInventoryItems } from "../data/inventory";
+import { getActiveTools } from "../data/tools";
 
 const MAX_MESSAGES = 50;
 const MAX_USER_MESSAGE_LENGTH = 50000;
@@ -52,6 +55,31 @@ export async function sendAssistantMessage(
 	const conversation: Anthropic.MessageParam[] = [...messages];
 	const workingDrafts: Draft[] = [...drafts];
 
+	let existingRecords: Promise<ExistingRecords> | undefined;
+
+	function loadExistingRecords() {
+		if (!existingRecords) {
+			existingRecords = Promise.all([getActiveInventoryItems(), getActiveTools()]).then(([inventory, tools]) => ({ inventory, tools }));
+		}
+
+		return existingRecords;
+	}
+
+	async function runTool(name: string, input: unknown): Promise<string> {
+		try {
+			if (name === "list_records") {
+				return formatRecords(await loadExistingRecords(), workingDrafts);
+			}
+
+			const existingToolNames = name === "propose_tool" ? (await loadExistingRecords()).tools.map((tool) => tool.name) : [];
+
+			return executeTool(name, input, workingDrafts, existingToolNames);
+		} catch (err) {
+			console.error(err);
+			return "Error: could not read the existing records right now.";
+		}
+	}
+
 	for (let round = 0; round < MAX_TOOL_ROUNDS; round++) {
 		const turn = await askClaude(conversation, { system: contextDef.systemPrompt, tools: contextDef.tools });
 
@@ -72,14 +100,17 @@ export async function sendAssistantMessage(
 			],
 		});
 
-		conversation.push({
-			role: "user",
-			content: turn.toolUses.map((toolUse) => ({
-				type: "tool_result" as const,
+		const toolResults: Anthropic.ToolResultBlockParam[] = [];
+
+		for (const toolUse of turn.toolUses) {
+			toolResults.push({
+				type: "tool_result",
 				tool_use_id: toolUse.id,
-				content: executeTool(toolUse.name, toolUse.input, workingDrafts),
-			})),
-		});
+				content: await runTool(toolUse.name, toolUse.input),
+			});
+		}
+
+		conversation.push({ role: "user", content: toolResults });
 	}
 
 	return { error: "The assistant is stuck making changes. Try rephrasing your last message.", drafts: workingDrafts };
