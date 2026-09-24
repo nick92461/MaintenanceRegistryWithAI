@@ -6,7 +6,7 @@ import { getCurrentUserAndRenewSession } from "../auth/sessions";
 import { Role } from "@/generated/prisma/enums";
 import { askClaude, type ChatMessage } from "../ai/claude";
 import { buildReply, countNewDrafts, executeTool, type Draft } from "../ai/drafts";
-import { formatRecords, type ExistingRecords } from "../ai/records";
+import { withDraftList, formatRecords, type ExistingRecords } from "../ai/records";
 import { getActiveInventoryItems } from "../data/inventory";
 import { getActiveTools } from "../data/tools";
 
@@ -54,6 +54,7 @@ export async function sendAssistantMessage(
 	const contextDef = ASSISTANT_CONTEXTS[context];
 	const conversation: Anthropic.MessageParam[] = [...messages];
 	const workingDrafts: Draft[] = [...drafts];
+	const systemPrompt = withDraftList(contextDef.systemPrompt, drafts);
 
 	let existingRecords: Promise<ExistingRecords> | undefined;
 
@@ -81,7 +82,7 @@ export async function sendAssistantMessage(
 	}
 
 	for (let round = 0; round < MAX_TOOL_ROUNDS; round++) {
-		const turn = await askClaude(conversation, { system: contextDef.systemPrompt, tools: contextDef.tools });
+		const turn = await askClaude(conversation, { system: systemPrompt, tools: contextDef.tools });
 
 		if (turn.toolUses.length === 0) {
 			return { reply: buildReply(countNewDrafts(drafts, workingDrafts), turn.text), drafts: workingDrafts };

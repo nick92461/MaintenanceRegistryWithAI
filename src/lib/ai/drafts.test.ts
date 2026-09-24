@@ -196,3 +196,35 @@ describe("buildReply", () => {
 		expect(buildReply(0, "")).toBe("Done.");
 	});
 });
+
+describe("duplicate inventory drafts", () => {
+	const first = { name: "AA batteries", category: "Batteries", location: "Shop 1", quantity: 48, reorderThreshold: 12 };
+
+	it("rejects the same item in the same location, ignoring case and word order", () => {
+		const drafts: Draft[] = [];
+		executeTool("propose_inventory_item", first, drafts);
+
+		const result = executeTool("propose_inventory_item", { ...first, name: "batteries, aa", location: "shop 1" }, drafts);
+
+		expect(drafts).toHaveLength(1);
+		expect(result.toLowerCase()).toContain("already exists");
+	});
+
+	it("allows the same item in a different location", () => {
+		const drafts: Draft[] = [];
+		executeTool("propose_inventory_item", first, drafts);
+
+		executeTool("propose_inventory_item", { ...first, location: "Shop 2" }, drafts);
+
+		expect(drafts).toHaveLength(2);
+	});
+
+	it("does not treat a different item as a duplicate", () => {
+		const drafts: Draft[] = [];
+		executeTool("propose_inventory_item", first, drafts);
+
+		executeTool("propose_inventory_item", { ...first, name: "AAA batteries" }, drafts);
+
+		expect(drafts).toHaveLength(2);
+	});
+});

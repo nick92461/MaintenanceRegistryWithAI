@@ -101,6 +101,17 @@ function highestTakenNumber(baseName: string, names: string[]): number {
     return highest;
 }
 
+function normalizeForMatch(text: string): string {
+    return text
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, " ")
+        .trim()
+        .split(" ")
+        .filter(Boolean)
+        .sort()
+        .join(" ");
+}
+
 function isRecord(value: unknown): value is Record<string, unknown> {
     return typeof value === "object" && value !== null;
 }
@@ -122,6 +133,17 @@ export function executeTool(name: string, input: unknown, drafts: Draft[], exist
                 typeof reorderThreshold !== "number"
             ) {
                 return "Error: propose_inventory_item is missing a required field."
+            }
+
+            const duplicate = drafts.find(
+                (d) => 
+                    d.kind === "inventory" &&
+                normalizeForMatch(d.name) === normalizeForMatch(itemName) &&
+                normalizeForMatch(d.location) === normalizeForMatch(location),
+            );
+
+            if (duplicate) {
+                return `Error: a draft for "${duplicate.name}" in ${duplicate.location} already exists (id ${duplicate.id}). Use update_draft to change it instead of proposing it again.`;
             }
 
             const draft: InventoryDraft = {

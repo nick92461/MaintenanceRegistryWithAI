@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { formatRecords } from "./records";
+import { withDraftList, formatRecords } from "./records";
 import type { Draft } from "./drafts";
 
 describe("formatRecords", () => {
@@ -39,5 +39,23 @@ describe("formatRecords", () => {
 		expect(text).toContain("Drafts pending review (2):");
 		expect(text).toContain("[inventory] id abc-123 | AA batteries");
 		expect(text).toContain("[tool] id def-456 | Ladder");
+	});
+});
+
+describe("withDraftList", () => {
+	it("puts the draft list, with ids, after the system prompt", () => {
+		const drafts: Draft[] = [
+			{ id: "abc-123", kind: "inventory", name: "AA batteries", category: "Batteries", location: "Shop 1", quantity: 48, reorderThreshold: 12 },
+		];
+
+		const text = withDraftList("BASE PROMPT", drafts);
+
+		expect(text.startsWith("BASE PROMPT")).toBe(true);
+		expect(text).toContain("Drafts pending review (1):");
+		expect(text).toContain("id abc-123 | AA batteries");
+	});
+
+	it("says there are no drafts when the list is empty", () => {
+		expect(withDraftList("BASE PROMPT", [])).toContain("Drafts pending review: none");
 	});
 });
