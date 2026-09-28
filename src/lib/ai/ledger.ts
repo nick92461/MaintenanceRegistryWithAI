@@ -225,7 +225,7 @@ export function renderReport(addedCount: number, events: LedgerEvent[], claudeTe
     const parts: string[] = [];
 
     if (addedCount > 0) {
-        parts.push(`${addedCount} ${addedCount === 1? "item" : "items"} added to the draft.`);
+        parts.push(`${addedCount} ${addedCount === 1? "item" : "items"} added to the draft. Use the table below to confirm/edit or tell me what edits to make.`);
     }
 
     const updated = events.filter((event): event is UpdatedEvent => event.kind === "updated");

@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState} from "react";
 import { useAssistantChat } from "./useAssistantChat";
+import DraftTable from "./DraftTable";
 import type { AssistantContextKey } from "@/lib/ai/contexts";
 
 export default function AssistantChat({ greeting, context }: { greeting: string, context: AssistantContextKey }) {
-    const { messages, isPending, error, send } = useAssistantChat(context);
+    const { messages, drafts, confirmErrors, isPending, isConfirming, error, send, updateDraft, removeDraft, confirm } = useAssistantChat(context);
     const [input, setInput] = useState("");
     const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -25,7 +26,7 @@ export default function AssistantChat({ greeting, context }: { greeting: string,
             setInput(text);
         }
     }
-
+    
     function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
@@ -34,45 +35,56 @@ export default function AssistantChat({ greeting, context }: { greeting: string,
     }
 
     return (
-        <div className="flex h-full min-h-0 flex-col gap-4">
-            <p className="text-sm text-gray-500">{greeting}</p>
+        <div className="flex flex-col gap-4">
+            <div className="flex h-[60vh] min-h-0 flex-col gap-4">
+                <p className="text-sm text-gray-500">{greeting}</p>
 
-            <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto">
-                {messages.map((message, index) => (
-                    <div
-                        key={index}
-                        className={
-                            message.role === "user"
-                                ? "max-w-[85%] self-end whitespace-pre-wrap rounded-xl text-black bg-gray-200 px-3 py-2"
-                                : "max-w-[85%] self-start whitespace-pre-wrap rounded-xl border px-3 py-2"
-                        }
+                <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto">
+                    {messages.map((message, index) => (
+                        <div
+                            key={index}
+                            className={
+                                message.role === "user"
+                                    ? "max-w-[85%] self-end whitespace-pre-wrap rounded-xl text-black bg-gray-200 px-3 py-2"   
+                                    : "max-w-[85%] self-start whitespace-pre-wrap rounded-xl border px-3 py-2"
+                            }
+                        >
+                            {message.content}
+                        </div>
+                    ))}
+                    {isPending && <p className="self-start text-sm text-gray-500">Thinking...</p>}
+                    <div ref={bottomRef} />
+                </div>
+
+                {error && <p className="text-sm text-red-600">{error}</p>}
+
+                <form onSubmit={handleSubmit} className="flex items-end gap-2">
+                    <textarea 
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                        rows={3}
+                        placeholder="Type a message"
+                        className="flex-1 resize-none rounded border px-3 py-2"
+                    />
+                    <button
+                        type="submit"
+                        disabled={isPending}
+                        className="rounded bg-gray-700 px-4 py-2 text-white disabled:opacity-50"
                     >
-                        {message.content}
-                    </div>
-                ))}
-                {isPending && <p className="self-start text-sm text-gray-500">Thinking...</p>}
-                <div ref={bottomRef} />
+                        Send
+                    </button>
+                </form>
             </div>
 
-            {error && <p className="text-sm text-red-600">{error}</p>}
-
-            <form onSubmit={handleSubmit} className ="flex items-end gap-2">
-                <textarea 
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    rows={3}
-                    placeholder="Type a message"
-                    className="flex-1 resize-none rounded border px-3 py-2"
-                />
-                <button
-                    type="submit"
-                    disabled={isPending}
-                    className="rounded bg-gray-700 px-4 py-2 text-white disabled:opacity-50"
-                >
-                    Send
-                </button>
-            </form>
+            <DraftTable 
+                drafts={drafts}
+                confirmErrors={confirmErrors}
+                isPending={isConfirming}
+                onEdit={updateDraft}
+                onRemove={removeDraft}
+                onConfirm={confirm}
+            />
         </div>
     );
 }

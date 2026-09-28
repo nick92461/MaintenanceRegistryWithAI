@@ -124,11 +124,15 @@ describe("rejectSavedDuplicate", () => {
 
 describe("renderReport", () => {
 	it("reports only the count when that is all there is", () => {
-		expect(renderReport(20, [], "NO_REPLY")).toBe("20 items added to the draft.");
+		expect(renderReport(20, [], "NO_REPLY")).toBe(
+			"20 items added to the draft. Use the table below to confirm/edit or tell me what edits to make.",
+		);
 	});
 
 	it("uses the singular for one item", () => {
-		expect(renderReport(1, [], "")).toBe("1 item added to the draft.");
+		expect(renderReport(1, [], "")).toBe(
+			"1 item added to the draft. Use the table below to confirm/edit or tell me what edits to make.",
+		);
 	});
 
 	it("lists skipped saved items with their quantities", () => {
@@ -139,7 +143,7 @@ describe("renderReport", () => {
 		];
 
 		expect(renderReport(2, events, "")).toBe(
-			"2 items added to the draft.\n\nAlready saved, not added: AA Batteries (Shop 1, qty 1241); Cordless Drill (Shop 1); Duct Tape (already in your draft).",
+			"2 items added to the draft. Use the table below to confirm/edit or tell me what edits to make.\n\nAlready saved, not added: AA Batteries (Shop 1, qty 1241); Cordless Drill (Shop 1); Duct Tape (already in your draft).",
 		);
 	});
 
@@ -150,7 +154,7 @@ describe("renderReport", () => {
 		];
 
 		expect(renderReport(15, events, "")).toBe(
-			"15 items added to the draft.\n\n2 items need clarification. Could you tell me:\n1. light bulbs: What color temperature?\n2. paint: Interior or exterior?",
+			"15 items added to the draft. Use the table below to confirm/edit or tell me what edits to make.\n\n2 items need clarification. Could you tell me:\n1. light bulbs: What color temperature?\n2. paint: Interior or exterior?",
 		);
 	});
 
@@ -161,7 +165,9 @@ describe("renderReport", () => {
 	});
 
 	it("drops the NO_REPLY marker but keeps real text from Claude", () => {
-		expect(renderReport(3, [], "NO_REPLY")).toBe("3 items added to the draft.");
+		expect(renderReport(3, [], "NO_REPLY")).toBe(
+			"3 items added to the draft. Use the table below to confirm/edit or tell me what edits to make.",
+		);
 		expect(renderReport(0, [], "  That is outside what I can help with.  ")).toBe("That is outside what I can help with.");
 	});
 
