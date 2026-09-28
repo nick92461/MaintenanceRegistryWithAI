@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState} from "react";
 import { useAssistantChat } from "./useAssistantChat";
 import DraftTable from "./DraftTable";
+import MicButton from "./MicButton";
 import type { AssistantContextKey } from "@/lib/ai/contexts";
 
 export default function AssistantChat({ greeting, context }: { greeting: string, context: AssistantContextKey }) {
@@ -32,6 +33,10 @@ export default function AssistantChat({ greeting, context }: { greeting: string,
             e.preventDefault();
             e.currentTarget.form?.requestSubmit();
         }
+    }
+
+    function handleVoiceResult(text: string) {
+        setInput((current) => (current.trim().length > 0 ? `${current.trim()} ${text}` : text));
     }
 
     return (
@@ -67,6 +72,7 @@ export default function AssistantChat({ greeting, context }: { greeting: string,
                         placeholder="Type a message"
                         className="flex-1 resize-none rounded border px-3 py-2"
                     />
+                    <MicButton onResult={handleVoiceResult} />
                     <button
                         type="submit"
                         disabled={isPending}
