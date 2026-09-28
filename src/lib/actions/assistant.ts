@@ -5,7 +5,8 @@ import { ASSISTANT_CONTEXTS, isAssistantContextKey, type AssistantContextKey } f
 import { getCurrentUserAndRenewSession } from "../auth/sessions";
 import { Role } from "@/generated/prisma/enums";
 import { askClaude, type ChatMessage } from "../ai/claude";
-import { buildReply, countNewDrafts, executeTool, type Draft } from "../ai/drafts";
+import { countNewDrafts, executeTool, type Draft } from "../ai/drafts";
+import { rejectSavedDuplicate, renderReport, runDraftEdit, runLedgerTool, type LedgerEvent } from "../ai/ledger";
 import { withDraftList, formatRecords, type ExistingRecords } from "../ai/records";
 import { getActiveInventoryItems } from "../data/inventory";
 import { getActiveTools } from "../data/tools";
@@ -55,6 +56,7 @@ export async function sendAssistantMessage(
 	const conversation: Anthropic.MessageParam[] = [...messages];
 	const workingDrafts: Draft[] = [...drafts];
 	const systemPrompt = withDraftList(contextDef.systemPrompt, drafts);
+	const events: LedgerEvent[] = [];
 
 	let existingRecords: Promise<ExistingRecords> | undefined;
 
@@ -72,6 +74,22 @@ export async function sendAssistantMessage(
 				return formatRecords(await loadExistingRecords(), workingDrafts);
 			}
 
+			if (name === "skip_existing" || name === "ask_clarification") {
+				return runLedgerTool(name, input, await loadExistingRecords(), workingDrafts, events);
+			}
+
+			if (name === "update_draft" || name === "remove_draft") {
+				return runDraftEdit(name, input, workingDrafts, events);
+			}
+
+			if (name === "propose_inventory_item") {
+				const duplicate = rejectSavedDuplicate(input, await loadExistingRecords(), events);
+
+				if (duplicate) {
+					return duplicate;
+				}
+			}
+
 			const existingToolNames = name === "propose_tool" ? (await loadExistingRecords()).tools.map((tool) => tool.name) : [];
 
 			return executeTool(name, input, workingDrafts, existingToolNames);
@@ -85,7 +103,7 @@ export async function sendAssistantMessage(
 		const turn = await askClaude(conversation, { system: systemPrompt, tools: contextDef.tools });
 
 		if (turn.toolUses.length === 0) {
-			return { reply: buildReply(countNewDrafts(drafts, workingDrafts), turn.text), drafts: workingDrafts };
+			return { reply: renderReport(countNewDrafts(drafts, workingDrafts), events, turn.text), drafts: workingDrafts };
 		}
 
 		conversation.push({

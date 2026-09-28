@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { buildReply, countNewDrafts, executeTool, type Draft } from "./drafts";
+import { countNewDrafts, executeTool, type Draft } from "./drafts";
 
 describe("executeTool", () => {
 	it("adds an inventory draft", () => {
@@ -172,28 +172,6 @@ describe("countNewDrafts", () => {
 		executeTool("propose_tool", { name: "Cordless Drill", category: "Power Tools", location: "Shop 1", count: 3 }, after);
 
 		expect(countNewDrafts([], after)).toBe(3);
-	});
-});
-
-describe("buildReply", () => {
-	it("puts the count first and Claude's text after a blank line", () => {
-		expect(buildReply(15, "5 items need clarification.")).toBe("15 items added to the draft.\n\n5 items need clarification.");
-	});
-
-	it("uses the singular for one item", () => {
-		expect(buildReply(1, "")).toBe("1 item added to the draft.");
-	});
-
-	it("returns just Claude's text when nothing was added", () => {
-		expect(buildReply(0, "  9V Batteries already exist.  ")).toBe("9V Batteries already exist.");
-	});
-
-	it("returns just the count when Claude wrote nothing", () => {
-		expect(buildReply(20, "")).toBe("20 items added to the draft.");
-	});
-
-	it("never returns an empty reply", () => {
-		expect(buildReply(0, "")).toBe("Done.");
 	});
 });
 

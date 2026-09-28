@@ -101,7 +101,7 @@ function highestTakenNumber(baseName: string, names: string[]): number {
     return highest;
 }
 
-function normalizeForMatch(text: string): string {
+export function normalizeForMatch(text: string): string {
     return text
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, " ")
@@ -112,7 +112,7 @@ function normalizeForMatch(text: string): string {
         .join(" ");
 }
 
-function isRecord(value: unknown): value is Record<string, unknown> {
+export function isRecord(value: unknown): value is Record<string, unknown> {
     return typeof value === "object" && value !== null;
 }
 
@@ -251,11 +251,4 @@ export function countNewDrafts(before: Draft[], after: Draft[]): number {
     const beforeIds = new Set(before.map((d) => d.id));
 
     return after.filter((d) => !beforeIds.has(d.id)).length;
-}
-
-export function buildReply(addedCount: number, text: string): string {
-    const summary = addedCount > 0 ? `${addedCount} ${addedCount === 1 ? "item" : "items"} added to the draft.` : "";
-    const parts = [summary, text.trim()].filter((part) => part.length > 0);
-
-    return parts.length > 0 ? parts.join("\n\n") : "Done.";
 }
