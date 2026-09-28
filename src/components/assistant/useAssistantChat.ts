@@ -28,19 +28,26 @@ export function useAssistantChat(context: AssistantContextKey) {
         setIsPending(true);
         setError(null);
 
-        const result = await sendAssistantMessage(context, nextMessages);
+        try {
+            const result = await sendAssistantMessage(context, nextMessages);
 
-        inFlight.current = false;
-        setIsPending(false);
+            if (!result.reply) {
+                setMessages(previousMessages);
+                setError(result.error ?? "Something went wrong");
+                return false;
+            }
 
-        if (!result.reply) {
+            setMessages([...nextMessages, { role: "assistant", content: result.reply }]);
+            return true;
+        } catch (err) {
+            console.error(err);
             setMessages(previousMessages);
-            setError(result.error ?? "Something went wrong");
+            setError("Something went wrong");
             return false;
+        } finally {
+            inFlight.current = false;
+            setIsPending(false);
         }
-
-        setMessages([...nextMessages, { role: "assistant", content: result.reply }]);
-        return true;
     }
 
     return { messages, isPending, error, send };
