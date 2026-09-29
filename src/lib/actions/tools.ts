@@ -1,8 +1,8 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { getCurrentUserAndRenewSession } from "../auth/sessions";
-import { Role } from "@/generated/prisma/enums";
+import { requirePropertyRole } from "../auth/access";
+import { LEAD_ROLES, STAFF_ROLES } from "../auth/propertyRole";
 import { Tool } from "../domain/Tool";
 import { revalidatePath } from "next/cache";
 
@@ -18,14 +18,10 @@ function getCheckoutDueDate(): Date {
 }
 
 export async function createTool(prevState: unknown, formData: FormData) {
-    const currentUser = await getCurrentUserAndRenewSession();
+    const access = await requirePropertyRole(formData.get("propertyId"), LEAD_ROLES);
 
-    if (!currentUser) {
-        return { error: "You must be logged in" };
-    }
-
-    if (currentUser.role !== Role.SUPERVISOR && currentUser.role !== Role.MANAGER) {
-        return { error: "You do not have permission to add tools" };
+    if ("error" in access) {
+        return { error: access.error };
     }
 
     const name = formData.get("name");
@@ -41,26 +37,22 @@ export async function createTool(prevState: unknown, formData: FormData) {
     }
 
     await prisma.tool.create({
-        data: { name, category, location },
+        data: { propertyId: access.propertyId, name, category, location },
     });
 
-    revalidatePath("/tools");
+    revalidatePath(`/p/${access.propertyId}/tools`);
 
     return { success: true };
 }
 
-export async function deleteTool(toolId: string) {
-    const currentUser = await getCurrentUserAndRenewSession();
+export async function deleteTool(propertyId: string, toolId: string) {
+    const access = await requirePropertyRole(propertyId, LEAD_ROLES);
 
-    if (!currentUser) {
-        return { error: "You must be logged in" };
+    if ("error" in access) {
+        return { error: access.error };
     }
 
-    if (currentUser.role !== Role.SUPERVISOR && currentUser.role !== Role.MANAGER) {
-        return { error: "You do not have permission to do that" };
-    }
-
-    const row = await prisma.tool.findUnique({ where: { id: toolId } });
+    const row = await prisma.tool.findFirst({ where: { id: toolId, propertyId: access.propertyId } });
 
     if (!row) {
         return { error: "Tool not found" };
@@ -86,24 +78,19 @@ export async function deleteTool(toolId: string) {
         data: { deletedAt: tool.getDeletedAt() },
     });
 
-    revalidatePath("/tools");
+    revalidatePath(`/p/${access.propertyId}/tools`);
 
     return { success: true };
 }
 
-export async function checkOutTool(toolId: string) {
-    const currentUser = await getCurrentUserAndRenewSession();
+export async function checkOutTool(propertyId: string, toolId: string) {
+    const access = await requirePropertyRole(propertyId, STAFF_ROLES);
 
-
-    if (!currentUser) {
-        return { error: "You must be logged in" };
+    if ("error" in access) {
+        return { error: access.error };
     }
 
-    if (currentUser.role === Role.GUEST) {
-        return { error: "Guests may not perform this action" };
-    }
-
-    const row = await prisma.tool.findUnique({ where: { id: toolId } });
+    const row = await prisma.tool.findFirst({ where: { id: toolId, propertyId: access.propertyId } });
 
     if (!row) {
         return { error: "Tool not found" };
@@ -115,7 +102,7 @@ export async function checkOutTool(toolId: string) {
         row.category,
         row.location,
         row.status,
-        row.deletedAt,
+        row.deletedAt
     );
 
     try {
@@ -131,31 +118,29 @@ export async function checkOutTool(toolId: string) {
 
     await prisma.checkout.create({
         data: {
+            propertyId: access.propertyId,
             toolId,
-            userId: currentUser.id,
+            userId: access.user.id,
             checkedOutAt: new Date(),
             dueAt: getCheckoutDueDate(),
         },
     });
 
-    revalidatePath("/tools");
+    revalidatePath(`/p/${access.propertyId}/tools`);
 
     return { success: true };
 }
 
-export async function checkInTool(toolId: string) {
-    const currentUser = await getCurrentUserAndRenewSession();
+export async function checkInTool(propertyId: string, toolId: string) {
+    const access = await requirePropertyRole(propertyId, STAFF_ROLES);
 
-    if (!currentUser) {
-        return { error: "You must be logged in" };
+    if ("error" in access) {
+        return { error: access.error };
     }
 
-    if (currentUser.role === Role.GUEST) {
-        return { error: "Guests may not perform that action" };
-    }
-    
-
-    const row = await prisma.tool.findUnique({ where: { id: toolId } });
+    const row = await prisma.tool.findFirst ({
+        where: { id: toolId, propertyId: access.propertyId },
+    });
 
     if (!row) {
         return { error: "Tool not found" };
@@ -163,8 +148,9 @@ export async function checkInTool(toolId: string) {
 
     const openCheckout = await prisma.checkout.findFirst({
         where: {
+            propertyId: access.propertyId,
             toolId,
-            returnedAt: null
+            returnedAt: null,
         },
     });
 
@@ -189,10 +175,10 @@ export async function checkInTool(toolId: string) {
 
     await prisma.checkout.update({
         where: { id: openCheckout.id },
-        data: { returnedAt: new Date() }
+        data: { returnedAt: new Date() },
     });
 
-    revalidatePath("/tools");
+    revalidatePath(`/p/${access.propertyId}/tools`);
 
     return { success: true };
 }

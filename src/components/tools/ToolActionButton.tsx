@@ -4,7 +4,7 @@ import { useState } from "react";
 import { checkOutTool, checkInTool } from "@/lib/actions/tools";
 import { ToolStatus } from "@/generated/prisma/enums";
 
-export default function ToolActionButton({ toolId, status}: { toolId: string; status: ToolStatus}) {
+export default function ToolActionButton({ propertyId, toolId, status }: { propertyId: string; toolId: string; status: ToolStatus }) {
     const [isPending, setIsPending] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -13,7 +13,7 @@ export default function ToolActionButton({ toolId, status}: { toolId: string; st
         setError(null);
 
         const action = status === ToolStatus.CHECKED_OUT ? checkInTool : checkOutTool;
-        const result = await action(toolId);
+        const result = await action(propertyId, toolId);
         
         if (result.error) {
             setError(result.error);

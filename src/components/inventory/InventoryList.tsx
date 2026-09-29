@@ -14,7 +14,7 @@ export type InventoryListItem = {
     isLowStock: boolean;
 }
 
-export default function InventoryList({ items, canManage }: { items: InventoryListItem[]; canManage: boolean }) {
+export default function InventoryList({ propertyId, items, canManage }: { propertyId: string; items: InventoryListItem[]; canManage: boolean }) {
     const [search, setSearch] = useState("");
 
     const query = search.trim().toLowerCase();
@@ -56,12 +56,12 @@ export default function InventoryList({ items, canManage }: { items: InventoryLi
                             <p className="text-sm text-gray-500">{item.category} - {item.location}</p>
                         </div>
                         <div className="flex items-center gap-4">
-                            {canManage && <DeleteItemButton itemId={item.id} />}
+                            {canManage && <DeleteItemButton propertyId={propertyId} itemId={item.id} />}
                             <div className="text-right">
                                 <p className="font-medium">{item.quantity}</p>
                                 <p className={item.isLowStock ? "text-sm text-red-600" : "text-sm text-gray-500"}>{item.statusLabel}</p>
                             </div>
-                            <AdjustQuantityForm itemId={item.id} />
+                            <AdjustQuantityForm propertyId={propertyId} itemId={item.id} />
                         </div>
                     </li>
                 ))}

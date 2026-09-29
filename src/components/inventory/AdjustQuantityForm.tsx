@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { adjustInventoryQuantity } from "@/lib/actions/inventory";
 
-export default function AdjustQuantityForm({ itemId }: { itemId: string }) {
+export default function AdjustQuantityForm({ propertyId, itemId }: { propertyId: string; itemId: string }) {
     const [amount, setAmount] = useState("");
     const [note, setNote] = useState("");
     const [isPending, setIsPending] = useState(false);
@@ -22,7 +22,7 @@ export default function AdjustQuantityForm({ itemId }: { itemId: string }) {
         setIsPending(true);
         setError(null);
 
-        const result = await adjustInventoryQuantity(itemId, amountNumber, note || undefined);
+        const result = await adjustInventoryQuantity(propertyId, itemId, amountNumber, note || undefined);
 
         if (result.error) {
             setError(result.error);

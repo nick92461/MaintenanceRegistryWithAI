@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { deleteInventoryItem } from "@/lib/actions/inventory";
 
-export default function DeleteItemButton({ itemId }: { itemId: string;}) {
+export default function DeleteItemButton({ propertyId, itemId }: { propertyId: string; itemId: string }) {
     const [isPending, setIsPending] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -11,7 +11,7 @@ export default function DeleteItemButton({ itemId }: { itemId: string;}) {
         setIsPending(true);
         setError(null);
 
-        const result = await deleteInventoryItem(itemId);
+        const result = await deleteInventoryItem(propertyId, itemId);
 
         if (result.error) {
             setError(result.error);

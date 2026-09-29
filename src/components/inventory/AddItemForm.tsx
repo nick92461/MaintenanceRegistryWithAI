@@ -7,11 +7,12 @@ type ActionState = { error?: string; success?: boolean };
 
 const initialState: ActionState = {};
 
-export default function AddItemForm() {
+export default function AddItemForm({ propertyId }: { propertyId: string }) {
     const [state, formAction, isPending] = useActionState(createInventoryItem, initialState);
 
     return (
         <form action={formAction} className="flex flex-col gap-3 rounded border p-4">
+            <input type="hidden" name="propertyId" value={propertyId} />
             <h2 className="font-semibold">Add Inventory Item</h2>
 
             <div className="flex flex-col gap-1">

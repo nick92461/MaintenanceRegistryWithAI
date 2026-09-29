@@ -1,20 +1,17 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { getCurrentUserAndRenewSession } from "../auth/sessions";
+import { requirePropertyRole } from "../auth/access";
+import { LEAD_ROLES, STAFF_ROLES } from "../auth/propertyRole";
 import { Role } from "@/generated/prisma/enums";
 import { revalidatePath } from "next/cache";
 import { InventoryItem } from "../domain/InventoryItem";
 
 export async function createInventoryItem(prevState: unknown, formData: FormData) {
-    const currentUser = await getCurrentUserAndRenewSession();
+    const access = await requirePropertyRole(formData.get("propertyId"), LEAD_ROLES);
 
-    if (!currentUser) {
-        return { error: "You must be logged in" };
-    }
-
-    if (currentUser.role !== Role.SUPERVISOR && currentUser.role !== Role.MANAGER) {
-        return { error: "You do not have permission to add inventory items" };
+    if ("error" in access) {
+        return { error: access.error };
     }
 
     const name = formData.get("name");
@@ -50,6 +47,7 @@ export async function createInventoryItem(prevState: unknown, formData: FormData
 
     await prisma.inventoryItem.create({
         data: {
+            propertyId: access.propertyId,
             name,
             category,
             location,
@@ -58,66 +56,58 @@ export async function createInventoryItem(prevState: unknown, formData: FormData
         },
     });
 
-    revalidatePath("/inventory");
+    revalidatePath(`/p/${access.propertyId}/inventory`);
 
     return { success: true };
 }
 
-export async function deleteInventoryItem(itemId: string) {
-    const currentUser = await getCurrentUserAndRenewSession();
+export async function deleteInventoryItem(propertyId: string, itemId: string) {
+    const access = await requirePropertyRole(propertyId, LEAD_ROLES);
 
-    if (!currentUser) {
-        return { error: "You must be logged in" };
+    if ("error" in access) {
+        return { error: access.error };
     }
 
-    if (currentUser.role !== Role.SUPERVISOR && currentUser.role !== Role.MANAGER) {
-        return { error: "You do not have permission to do that" };
-    }
-
-    const row = await prisma.inventoryItem.findUnique({where: { id: itemId } });
+    const row = await prisma.inventoryItem.findFirst({ where: { id: itemId, propertyId: access.propertyId } });
 
     if (!row) {
-        return { error: "Inventory item not found"};
+        return { error: "Inventory item not found" };
     }
 
     const inventoryItem = new InventoryItem(
-            row.id,
-            row.name,
-            row.category,
-            row.location,
-            row.quantity,
-            row.reorderThreshold,
-            row.deletedAt,
-        );
+        row.id,
+        row.name,
+        row.category,
+        row.location,
+        row.quantity,
+        row.reorderThreshold,
+        row.deletedAt,
+    );
 
-        inventoryItem.delete();
+    inventoryItem.delete();
 
-        await prisma.inventoryItem.update({
-            where: { id: itemId },
-            data: {deletedAt: inventoryItem.getDeletedAt()},
-        });
+    await prisma.inventoryItem.update({
+        where: { id: itemId },
+        data: { deletedAt: inventoryItem.getDeletedAt() },
+    });
+    
+    revalidatePath(`/p/${access.propertyId}/inventory`);
 
-        revalidatePath("/inventory");
-
-        return { success: true };
+    return { success: true };
 }
 
-export async function adjustInventoryQuantity(itemId: string, amount: number, note?: string) {
-    const currentUser = await getCurrentUserAndRenewSession();
+export async function adjustInventoryQuantity(propertyId: string, itemId: string, amount: number, note?: string) {
+    const access = await requirePropertyRole(propertyId, STAFF_ROLES);
 
-    if (!currentUser) {
-        return { error: "You must be logged in" };
+    if ("error" in access) {
+        return { error: access.error };
     }
 
-    if (currentUser.role === Role.GUEST) {
-        return { error: "Guests may not perform that action" };
-    }
-
-    if (currentUser.role === Role.TECHNICIAN && amount > 0) {
+    if (access.role === Role.TECHNICIAN && amount > 0) {
         return { error: "You may only remove quantity from an item" };
     }
 
-    const row = await prisma.inventoryItem.findUnique({ where: { id: itemId } });
+    const row = await prisma.inventoryItem.findFirst({ where: { id: itemId, propertyId: access.propertyId } });
 
     if (!row) {
         return { error: "Inventory item not found" };
@@ -148,15 +138,16 @@ export async function adjustInventoryQuantity(itemId: string, amount: number, no
 
     await prisma.inventoryAdjustment.create({
         data: {
+            propertyId: access.propertyId,
             itemId,
-            userId: currentUser.id,
+            userId: access.user.id,
             changeAmount: amount,
             resultingQuantity: newQuantity,
             note,
         },
     });
 
-    revalidatePath("/inventory")
+    revalidatePath(`/p/${access.propertyId}/inventory`);
 
     return { success: true };
 }

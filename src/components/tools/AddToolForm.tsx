@@ -7,11 +7,12 @@ type ActionState = { error?: string; success?: boolean };
 
 const initialState: ActionState = {};
 
-export default function AddToolForm() {
+export default function AddToolForm({ propertyId }: { propertyId: string }) {
     const [state, formAction, isPending] = useActionState(createTool, initialState);
 
     return (
         <form action={formAction} className="flex flex-col gap-3 rounded border p-4">
+            <input type="hidden" name="propertyId" value={propertyId} />
             <h2 className="font-semibold">Add Tool</h2>
 
             <div className="flex flex-col gap-1">

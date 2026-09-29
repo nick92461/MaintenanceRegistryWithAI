@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { deleteTool } from "@/lib/actions/tools";
 
-export default function DeleteToolButton({ toolId }: { toolId: string;}) {
+export default function DeleteToolButton({ propertyId, toolId }: { propertyId: string; toolId: string }) {
     const [isPending, setIsPending] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -11,7 +11,7 @@ export default function DeleteToolButton({ toolId }: { toolId: string;}) {
         setIsPending(true);
         setError(null);
 
-        const result = await deleteTool(toolId);
+        const result = await deleteTool(propertyId, toolId);
 
         if (result.error) {
             setError(result.error);

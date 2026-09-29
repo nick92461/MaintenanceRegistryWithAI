@@ -17,7 +17,7 @@ export type ToolListItem = {
     dueAt: Date | null;
 };
 
-export default function ToolsList({ tools, canManage }: { tools: ToolListItem[]; canManage: boolean }) {
+export default function ToolsList({ propertyId, tools, canManage }: { propertyId: string; tools: ToolListItem[]; canManage: boolean }) {
     const [search, setSearch] = useState("");
 
     const query = search.trim().toLowerCase();
@@ -74,8 +74,8 @@ export default function ToolsList({ tools, canManage }: { tools: ToolListItem[];
                                 </span>
                             )}
                             <span className="text-sm text-gray-500">{tool.statusLabel}</span>
-                            <ToolActionButton toolId={tool.id} status={tool.status} />
-                            {canManage && <DeleteToolButton toolId={tool.id} />}
+                            <ToolActionButton propertyId={propertyId} toolId={tool.id} status={tool.status} />
+                            {canManage && <DeleteToolButton propertyId={propertyId} toolId={tool.id} />}
                         </div>
                     </li>
                 ))}
