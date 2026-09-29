@@ -23,18 +23,63 @@ enum ToolStatus {
   MAINTENANCE
 }
 
-model User {
-  id           String   @id @default(cuid())
-  name         String
-  email        String   @unique
-  passwordHash String
-  role         Role     @default(GUEST)
-  createdAt    DateTime @default(now())
-  deletedAt    DateTime?
+model Company {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
 
+  properties Property[]
+  users      User[]
+}
+
+model Property {
+  id        String   @id @default(cuid())
+  companyId String
+  name      String
+  joinCode  String   @unique
+  createdAt DateTime @default(now())
+
+  company        Company               @relation(fields: [companyId], references: [id])
+  memberships    PropertyMembership[]
+  tools          Tool[]
+  inventoryItems InventoryItem[]
+  checkouts      Checkout[]
+  adjustments    InventoryAdjustment[]
+
+  @@index([companyId])
+}
+
+model User {
+  id                 String    @id @default(cuid())
+  companyId          String
+  name               String
+  email              String    @unique
+  passwordHash       String
+  isCompanyAdmin     Boolean   @default(false)
+  mustChangePassword Boolean   @default(false)
+  createdAt          DateTime  @default(now())
+  deletedAt          DateTime?
+
+  company     Company               @relation(fields: [companyId], references: [id])
+  memberships PropertyMembership[]
   sessions    Session[]
   checkouts   Checkout[]
   adjustments InventoryAdjustment[]
+
+  @@index([companyId])
+}
+
+model PropertyMembership {
+  userId     String
+  propertyId String
+  role       Role     @default(GUEST)
+  createdAt  DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id])
+  property Property @relation(fields: [propertyId], references: [id])
+
+  @@id([userId, propertyId])
+  @@index([propertyId])
 }
 
 model Session {
@@ -49,44 +94,57 @@ model Session {
 }
 
 model Tool {
-  id        String     @id @default(cuid())
-  name      String
-  category  String
-  location  String
-  status    ToolStatus @default(AVAILABLE)
-  createdAt DateTime   @default(now())
-  deletedAt DateTime?
+  id         String     @id @default(cuid())
+  propertyId String
+  name       String
+  category   String
+  location   String
+  status     ToolStatus @default(AVAILABLE)
+  createdAt  DateTime   @default(now())
+  deletedAt  DateTime?
 
+  property  Property   @relation(fields: [propertyId], references: [id])
   checkouts Checkout[]
+
+  @@index([propertyId])
 }
 
 model Checkout {
   id           String    @id @default(cuid())
+  propertyId   String
   toolId       String
   userId       String
   checkedOutAt DateTime  @default(now())
   dueAt        DateTime
   returnedAt   DateTime?
 
-  tool Tool @relation(fields: [toolId], references: [id])
-  user User @relation(fields: [userId], references: [id])
+  property Property @relation(fields: [propertyId], references: [id])
+  tool     Tool     @relation(fields: [toolId], references: [id])
+  user     User     @relation(fields: [userId], references: [id])
+
+  @@index([propertyId])
 }
 
 model InventoryItem {
-  id               String   @id @default(cuid())
+  id               String    @id @default(cuid())
+  propertyId       String
   name             String
   category         String
   quantity         Int
   reorderThreshold Int
   location         String
-  createdAt        DateTime @default(now())
+  createdAt        DateTime  @default(now())
   deletedAt        DateTime?
 
+  property    Property              @relation(fields: [propertyId], references: [id])
   adjustments InventoryAdjustment[]
+
+  @@index([propertyId])
 }
 
 model InventoryAdjustment {
   id                String   @id @default(cuid())
+  propertyId        String
   itemId            String
   userId            String
   changeAmount      Int
@@ -94,6 +152,9 @@ model InventoryAdjustment {
   note              String?
   createdAt         DateTime @default(now())
 
-  item InventoryItem @relation(fields: [itemId], references: [id])
-  user User          @relation(fields: [userId], references: [id])
+  property Property      @relation(fields: [propertyId], references: [id])
+  item     InventoryItem @relation(fields: [itemId], references: [id])
+  user     User          @relation(fields: [userId], references: [id])
+
+  @@index([propertyId])
 }

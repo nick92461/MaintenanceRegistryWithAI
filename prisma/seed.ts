@@ -3,16 +3,19 @@ import { PrismaClient } from "../src/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Role, ToolStatus } from "../src/generated/prisma/enums";
 import { hashPassword } from "../src/lib/auth/passwords";
+import { generateJoinCode } from "../src/lib/tenancy/joinCode";
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 const prisma = new PrismaClient({ adapter });
 
 const DEMO_PASSWORD = "Password123!";
-const TWO_YEARS_MS = 1000 * 60 * 60 * 24 * 365 * 2;
+const HOUR_MS = 1000 * 60 * 60;
+const DAY_MS = HOUR_MS * 24;
 const NOW = new Date();
-const START = new Date(NOW.getTime() - TWO_YEARS_MS);
-
-const LOCATIONS = ["Shop 1", "Shop 2", "Leasing Office"];
+const START = new Date(NOW.getTime() - DAY_MS * 365 * 2);
+// Past checkouts stop three days before today, so every one of them was returned
+// in the past. The checkouts that are still open get added separately.
+const HISTORY_END = new Date(NOW.getTime() - DAY_MS * 3);
 
 function randomInt(min: number, max: number): number {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -32,6 +35,15 @@ function pickWeighted<T>(items: T[], weights: number[]): T {
 	return items[items.length - 1];
 }
 
+function shuffle<T>(items: T[]): T[] {
+	const copy = [...items];
+	for (let i = copy.length - 1; i > 0; i--) {
+		const j = randomInt(0, i);
+		[copy[i], copy[j]] = [copy[j], copy[i]];
+	}
+	return copy;
+}
+
 function randomDateBetween(start: Date, end: Date): Date {
 	return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
 }
@@ -47,13 +59,117 @@ function getCheckoutDueDate(checkedOutAt: Date): Date {
 	return due;
 }
 
-const USERS = [
-	{ name: "Denise Ramirez", email: "manager@example.com", role: Role.MANAGER },
-	{ name: "Carlos Vega", email: "supervisor@example.com", role: Role.SUPERVISOR },
-	{ name: "Mike Turner", email: "tech1@example.com", role: Role.TECHNICIAN },
-	{ name: "Priya Nair", email: "tech2@example.com", role: Role.TECHNICIAN },
-	{ name: "Jordan Lee", email: "tech3@example.com", role: Role.TECHNICIAN },
-	{ name: "Alex Kim", email: "guest@example.com", role: Role.GUEST },
+type PropertySeed = {
+	key: string;
+	name: string;
+	// The main demo property gets the full catalog plus the planted anomalies the
+	// Reports page is meant to surface. Every other property gets a random subset.
+	isMainDemo?: boolean;
+};
+
+type CompanySeed = {
+	key: string;
+	name: string;
+	properties: PropertySeed[];
+};
+
+const COMPANIES: CompanySeed[] = [
+	{
+		key: "summit",
+		name: "Summit Residential",
+		properties: [
+			{ key: "riverside", name: "Riverside Commons", isMainDemo: true },
+			{ key: "maple", name: "Maple Heights" },
+			{ key: "cedar", name: "Cedar Park Apartments" },
+		],
+	},
+	{
+		key: "harbor",
+		name: "Harbor Point Management",
+		properties: [
+			{ key: "harborView", name: "Harbor View Lofts" },
+			{ key: "bayside", name: "Bayside Terrace" },
+		],
+	},
+	{
+		// A standalone property: a "company of one" named after the property.
+		key: "willows",
+		name: "The Willows",
+		properties: [{ key: "willows", name: "The Willows" }],
+	},
+];
+
+type UserSeed = {
+	name: string;
+	email: string;
+	company: string;
+	isCompanyAdmin?: boolean;
+	memberships: { property: string; role: Role }[];
+	// How often this person checks out tools compared to other techs.
+	checkoutWeight?: number;
+};
+
+// Jordan is the least busy tech overall, but almost always returns the pressure
+// washer late. That pairing is what the tool usage report should expose.
+const ANOMALY_TECH_EMAIL = "riverside.tech2@example.com";
+
+const USERS: UserSeed[] = [
+	// Summit Residential
+	{ name: "Denise Ramirez", email: "summit.admin@example.com", company: "summit", isCompanyAdmin: true, memberships: [] },
+	{
+		name: "Marcus Bell",
+		email: "summit.regional@example.com",
+		company: "summit",
+		memberships: [
+			{ property: "riverside", role: Role.MANAGER },
+			{ property: "maple", role: Role.MANAGER },
+		],
+	},
+	{ name: "Tanya Brooks", email: "cedar.manager@example.com", company: "summit", memberships: [{ property: "cedar", role: Role.MANAGER }] },
+	{ name: "Carlos Vega", email: "riverside.supervisor@example.com", company: "summit", memberships: [{ property: "riverside", role: Role.SUPERVISOR }] },
+	{
+		name: "Mike Turner",
+		email: "riverside.tech@example.com",
+		company: "summit",
+		checkoutWeight: 5,
+		memberships: [{ property: "riverside", role: Role.TECHNICIAN }],
+	},
+	{
+		name: "Priya Nair",
+		email: "floating.tech@example.com",
+		company: "summit",
+		checkoutWeight: 4,
+		memberships: [
+			{ property: "riverside", role: Role.TECHNICIAN },
+			{ property: "maple", role: Role.TECHNICIAN },
+		],
+	},
+	{
+		name: "Jordan Lee",
+		email: ANOMALY_TECH_EMAIL,
+		company: "summit",
+		checkoutWeight: 3,
+		memberships: [{ property: "riverside", role: Role.TECHNICIAN }],
+	},
+	{
+		name: "Sam Ortiz",
+		email: "mixed.roles@example.com",
+		company: "summit",
+		memberships: [
+			{ property: "maple", role: Role.SUPERVISOR },
+			{ property: "cedar", role: Role.TECHNICIAN },
+			{ property: "riverside", role: Role.GUEST },
+		],
+	},
+	{ name: "Alex Kim", email: "pending.guest@example.com", company: "summit", memberships: [{ property: "riverside", role: Role.GUEST }] },
+
+	// Harbor Point Management
+	{ name: "Grace Liu", email: "harbor.admin@example.com", company: "harbor", isCompanyAdmin: true, memberships: [] },
+	{ name: "Dev Patel", email: "harbor.tech@example.com", company: "harbor", memberships: [{ property: "harborView", role: Role.TECHNICIAN }] },
+
+	// The Willows (standalone)
+	{ name: "Rosa Delgado", email: "willows.admin@example.com", company: "willows", isCompanyAdmin: true, memberships: [] },
+	{ name: "Ben Carter", email: "willows.tech@example.com", company: "willows", memberships: [{ property: "willows", role: Role.TECHNICIAN }] },
 ];
 
 const TOOLS = [
@@ -91,26 +207,86 @@ const INVENTORY_ITEMS = [
 	{ name: "Disinfectant Spray", category: "Cleaning Supplies", location: "Leasing Office", startQty: 24, reorderThreshold: 8 },
 ];
 
-async function seedUsers() {
+type SeededProperty = PropertySeed & { id: string; companyKey: string; joinCode: string };
+type SeededUser = UserSeed & { id: string };
+type SeededTool = { id: string; name: string; weight: number };
+type PropertyStaff = { techs: SeededUser[]; restockers: SeededUser[] };
+
+async function seedCompanies() {
+	const companyIds = new Map<string, string>();
+	const properties: SeededProperty[] = [];
+
+	for (const company of COMPANIES) {
+		const companyRow = await prisma.company.create({ data: { name: company.name } });
+		companyIds.set(company.key, companyRow.id);
+
+		for (const property of company.properties) {
+			const propertyRow = await prisma.property.create({
+				data: { companyId: companyRow.id, name: property.name, joinCode: generateJoinCode() },
+			});
+
+			properties.push({ ...property, id: propertyRow.id, companyKey: company.key, joinCode: propertyRow.joinCode });
+		}
+	}
+
+	return { companyIds, properties };
+}
+
+async function seedUsers(companyIds: Map<string, string>, properties: SeededProperty[]) {
 	const passwordHash = await hashPassword(DEMO_PASSWORD);
-	const created: Record<string, { id: string; role: Role }> = {};
+	const propertyIds = new Map(properties.map((property) => [property.key, property.id]));
+	const users: SeededUser[] = [];
 
 	for (const user of USERS) {
 		const row = await prisma.user.create({
-			data: { name: user.name, email: user.email, passwordHash, role: user.role },
+			data: {
+				companyId: companyIds.get(user.company)!,
+				name: user.name,
+				email: user.email,
+				passwordHash,
+				isCompanyAdmin: user.isCompanyAdmin ?? false,
+			},
 		});
-		created[user.email] = { id: row.id, role: row.role };
+
+		if (user.memberships.length > 0) {
+			await prisma.propertyMembership.createMany({
+				data: user.memberships.map((membership) => ({
+					userId: row.id,
+					propertyId: propertyIds.get(membership.property)!,
+					role: membership.role,
+				})),
+			});
+		}
+
+		users.push({ ...user, id: row.id });
 	}
 
-	return created;
+	return users;
 }
 
-async function seedTools() {
-	const created: { id: string; name: string; weight: number }[] = [];
+function roleAt(user: SeededUser, propertyKey: string): Role | undefined {
+	return user.memberships.find((membership) => membership.property === propertyKey)?.role;
+}
 
-	for (const tool of TOOLS) {
+function staffFor(property: SeededProperty, users: SeededUser[]): PropertyStaff {
+	const techs = users.filter((user) => roleAt(user, property.key) === Role.TECHNICIAN);
+	const leads = users.filter((user) => {
+		const role = roleAt(user, property.key);
+		return role === Role.SUPERVISOR || role === Role.MANAGER;
+	});
+	const admins = users.filter((user) => user.isCompanyAdmin && user.company === property.companyKey);
+
+	// Supervisors and managers restock. A property with neither falls back to its company admin.
+	return { techs, restockers: leads.length > 0 ? leads : admins };
+}
+
+async function seedTools(property: SeededProperty): Promise<SeededTool[]> {
+	const catalog = property.isMainDemo ? TOOLS : TOOLS.filter(() => Math.random() < 0.75);
+	const created: SeededTool[] = [];
+
+	for (const tool of catalog) {
 		const row = await prisma.tool.create({
-			data: { name: tool.name, category: tool.category, location: tool.location },
+			data: { propertyId: property.id, name: tool.name, category: tool.category, location: tool.location },
 		});
 		created.push({ id: row.id, name: row.name, weight: tool.weight });
 	}
@@ -118,34 +294,18 @@ async function seedTools() {
 	return created;
 }
 
-async function seedInventoryItems() {
-	const created: { id: string; name: string; startQty: number; anomaly: boolean }[] = [];
+async function seedCheckouts(property: SeededProperty, tools: SeededTool[], staff: PropertyStaff) {
+	const people = staff.techs.length > 0 ? staff.techs : staff.restockers;
 
-	for (const item of INVENTORY_ITEMS) {
-		const row = await prisma.inventoryItem.create({
-			data: {
-				name: item.name,
-				category: item.category,
-				location: item.location,
-				quantity: item.startQty,
-				reorderThreshold: item.reorderThreshold,
-			},
-		});
-		created.push({ id: row.id, name: row.name, startQty: item.startQty, anomaly: !!item.anomaly });
+	if (tools.length === 0 || people.length === 0) {
+		return;
 	}
 
-	return created;
-}
+	const anomalyTech = property.isMainDemo ? people.find((user) => user.email === ANOMALY_TECH_EMAIL) : undefined;
+	const anomalyTool = property.isMainDemo ? tools.find((tool) => tool.name === "Pressure Washer") : undefined;
 
-async function seedCheckouts(
-	tools: { id: string; name: string; weight: number }[],
-	techs: { id: string; email: string }[],
-) {
-	const jordan = techs.find((t) => t.email === "tech3@example.com")!;
-	const pressureWasher = tools.find((t) => t.name === "Pressure Washer")!;
-	const techWeights = [5, 4, 3]; // Mike busiest, Jordan least busy overall
-
-	const checkoutRows: {
+	const rows: {
+		propertyId: string;
 		toolId: string;
 		userId: string;
 		checkedOutAt: Date;
@@ -153,102 +313,111 @@ async function seedCheckouts(
 		returnedAt: Date | null;
 	}[] = [];
 
-	const totalCheckouts = 450;
+	const totalCheckouts = people.length * 150;
 
 	for (let i = 0; i < totalCheckouts; i++) {
 		const tool = pickWeighted(tools, tools.map((t) => t.weight));
-		const user = pickWeighted(techs, techWeights);
-		const checkedOutAt = randomDateBetween(START, NOW);
+		const user = pickWeighted(people, people.map((p) => p.checkoutWeight ?? 3));
+		const checkedOutAt = randomDateBetween(START, HISTORY_END);
 		const dueAt = getCheckoutDueDate(checkedOutAt);
 
-		const isAnomalyPair = user.id === jordan.id && tool.id === pressureWasher.id;
-		const isLate = isAnomalyPair ? Math.random() < 0.85 : Math.random() < 0.12;
+		const isAnomalyPair = user === anomalyTech && tool === anomalyTool;
+		const isLate = Math.random() < (isAnomalyPair ? 0.85 : 0.12);
+		const returnedAt = isLate
+			? new Date(dueAt.getTime() + randomInt(2, 30) * HOUR_MS)
+			: randomDateBetween(checkedOutAt, dueAt);
 
-		const lateHours = isLate ? randomInt(2, 30) : -randomInt(0, 4);
-		const returnedAt = new Date(dueAt.getTime() + lateHours * 60 * 60 * 1000);
-
-		checkoutRows.push({ toolId: tool.id, userId: user.id, checkedOutAt, dueAt, returnedAt });
+		rows.push({ propertyId: property.id, toolId: tool.id, userId: user.id, checkedOutAt, dueAt, returnedAt });
 	}
 
-	// Leave a handful of checkouts still open: two overdue, one not yet due.
-	const openTools = pick(tools);
-	const stillOpenIndexes = new Set<number>();
-	while (stillOpenIndexes.size < 3) {
-		stillOpenIndexes.add(randomInt(checkoutRows.length - 30, checkoutRows.length - 1));
-	}
+	// One tool is under maintenance and one is retired, so neither can be out right now.
+	const maintenanceTool = tools.find((tool) => tool.name === "Drain Snake");
+	const retiredTool = tools.find((tool) => tool.name === "Hedge Trimmer");
+	const available = tools.filter((tool) => tool !== maintenanceTool && tool !== retiredTool);
 
-	let openCount = 0;
-	const openToolIds: string[] = [];
-	for (const index of stillOpenIndexes) {
-		const row = checkoutRows[index];
-		row.checkedOutAt = new Date(NOW.getTime() - randomInt(1, 4) * 24 * 60 * 60 * 1000);
-		row.dueAt = getCheckoutDueDate(row.checkedOutAt);
-		row.returnedAt = openCount === 0 ? new Date(NOW.getTime() + 2 * 24 * 60 * 60 * 1000) : null; // first one not yet due, keep returnedAt null too below
-		row.returnedAt = null;
-		openToolIds.push(row.toolId);
-		openCount++;
-	}
+	// Three tools are still checked out: the first one today (not due yet), the other two overdue.
+	const openTools = shuffle(available).slice(0, 3);
 
-	await prisma.checkout.createMany({ data: checkoutRows });
+	openTools.forEach((tool, index) => {
+		const checkedOutAt = index === 0 ? NOW : new Date(NOW.getTime() - randomInt(1, 3) * DAY_MS);
+		rows.push({
+			propertyId: property.id,
+			toolId: tool.id,
+			userId: pick(people).id,
+			checkedOutAt,
+			dueAt: getCheckoutDueDate(checkedOutAt),
+			returnedAt: null,
+		});
+	});
 
-	// Sync Tool.status for the tools left "currently checked out."
+	await prisma.checkout.createMany({ data: rows });
+
 	await prisma.tool.updateMany({
-		where: { id: { in: openToolIds } },
+		where: { id: { in: openTools.map((tool) => tool.id) } },
 		data: { status: ToolStatus.CHECKED_OUT },
 	});
 
-	// One tool permanently under maintenance, with no checkout history.
-	const maintenanceTool = tools.find((t) => !openToolIds.includes(t.id) && t.name === "Drain Snake");
 	if (maintenanceTool) {
 		await prisma.tool.update({ where: { id: maintenanceTool.id }, data: { status: ToolStatus.MAINTENANCE } });
 	}
 
-	// One soft-deleted tool, retired from the fleet.
-	const retiredTool = tools.find((t) => !openToolIds.includes(t.id) && t.name === "Hedge Trimmer");
 	if (retiredTool) {
-		await prisma.tool.update({ where: { id: retiredTool.id }, data: { deletedAt: new Date() } });
+		await prisma.tool.update({ where: { id: retiredTool.id }, data: { deletedAt: NOW } });
 	}
 }
 
-async function seedInventoryAdjustments(
-	items: { id: string; name: string; startQty: number; anomaly: boolean }[],
-	users: Record<string, { id: string; role: Role }>,
-) {
-	const technicianIds = Object.values(users)
-		.filter((u) => u.role === Role.TECHNICIAN)
-		.map((u) => u.id);
-	const supervisorId = Object.values(users).find((u) => u.role === Role.SUPERVISOR)!.id;
-	const managerId = Object.values(users).find((u) => u.role === Role.MANAGER)!.id;
+async function seedInventory(property: SeededProperty, staff: PropertyStaff) {
+	if (staff.restockers.length === 0) {
+		return;
+	}
 
-	for (const item of items) {
+	const catalog = property.isMainDemo ? INVENTORY_ITEMS : INVENTORY_ITEMS.filter(() => Math.random() < 0.75);
+	const usagePeople = staff.techs.length > 0 ? staff.techs : staff.restockers;
+
+	for (const item of catalog) {
+		const anomaly = property.isMainDemo && item.anomaly === true;
+
+		const row = await prisma.inventoryItem.create({
+			data: {
+				propertyId: property.id,
+				name: item.name,
+				category: item.category,
+				location: item.location,
+				quantity: item.startQty,
+				reorderThreshold: item.reorderThreshold,
+			},
+		});
+
 		type Event = { date: Date; amount: number; userId: string; note?: string };
 		const events: Event[] = [];
 
-		// Monthly-ish restocks from Supervisor/Manager.
+		// Restocks roughly every month.
 		let cursor = new Date(START);
 		while (cursor < NOW) {
 			events.push({
 				date: new Date(cursor),
-				amount: item.anomaly ? randomInt(80, 140) : randomInt(15, 40),
-				userId: Math.random() < 0.7 ? supervisorId : managerId,
+				amount: anomaly ? randomInt(80, 140) : randomInt(15, 40),
+				userId: pick(staff.restockers).id,
 				note: "Restock",
 			});
-			cursor = new Date(cursor.getTime() + randomInt(20, 40) * 24 * 60 * 60 * 1000);
+			cursor = new Date(cursor.getTime() + randomInt(20, 40) * DAY_MS);
 		}
 
-		// Usage events from technicians (and occasionally Supervisor/Manager).
-		const usageEventCount = item.anomaly ? randomInt(180, 220) : randomInt(25, 55);
+		// Usage, mostly by technicians.
+		const usageEventCount = anomaly ? randomInt(180, 220) : randomInt(25, 55);
 		for (let i = 0; i < usageEventCount; i++) {
-			const date = randomDateBetween(START, NOW);
-			const amount = item.anomaly ? -randomInt(4, 12) : -randomInt(1, 4);
-			const userId = Math.random() < 0.85 ? pick(technicianIds) : supervisorId;
-			events.push({ date, amount, userId });
+			events.push({
+				date: randomDateBetween(START, NOW),
+				amount: anomaly ? -randomInt(4, 12) : -randomInt(1, 4),
+				userId: Math.random() < 0.85 ? pick(usagePeople).id : pick(staff.restockers).id,
+			});
 		}
 
 		events.sort((a, b) => a.date.getTime() - b.date.getTime());
 
 		let runningQty = item.startQty;
 		const rows: {
+			propertyId: string;
 			itemId: string;
 			userId: string;
 			changeAmount: number;
@@ -258,15 +427,14 @@ async function seedInventoryAdjustments(
 		}[] = [];
 
 		for (const event of events) {
-			let amount = event.amount;
-			if (runningQty + amount < 0) {
-				amount = -runningQty; // never let usage push a running total below zero
-			}
+			// Usage can never push the count below zero.
+			const amount = runningQty + event.amount < 0 ? -runningQty : event.amount;
 			runningQty += amount;
 			if (amount === 0) continue;
 
 			rows.push({
-				itemId: item.id,
+				propertyId: property.id,
+				itemId: row.id,
 				userId: event.userId,
 				changeAmount: amount,
 				resultingQuantity: runningQty,
@@ -276,42 +444,54 @@ async function seedInventoryAdjustments(
 		}
 
 		await prisma.inventoryAdjustment.createMany({ data: rows });
-		await prisma.inventoryItem.update({ where: { id: item.id }, data: { quantity: runningQty } });
-	}
 
-	// One soft-deleted inventory item, discontinued.
-	const discontinued = items.find((i) => i.name === "Furnace Filter Wipes");
-	if (discontinued) {
-		await prisma.inventoryItem.update({ where: { id: discontinued.id }, data: { deletedAt: new Date() } });
+		// One discontinued item is soft-deleted, as in the original seed.
+		await prisma.inventoryItem.update({
+			where: { id: row.id },
+			data: { quantity: runningQty, deletedAt: item.name === "Furnace Filter Wipes" ? NOW : null },
+		});
+	}
+}
+
+function printSummary(properties: SeededProperty[], users: SeededUser[]) {
+	const propertyName = (key: string) => properties.find((property) => property.key === key)!.name;
+
+	console.log(`\nDone. Every account uses the password: ${DEMO_PASSWORD}\n`);
+
+	for (const company of COMPANIES) {
+		console.log(company.name);
+
+		for (const property of properties.filter((p) => p.companyKey === company.key)) {
+			console.log(`  Property: ${property.name} (join code ${property.joinCode})`);
+		}
+
+		for (const user of users.filter((u) => u.company === company.key)) {
+			const access = user.isCompanyAdmin
+				? "company admin (every property)"
+				: user.memberships.map((m) => `${m.role} at ${propertyName(m.property)}`).join(", ");
+			console.log(`  ${user.email.padEnd(34)} ${access}`);
+		}
+
+		console.log("");
 	}
 }
 
 async function main() {
-	console.log("Seeding users...");
-	const users = await seedUsers();
+	console.log("Seeding companies and properties...");
+	const { companyIds, properties } = await seedCompanies();
 
-	console.log("Seeding tools...");
-	const tools = await seedTools();
+	console.log("Seeding users and memberships...");
+	const users = await seedUsers(companyIds, properties);
 
-	console.log("Seeding inventory items...");
-	const items = await seedInventoryItems();
-
-	console.log("Seeding two years of checkout history...");
-	const techs = [
-		{ id: users["tech1@example.com"].id, email: "tech1@example.com" },
-		{ id: users["tech2@example.com"].id, email: "tech2@example.com" },
-		{ id: users["tech3@example.com"].id, email: "tech3@example.com" },
-	];
-	await seedCheckouts(tools, techs);
-
-	console.log("Seeding two years of inventory adjustments...");
-	await seedInventoryAdjustments(items, users);
-
-	console.log("\nDone. Demo accounts (all use the same password):\n");
-	console.log(`  Password for every account: ${DEMO_PASSWORD}\n`);
-	for (const user of USERS) {
-		console.log(`  ${user.role.padEnd(11)} ${user.email}`);
+	for (const property of properties) {
+		console.log(`Seeding ${property.name}...`);
+		const staff = staffFor(property, users);
+		const tools = await seedTools(property);
+		await seedCheckouts(property, tools, staff);
+		await seedInventory(property, staff);
 	}
+
+	printSummary(properties, users);
 }
 
 main()
