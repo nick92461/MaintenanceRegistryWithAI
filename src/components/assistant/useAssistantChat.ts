@@ -15,7 +15,7 @@ export type DraftEdit = {
     reorderThreshold?: number;
 };
 
-export function useAssistantChat(context: AssistantContextKey) {
+export function useAssistantChat(propertyId: string, context: AssistantContextKey) {
     const [messages, setMessages] = useState<ChatMessage[]>([]);
 	const [drafts, setDrafts] = useState<Draft[]>([]);
 	const [confirmErrors, setConfirmErrors] = useState<Record<string, string>>({});
@@ -41,7 +41,7 @@ export function useAssistantChat(context: AssistantContextKey) {
         setError(null);
 
         try {
-            const result = await sendAssistantMessage(context, nextMessages, drafts);
+            const result = await sendAssistantMessage(propertyId, context, nextMessages, drafts);
 
             if (!result.reply) {
                 setMessages(previousMessages);
@@ -104,7 +104,7 @@ export function useAssistantChat(context: AssistantContextKey) {
         setError(null);
 
         try {
-            const result = await confirmDrafts(drafts);
+            const result = await confirmDrafts(propertyId, drafts);
 
             if ("error" in result) {
                 setError(result.error);

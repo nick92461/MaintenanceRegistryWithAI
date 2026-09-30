@@ -6,8 +6,8 @@ import DraftTable from "./DraftTable";
 import MicButton from "./MicButton";
 import type { AssistantContextKey } from "@/lib/ai/contexts";
 
-export default function AssistantChat({ greeting, context }: { greeting: string, context: AssistantContextKey }) {
-    const { messages, drafts, confirmErrors, isPending, isConfirming, error, send, updateDraft, removeDraft, confirm } = useAssistantChat(context);
+export default function AssistantChat({ propertyId, greeting, context }: { propertyId: string, greeting: string, context: AssistantContextKey }) {
+    const { messages, drafts, confirmErrors, isPending, isConfirming, error, send, updateDraft, removeDraft, confirm } = useAssistantChat(propertyId, context);
     const [input, setInput] = useState("");
     const bottomRef = useRef<HTMLDivElement>(null);
 

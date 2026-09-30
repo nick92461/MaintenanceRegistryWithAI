@@ -2,8 +2,8 @@
 
 import type Anthropic from "@anthropic-ai/sdk";
 import { ASSISTANT_CONTEXTS, isAssistantContextKey, type AssistantContextKey } from "../ai/contexts";
-import { getCurrentUserAndRenewSession } from "../auth/sessions";
-import { Role } from "@/generated/prisma/enums";
+import { requirePropertyRole } from "../auth/access";
+import { LEAD_ROLES } from "../auth/propertyRole";
 import { askClaude, type ChatMessage } from "../ai/claude";
 import { countNewDrafts, executeTool, type Draft } from "../ai/drafts";
 import { rejectSavedDuplicate, renderReport, runDraftEdit, runLedgerTool, type LedgerEvent } from "../ai/ledger";
@@ -34,19 +34,18 @@ function isValidTranscript(messages: unknown): messages is ChatMessage[] {
 }
 
 export async function sendAssistantMessage(
+	propertyId: string,
 	context: AssistantContextKey,
 	messages: ChatMessage[],
 	drafts: Draft[] = [],
 ) {
-	const currentUser = await getCurrentUserAndRenewSession();
+	const access = await requirePropertyRole(propertyId, LEAD_ROLES);
 
-	if (!currentUser) {
-		return { error: "You must be logged in" };
+	if ("error" in access) {
+		return { error: access.error };
 	}
 
-	if (currentUser.role !== Role.SUPERVISOR && currentUser.role !== Role.MANAGER) {
-		return { error: "You do not have permission to do that" };
-	}
+	const verifiedPropertyId = access.propertyId;
 
 	if (!isAssistantContextKey(context) || !isValidTranscript(messages)) {
 		return { error: "Invalid conversation" };
@@ -62,7 +61,7 @@ export async function sendAssistantMessage(
 
 	function loadExistingRecords() {
 		if (!existingRecords) {
-			existingRecords = Promise.all([getActiveInventoryItems(), getActiveTools()]).then(([inventory, tools]) => ({ inventory, tools }));
+			existingRecords = Promise.all([getActiveInventoryItems(verifiedPropertyId), getActiveTools(verifiedPropertyId)]).then(([inventory, tools]) => ({ inventory, tools }));
 		}
 
 		return existingRecords;

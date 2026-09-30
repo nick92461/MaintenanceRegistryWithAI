@@ -1,8 +1,8 @@
 import { prisma } from "@/lib/prisma";
 
-export async function getActiveTools() {
+export async function getActiveTools(propertyId: string) {
     return prisma.tool.findMany({
-        where: { deletedAt: null },
+        where: { propertyId, deletedAt: null },
         select: { name: true, category: true, location: true },
         orderBy: { name: "asc" }, 
     });

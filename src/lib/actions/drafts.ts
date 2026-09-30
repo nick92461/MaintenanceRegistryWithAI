@@ -1,8 +1,8 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { getCurrentUserAndRenewSession } from "../auth/sessions";
-import { Role } from "@/generated/prisma/enums";
+import { requirePropertyRole } from "../auth/access";
+import { LEAD_ROLES } from "../auth/propertyRole";
 import { revalidatePath } from "next/cache";
 import type { Draft } from "../ai/drafts";
 
@@ -28,16 +28,12 @@ function validateDraft(draft: Draft): string | undefined {
     return undefined;
 }
 
-export async function confirmDrafts(drafts: Draft[]): Promise<ConfirmDraftsResult> {
-    const currentUser = await getCurrentUserAndRenewSession();
+export async function confirmDrafts(propertyId: string, drafts: Draft[]): Promise<ConfirmDraftsResult> {
+    const access = await requirePropertyRole(propertyId, LEAD_ROLES);
 
-    if (!currentUser) {
-        return { error: "You must be logged in." };
+    if ("error" in access) {
+        return { error: access.error };
     }
-
-    if (currentUser.role !== Role.SUPERVISOR && currentUser.role !== Role.MANAGER) {
-		return { error: "You do not have permission to do that" };
-	}
 
     if (!Array.isArray(drafts) || drafts.length === 0) {
         return { error: "No drafts to confirm" };
@@ -67,6 +63,7 @@ export async function confirmDrafts(drafts: Draft[]): Promise<ConfirmDraftsResul
         if (inventoryDrafts.length > 0) {
             await tx.inventoryItem.createMany({
                 data: inventoryDrafts.map((draft) => ({
+                    propertyId: access.propertyId,
                     name: draft.name,
                     category: draft.category,
                     location: draft.location,
@@ -79,6 +76,7 @@ export async function confirmDrafts(drafts: Draft[]): Promise<ConfirmDraftsResul
         if (toolDrafts.length > 0) {
             await tx.tool.createMany({
                 data: toolDrafts.map((draft) => ({
+                    propertyId: access.propertyId,
                     name: draft.name,
                     category: draft.category,
                     location: draft.location,
@@ -87,8 +85,8 @@ export async function confirmDrafts(drafts: Draft[]): Promise<ConfirmDraftsResul
         }
     });
 
-    revalidatePath("/inventory");
-    revalidatePath("/tools");
+    revalidatePath(`/p/${access.propertyId}/inventory`);
+    revalidatePath(`/p/${access.propertyId}/tools`);
 
     return { createdCount: valid.length, failed };
 }

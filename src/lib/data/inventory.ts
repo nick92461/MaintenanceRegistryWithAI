@@ -1,8 +1,8 @@
 import { prisma } from "@/lib/prisma";
 
-export async function getActiveInventoryItems() {
+export async function getActiveInventoryItems(propertyId: string) {
     return prisma.inventoryItem.findMany({
-        where: { deletedAt: null },
+        where: { propertyId, deletedAt: null },
         select: { name: true, category: true, location: true, quantity: true, reorderThreshold: true },
         orderBy: { name: "asc" },
     });

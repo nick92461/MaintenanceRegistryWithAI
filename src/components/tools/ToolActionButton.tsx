@@ -14,7 +14,7 @@ export default function ToolActionButton({ propertyId, toolId, status }: { prope
 
         const action = status === ToolStatus.CHECKED_OUT ? checkInTool : checkOutTool;
         const result = await action(propertyId, toolId);
-        
+
         if (result.error) {
             setError(result.error);
         }
