@@ -1,8 +1,8 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { getCurrentUserAndRenewSession } from "../auth/sessions";
-import { Role } from "@/generated/prisma/enums";
+import { requirePropertyRole } from "../auth/access";
+import { LEAD_ROLES } from "../auth/propertyRole";
 
 export type ToolUsageReportRow = {
     userName: string;
@@ -19,28 +19,15 @@ export type InventoryUsageReportRow = {
     avgPerEvent: number;
 };
 
-async function checkReportAccess(): Promise<string | null> {
-    const currentUser = await getCurrentUserAndRenewSession();
-
-    if (!currentUser) {
-        return "You must be logged in";
-    }
-
-    if (currentUser.role !== Role.SUPERVISOR && currentUser.role !== Role.MANAGER) {
-        return "You do not have permission to view reports";
-    }
-
-    return null;
-}
-
 export async function generateToolUsageReport(
+    propertyId: string,
     startDate: Date,
     endDate: Date,
 ): Promise<{ error: string } | { rows: ToolUsageReportRow[] }> {
-    const accessError = await checkReportAccess();
+    const access = await requirePropertyRole(propertyId, LEAD_ROLES);
 
-    if (accessError) {
-        return { error: accessError };
+    if ("error" in access) {
+        return { error: access.error };
     }
 
     if (endDate < startDate) {
@@ -55,6 +42,7 @@ export async function generateToolUsageReport(
     //the names of the tool and user related to that checkout record.
     const checkouts = await prisma.checkout.findMany({
         where: {
+            propertyId: access.propertyId,
             checkedOutAt: { gte: startDate, lte: endDate },
             OR: [
                 { returnedAt: { not: null } },
@@ -115,13 +103,14 @@ export async function generateToolUsageReport(
 }
 
 export async function generateInventoryUsageReport(
+    propertyId: string,
     startDate: Date,
     endDate: Date,
 ): Promise<{error: string} | { rows: InventoryUsageReportRow[] }> {
-    const accessError = await checkReportAccess();
+    const access = await requirePropertyRole(propertyId, LEAD_ROLES);
 
-    if (accessError) {
-        return { error: accessError };
+    if ("error" in access) {
+        return { error: access.error };
     }
 
     if (endDate < startDate) {
@@ -130,6 +119,7 @@ export async function generateInventoryUsageReport(
 
     const adjustments = await prisma.inventoryAdjustment.findMany({
         where: {
+            propertyId: access.propertyId,
             createdAt: { gte: startDate, lte: endDate },
             changeAmount: { lt: 0 },
         },

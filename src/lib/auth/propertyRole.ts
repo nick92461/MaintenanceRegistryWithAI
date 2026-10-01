@@ -28,3 +28,14 @@ export function resolvePropertyRole(user: UserForAccess, property: PropertyForAc
 
     return membership?.role ?? null;
 }
+
+export function canRemoveFromCompany(
+    actor: { isCompanyAdmin: boolean; managedPropertyIds: string[] }, 
+    targetPropertyIds: string[],
+): boolean {
+    if (actor.isCompanyAdmin) {
+        return true;
+    }
+
+    return targetPropertyIds.length > 0 && targetPropertyIds.every((id) => actor.managedPropertyIds.includes(id));
+}

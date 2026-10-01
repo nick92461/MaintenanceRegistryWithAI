@@ -4,14 +4,14 @@ import { useState } from "react";
 import { updateUserRole } from "@/lib/actions/users";
 import { Role } from "@/generated/prisma/enums";
 
-export default function ApproveButton({ userId }: { userId: string }) {
+export default function ApproveButton({ propertyId, userId }: { propertyId: string; userId: string }) {
     const [isPending, setIsPending] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     async function handleClick() {
         setIsPending(true);
         setError(null);
-        const result = await updateUserRole(userId, Role.TECHNICIAN);
+        const result = await updateUserRole(propertyId, userId, Role.TECHNICIAN);
 
         if (result.error) {
             setError(result.error);

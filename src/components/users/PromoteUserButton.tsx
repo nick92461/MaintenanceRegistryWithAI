@@ -17,7 +17,7 @@ function getPromotedRole(currentRole: Role): Role | null {
     return ROLE_HIERARCHY[currentIndex + 1];
 }
 
-export default function PromoteUserButton({ userId, currentRole }: { userId: string, currentRole: Role }) {
+export default function PromoteUserButton({ propertyId, userId, currentRole }: { propertyId: string, userId: string, currentRole: Role }) {
     const [isPending, setIsPending] = useState(false);
     const [error, setError] = useState<string | null>(null);
     
@@ -37,7 +37,7 @@ export default function PromoteUserButton({ userId, currentRole }: { userId: str
             return;
         }
 
-        const result = await updateUserRole(userId, newRole);
+        const result = await updateUserRole(propertyId, userId, newRole);
 
         if (result.error) {
             setError(result.error);

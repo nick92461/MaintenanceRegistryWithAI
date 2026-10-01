@@ -1,26 +1,14 @@
-import { Role } from "@/generated/prisma/enums";
-
 export class User {
-	protected readonly id: string;
-	protected readonly role: Role;
+    protected readonly id: string;
     protected deletedAt: Date | null;
 
-    constructor (
-        id: string,
-        role: Role,
-        deletedAt: Date | null,
-    ) {
+    constructor(id: string, deletedAt: Date | null) {
         this.id = id;
-        this.role = role;
         this.deletedAt = deletedAt;
     }
 
     public getId(): string {
         return this.id;
-    }
-
-    public getRole(): Role {
-        return this.role;
     }
 
     public delete(): void {
@@ -30,5 +18,4 @@ export class User {
     public getDeletedAt(): Date | null {
         return this.deletedAt;
     }
-
 }

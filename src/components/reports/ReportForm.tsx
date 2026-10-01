@@ -33,15 +33,15 @@ function getCustomRange(startDateInput: string, endDateInput: string): { startDa
     return { startDate, endDate };
 }
 
-export default function ReportForm() {
+export default function ReportForm({ propertyId }: { propertyId: string }) {
     const [reportType, setReportType] = useState<ReportType>("TOOLS");
-	const [timeframeMode, setTimeframeMode] = useState<TimeframeMode>("month");
-	const [month, setMonth] = useState("");
-	const [startDateInput, setStartDateInput] = useState("");
-	const [endDateInput, setEndDateInput] = useState("");
-	const [isPending, setIsPending] = useState(false);
-	const [error, setError] = useState<string | null>(null);
-	const [result, setResult] = useState<ReportResult | null>(null);
+    const [timeframeMode, setTimeframeMode] = useState<TimeframeMode>("month");
+    const [month, setMonth] = useState("");
+    const [startDateInput, setStartDateInput] = useState("");
+    const [endDateInput, setEndDateInput] = useState("");
+    const [isPending, setIsPending] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [result, setResult] = useState<ReportResult | null>(null);
 
     async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -62,7 +62,7 @@ export default function ReportForm() {
         setIsPending(true);
 
         if (reportType === "TOOLS") {
-            const response = await generateToolUsageReport(startDate, endDate);
+            const response = await generateToolUsageReport(propertyId, startDate, endDate);
 
             if ("error" in response) {
                 setError(response.error);
@@ -70,8 +70,8 @@ export default function ReportForm() {
                 setResult({ type: "TOOLS", rows: response.rows, startDate, endDate, generatedAt: new Date() });
             }
         } else {
-            const response = await generateInventoryUsageReport(startDate, endDate);
-            
+            const response = await generateInventoryUsageReport(propertyId, startDate, endDate);
+
             if ("error" in response) {
                 setError(response.error);
             } else {
@@ -103,8 +103,8 @@ export default function ReportForm() {
                         onClick={() => setTimeframeMode("month")}
                         className={
                             timeframeMode === "month"
-                            ? "rounded bg-blue-600 px-3 py-1 text-sm text-white"
-                            : "rounded border px-3 py-1 text-sm"
+                                ? "rounded bg-blue-600 px-3 py-1 text-sm text-white"
+                                : "rounded border px-3 py-1 text-sm"
                         }
                     >
                         Select A Month
@@ -114,8 +114,8 @@ export default function ReportForm() {
                         onClick={() => setTimeframeMode("custom")}
                         className={
                             timeframeMode === "custom"
-                            ? "rounded bg-blue-600 px-3 py-1 text-sm text-white"
-                            : "rounded border px-3 py-1 text-sm"
+                                ? "rounded bg-blue-600 px-3 py-1 text-sm text-white"
+                                : "rounded border px-3 py-1 text-sm"
                         }
                     >
                         Custom Range

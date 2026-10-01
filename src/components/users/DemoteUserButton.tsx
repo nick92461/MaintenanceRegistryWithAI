@@ -16,7 +16,7 @@ function getDemotedRole(currentRole: Role): Role | null {
     return ROLE_HIERARCHY[currentIndex - 1];
 }
 
-export default function DemoteUserButton({ userId, currentRole }: { userId: string, currentRole: Role }) {
+export default function DemoteUserButton({propertyId, userId, currentRole }: { propertyId: string; userId: string; currentRole: Role }) {
     const [isPending, setIsPending] = useState(false);
     const [error, setError] = useState<string | null>(null);
     
@@ -36,7 +36,7 @@ export default function DemoteUserButton({ userId, currentRole }: { userId: stri
             return;
         }
 
-        const result = await updateUserRole(userId, newRole);
+        const result = await updateUserRole(propertyId, userId, newRole);
 
         if (result.error) {
             setError(result.error);

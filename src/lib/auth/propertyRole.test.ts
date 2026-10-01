@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { Role } from "@/generated/prisma/enums";
-import { resolvePropertyRole } from "./propertyRole";
+import { resolvePropertyRole, canRemoveFromCompany } from "./propertyRole";
 
 const tech = { id: "u1", companyId: "c1", isCompanyAdmin: false };
 const admin = { id: "u2", companyId: "c1", isCompanyAdmin: true };
@@ -45,5 +45,23 @@ describe("resolvePropertyRole", () => {
 	it("denies a property that doesn't exist", () => {
 		expect(resolvePropertyRole(tech, null)).toBeNull();
 		expect(resolvePropertyRole(admin, null)).toBeNull();
+	});
+});
+
+describe("canRemoveFromCompany", () => {
+	it("always allows a company admin", () => {
+		expect(canRemoveFromCompany({ isCompanyAdmin: true, managedPropertyIds: [] }, ["a", "b"])).toBe(true);
+	});
+
+	it("allows a manager who manages every property the person belongs to", () => {
+		expect(canRemoveFromCompany({ isCompanyAdmin: false, managedPropertyIds: ["a", "b", "c"] }, ["a", "b"])).toBe(true);
+	});
+
+	it("denies a manager when the person also belongs to a property they don't manage", () => {
+		expect(canRemoveFromCompany({ isCompanyAdmin: false, managedPropertyIds: ["a", "b"] }, ["a", "c"])).toBe(false);
+	});
+
+	it("denies when the person belongs to no properties at all", () => {
+		expect(canRemoveFromCompany({ isCompanyAdmin: false, managedPropertyIds: ["a"] }, [])).toBe(false);
 	});
 });
