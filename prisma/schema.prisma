@@ -158,3 +158,11 @@ model InventoryAdjustment {
 
   @@index([propertyId])
 }
+
+model RateLimitHit {
+  id        String   @id @default(cuid())
+  key       String
+  createdAt DateTime @default(now())
+
+  @@index([key, createdAt])
+}
