@@ -2,7 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { hashPassword, verifyPassword } from "../auth/passwords";
-import { createSession, destroySession } from "../auth/sessions";
+import { getCurrentUserAndRenewSession, createSession, destroySession } from "../auth/sessions";
 import { isRateLimited, recordRateLimitHit } from "../auth/rateLimit";
 import { Role } from "@/generated/prisma/enums";
 import { headers } from "next/headers";
@@ -123,6 +123,55 @@ export async function login(prevState: AuthActionState, formData: FormData): Pro
     if (!hasAccess) {
         redirect("/pending-approval");
     }
+
+    redirect("/dashboard");
+}
+
+export async function changePassword(prevState: unknown, formData: FormData): Promise<AuthActionState> {
+    const user = await getCurrentUserAndRenewSession();
+
+    if (!user) {
+        return { error: "You must be logged in." };
+    }
+
+    if (!user.mustChangePassword) {
+        return { error: "Your password doesn't need to be changed." };
+    }
+
+    const newPassword = formData.get("newPassword");
+    const confirmPassword = formData.get("confirmPassword");
+
+    if (typeof newPassword !== "string" || typeof confirmPassword !== "string") {
+        return { error: "Missing required fields" };
+    }
+
+    if (newPassword.length < 8) {
+        return { error: "Password must be at least 8 characters." };
+    }
+
+    if (newPassword !== confirmPassword) {
+        return { error: "Passwords do not match." };
+    }
+
+    const row = await prisma.user.findUnique({ where: { id: user.id }, select: { passwordHash: true } });
+
+    if (!row) {
+        return { error: "You must be logged in." };
+    }
+
+    if (await verifyPassword(newPassword, row.passwordHash)) {
+        return { error: "Choose a password different from the temporary one." };
+    }
+
+    const passwordHash = await hashPassword(newPassword);
+
+    //End any session including any that used the old password then start a new one
+    await prisma.$transaction([
+        prisma.user.update({ where: { id: user.id }, data: { passwordHash, mustChangePassword: false } }),
+        prisma.session.deleteMany({ where: { userId: user.id } })
+    ]);
+
+    await createSession(user.id);
 
     redirect("/dashboard");
 }

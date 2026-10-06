@@ -11,6 +11,10 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         redirect("/login");
     }
 
+    if (user.mustChangePassword) {
+        redirect("/change-password");
+    }
+
     const properties = await getAccessibleProperties();
 
     if (properties.length === 0 && !user.isCompanyAdmin) {
