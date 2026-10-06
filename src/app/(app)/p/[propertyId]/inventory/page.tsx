@@ -1,19 +1,20 @@
 import { prisma } from "@/lib/prisma";
 import { InventoryItem } from "@/lib/domain/InventoryItem";
-import { getCurrentUser } from "@/lib/auth/sessions";
-import { Role } from "@/generated/prisma/enums";
+import { LEAD_ROLES, STAFF_ROLES } from "@/lib/auth/propertyRole";
+import { requirePageRole } from "@/lib/auth/pageAccess";
 import AddItemForm from "@/components/inventory/AddItemForm";
 import InventoryList, { type InventoryListItem } from "@/components/inventory/InventoryList";
 
-export default async function InventoryPage() {
-	const user = await getCurrentUser();
+export default async function InventoryPage({ params }: { params: Promise<{ propertyId: string }> }) {
+	const { propertyId } = await params;
+	const access = await requirePageRole(propertyId, STAFF_ROLES);
 
 	const rows = await prisma.inventoryItem.findMany({
-		where: { deletedAt: null },
+		where: { propertyId: access.property.id, deletedAt: null },
 		orderBy: { name: "asc" },
 	});
 
-	const canManage = user?.role === Role.SUPERVISOR || user?.role === Role.MANAGER;
+	const canManage = LEAD_ROLES.includes(access.role);
 
 	const items: InventoryListItem[] = rows.map((row) => {
 		const item = new InventoryItem(
@@ -41,9 +42,9 @@ export default async function InventoryPage() {
 		<div className="flex flex-col gap-4">
 			<h1 className="text-xl font-semibold">Inventory</h1>
 
-			{canManage && <AddItemForm />}
+			{canManage && <AddItemForm propertyId={access.property.id} />}
 
-			<InventoryList items={items} canManage={canManage} />
+			<InventoryList propertyId={access.property.id} items={items} canManage={canManage} />
 		</div>
 	);
 }

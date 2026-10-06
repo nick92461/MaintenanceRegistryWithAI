@@ -1,42 +1,56 @@
-import { getCurrentUser } from "@/lib/auth/sessions";
-import { Role } from "@/generated/prisma/enums";
 import Link from "next/link";
-
-const DASHBOARD_TILES: { label: string; href: string; allowedRoles: Role[] }[] = [
-    { label: "Tools", href: "/tools", allowedRoles: [Role.TECHNICIAN, Role.SUPERVISOR, Role.MANAGER] },
-    { label: "Inventory", href: "/inventory", allowedRoles: [Role.TECHNICIAN, Role.SUPERVISOR, Role.MANAGER] },
-    { label: "Users", href: "/users", allowedRoles: [Role.SUPERVISOR, Role.MANAGER] },
-    { label: "Reports", href: "/reports", allowedRoles: [Role.SUPERVISOR, Role.MANAGER] },
-    { label: "Onboarding Assistant", href: "/assistant", allowedRoles: [Role.SUPERVISOR, Role.MANAGER] },
-];
+import { redirect } from "next/navigation";
+import { getCurrentUser } from "@/lib/auth/sessions";
+import { getAccessibleProperties } from "@/lib/auth/pageAccess";
+import { LEAD_ROLES } from "@/lib/auth/propertyRole";
+import { getPropertyCounts } from "@/lib/data/portfolio";
 
 export default async function DashboardPage() {
-    const currentUser = await getCurrentUser();
+    const user = await getCurrentUser();
 
-    if (!currentUser) {
+    if (!user) {
         return null;
     }
 
-    return (
-        <div className="flex flex-col gap-4 sm:mx-[100px] text-center sm:text-left max-w-[700px]">
-                <h1 className="text-3xl font-display">Dashboard</h1>
+    const properties = await getAccessibleProperties();
 
-                <ul className="grid grid-cols-2 gap-2 sm:flex sm:flex-col">
-                    {DASHBOARD_TILES.filter((tile) => tile.allowedRoles.includes(currentUser.role)).map((tile) => (
-                        <li
-                            key={tile.label}
-                        >
+    if (properties.length === 1) {
+        redirect(`/p/${properties[0].id}`);
+    }
+
+    if (properties.length === 0) {
+        return <p className="text-gray-500">This company has no properties yet.</p>;
+    }
+
+    const counts = await getPropertyCounts(properties.map((property) => property.id));
+
+    return (
+        <div className="flex flex-col gap-4 sm:mx-[100px] max-w-[700px]">
+            <h1 className="text-3xl font-display">Your properties</h1>
+
+            <ul className="flex flex-col gap-2">
+                {properties.map((property) => {
+                    const stats = counts.get(property.id)!;
+
+                    return (
+                        <li key={property.id}>
                             <Link
-                                href={tile.href}
-                                className="flex items-center justify-center rounded-xl border p-3 aspect-square sm:aspect-auto sm:justify-between sm:max-w-[700px] hover:border-black sm:hover:translate-x-5 hover:translate-x-2 transition hover:text-background hover:bg-foreground"
+                                href={`/p/${property.id}`}
+                                className="flex flex-col gap-1 rounded-xl border p-3 hover:border-black"
                             >
-                                <div>
-                                    <p className="font-body text-lg xs:text-2xl sm:text-lg">{tile.label}</p>
+                                <div className="flex items-center justify-between">
+                                    <p className="font-body text-lg">{property.name}</p>
+                                    <p className="text-sm text-gray-500">{property.role}</p>
                                 </div>
+                                <p className="text-sm text-gray-500">
+                                    {stats.lowStock} low stock · {stats.overdueTools} overdue tools
+                                    {LEAD_ROLES.includes(property.role) && ` · ${stats.pendingApprovals} pending approval`}
+                                </p>
                             </Link>
                         </li>
-                    ))}
-                </ul>
+                    );
+                })}
+            </ul>
         </div>
-    )
+    );
 }

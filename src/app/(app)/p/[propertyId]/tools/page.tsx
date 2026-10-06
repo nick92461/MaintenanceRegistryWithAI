@@ -1,15 +1,17 @@
 import { prisma } from "@/lib/prisma";
 import { Tool } from "@/lib/domain/Tool";
-import { getCurrentUser } from "@/lib/auth/sessions";
-import { Role, ToolStatus } from "@/generated/prisma/enums";
+import { ToolStatus } from "@/generated/prisma/enums";
+import { LEAD_ROLES, STAFF_ROLES } from "@/lib/auth/propertyRole";
+import { requirePageRole } from "@/lib/auth/pageAccess";
 import AddToolForm from "@/components/tools/AddToolForm";
 import ToolsList, { type ToolListItem } from "@/components/tools/ToolsList";
 
-export default async function ToolsPage() {
-    const user = await getCurrentUser();
+export default async function ToolsPage({ params }: { params: Promise<{ propertyId: string }> }) {
+    const { propertyId } = await params;
+    const access = await requirePageRole(propertyId, STAFF_ROLES);
 
     const rows = await prisma.tool.findMany({
-        where: { deletedAt: null },
+        where: { propertyId: access.property.id, deletedAt: null },
         orderBy: { name: "asc" },
         include: {
             checkouts: {
@@ -19,7 +21,7 @@ export default async function ToolsPage() {
         },
     });
 
-    const canManage = user?.role === Role.SUPERVISOR || user?.role === Role.MANAGER;
+    const canManage = LEAD_ROLES.includes(access.role);
 
     const tools: ToolListItem[] = rows.map((row) => {
         const tool = new Tool(row.id, row.name, row.category, row.location, row.status, row.deletedAt);
@@ -44,9 +46,9 @@ export default async function ToolsPage() {
         <div className="flex flex-col gap-2">
             <h1 className="text-xl font-semibold">Tools</h1>
 
-            {canManage && <AddToolForm />}
+            {canManage && <AddToolForm propertyId={access.property.id} />}
 
-            <ToolsList tools={tools} canManage={canManage} />
+            <ToolsList propertyId={access.property.id} tools={tools} canManage={canManage} />
         </div>
     );
 }

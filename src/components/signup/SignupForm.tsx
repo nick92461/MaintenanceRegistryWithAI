@@ -13,6 +13,20 @@ export default function SignupForm() {
             <h1 className="text-xl font-semibold">Create an account</h1>
 
             <div className="flex flex-col gap-1">
+                <label htmlFor="joinCode">Property join code</label>
+                <input 
+                    id="joinCode"
+                    name="joinCode"
+                    type="text"
+                    required
+                    autoCapitalize="characters"
+                    autoComplete="off"
+                    className="rounded border px-3 py-2 uppercase"
+                />
+                <p className="text-xs text-gray-500">Ask your property manager for this code.</p>
+            </div>
+
+            <div className="flex flex-col gap-1">
                 <label htmlFor="name">Name</label>
                 <input id="name" name="name" type="text" required className="rounded border px-3 py-2" />
             </div>
