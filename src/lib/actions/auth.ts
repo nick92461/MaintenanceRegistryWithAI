@@ -3,13 +3,16 @@
 import { prisma } from "@/lib/prisma";
 import { hashPassword, verifyPassword } from "../auth/passwords";
 import { getCurrentUserAndRenewSession, createSession, destroySession } from "../auth/sessions";
-import { isRateLimited, recordRateLimitHit } from "../auth/rateLimit";
+import { clearRateLimit, isRateLimited, recordRateLimitHit } from "../auth/rateLimit";
 import { Role } from "@/generated/prisma/enums";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 const JOIN_CODE_ATTEMPT_LIMIT = 10;
 const JOIN_CODE_WINDOW_MS = 15 * 60 * 1000;
+const LOGIN_EMAIL_ATTEMPT_LIMIT = 10;
+const LOGIN_ADDRESS_ATTEMPT_LIMIT = 30;
+const LOGIN_WINDOW_MS = 15 * 60 * 1000;
 
 export type AuthActionState = {
     error?: string;
@@ -92,6 +95,23 @@ export async function login(prevState: AuthActionState, formData: FormData): Pro
     if (typeof email !== "string" || typeof password !== "string") {
         return { error: "Invalid email or password" };
     }
+    
+    const emailKey = `login-email:${email.trim().toLowerCase().slice(0, 200)}`;
+    const addressKey = `login-address:${await getClientAddress()}`;
+
+    if (
+        (await isRateLimited(emailKey, LOGIN_EMAIL_ATTEMPT_LIMIT, LOGIN_WINDOW_MS)) ||
+        (await isRateLimited(addressKey, LOGIN_ADDRESS_ATTEMPT_LIMIT, LOGIN_WINDOW_MS))
+    ) {
+        return { error: "Too many attempts. Please try again later." };
+    }
+
+    async function failLogin(): Promise<AuthActionState> {
+        await recordRateLimitHit(emailKey, LOGIN_WINDOW_MS);
+        await recordRateLimitHit(addressKey, LOGIN_WINDOW_MS);
+
+        return { error: "Invalid email or password" };
+    }
 
     const user = await prisma.user.findUnique({
         where: { email },
@@ -99,19 +119,20 @@ export async function login(prevState: AuthActionState, formData: FormData): Pro
     });
 
     if (!user) {
-        return { error: "Invalid email or password" };
+        return failLogin();
     }
 
     if (user.deletedAt) {
-        return { error: "Invalid email or password" };
+        return failLogin();
     }
 
     const isValid = await verifyPassword(password, user.passwordHash);
 
     if (!isValid) {
-        return { error: "Invalid email or password" };
+        return failLogin();
     }
 
+    await clearRateLimit(emailKey);
     await createSession(user.id);
 
     if (user.mustChangePassword) {
