@@ -49,7 +49,7 @@ export default function AccountPasswordForm() {
             </div>
 
             {state.error && <p className="text-sm text-red-600">{state.error}</p>}
-            {state.success && (<p className="text-sm text-green-600">Password changed. You've been signed out everywhere else.</p>)}
+            {state.success && (<p className="text-sm text-green-600">Password changed. You&apos;ve been signed out everywhere else.</p>)}
 
             <button
                 type="submit"

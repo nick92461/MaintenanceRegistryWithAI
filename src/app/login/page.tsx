@@ -1,8 +1,11 @@
+import { connection } from "next/server";
 import LoginForm from "@/components/login/LoginForm";
 import DemoButton from "@/components/login/DemoButton";
 import { isDemoMode } from "@/lib/demo/demoMode";
 
-export default function LoginPage() {
+export default async function LoginPage() {
+    await connection();
+
     const demo = isDemoMode();
 
     return (

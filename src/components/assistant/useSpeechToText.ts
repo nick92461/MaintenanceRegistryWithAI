@@ -45,7 +45,10 @@ export function useSpeechToText(onResult: (text: string) => void) {
     const shouldListenRef = useRef(false);
     const onResultRef = useRef(onResult);
 
-    onResultRef.current = onResult;
+    // Updated after render, not during it, so a render React throws away can't leave a stale value here.
+    useEffect(() => {
+        onResultRef.current = onResult;
+    });
 
     useEffect(() => {
         const SpeechRecognitionCtor = getSpeechRecognitionConstructor();

@@ -13,7 +13,7 @@ export default function DemoButton() {
         <form action={formAction} className="flex w-full max-w-sm flex-col gap-2 rounded border p-4">
             <h2 className="font-semibold">See it in action</h2>
             <p className="text-sm text-gray-500">
-                Opens a private demo with sample data that only you can see. No account needed, and it's deleted after a day.
+                Opens a private demo with sample data that only you can see. No account needed, and it&apos;s deleted after a day.
             </p>
 
             {state.error && <p className="text-sm text-red-600">{state.error}</p>}
