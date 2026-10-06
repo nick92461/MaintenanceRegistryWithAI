@@ -38,6 +38,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
                     <Link href="/dashboard" className="text-sm text-blue-600 underline">
                         Dashboard
                     </Link>
+                    <Link href="/account" className="text-sm text-blue-600 underline">
+                        Account
+                    </Link>
                 </div>
             </header>
             <main className="p-6">{children}</main>

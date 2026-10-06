@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { hashPassword, verifyPassword } from "../auth/passwords";
 import { getCurrentUserAndRenewSession, createSession, destroySession } from "../auth/sessions";
 import { clearRateLimit, isRateLimited, recordRateLimitHit } from "../auth/rateLimit";
+import { checkNewPassword } from "../auth/passwordRules";
 import { Role } from "@/generated/prisma/enums";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
@@ -13,6 +14,8 @@ const JOIN_CODE_WINDOW_MS = 15 * 60 * 1000;
 const LOGIN_EMAIL_ATTEMPT_LIMIT = 10;
 const LOGIN_ADDRESS_ATTEMPT_LIMIT = 30;
 const LOGIN_WINDOW_MS = 15 * 60 * 1000;
+const PASSWORD_CHANGE_ATTEMPT_LIMIT = 5;
+const PASSWORD_CHANGE_WINDOW_MS = 15 * 60 * 1000;
 
 export type AuthActionState = {
     error?: string;
@@ -166,12 +169,10 @@ export async function changePassword(prevState: unknown, formData: FormData): Pr
         return { error: "Missing required fields" };
     }
 
-    if (newPassword.length < 8) {
-        return { error: "Password must be at least 8 characters." };
-    }
+    const problem = checkNewPassword(newPassword, confirmPassword);
 
-    if (newPassword !== confirmPassword) {
-        return { error: "Passwords do not match." };
+    if (problem) {
+        return { error: problem };
     }
 
     const row = await prisma.user.findUnique({ where: { id: user.id }, select: { passwordHash: true } });
@@ -195,6 +196,68 @@ export async function changePassword(prevState: unknown, formData: FormData): Pr
     await createSession(user.id);
 
     redirect("/dashboard");
+}
+
+export async function changeOwnPassword(prevState: unknown, formData: FormData): Promise<AuthActionState> {
+    const user = await getCurrentUserAndRenewSession();
+
+    if (!user) {
+        return { error: "You must be logged in" };
+    }
+
+    const currentPassword = formData.get("currentPassword");
+    const newPassword = formData.get("newPassword");
+    const confirmPassword = formData.get("confirmPassword");
+
+    if (
+        typeof currentPassword !== "string" ||
+        typeof newPassword !== "string" ||
+        typeof confirmPassword !== "string"
+    ) {
+        return { error: "Missing required fields" };
+    }
+
+    //without this, a hijacked session could be used to guess the current password
+    const attemptKey = `password-change:${user.id}`;
+
+
+    if (await isRateLimited(attemptKey, PASSWORD_CHANGE_ATTEMPT_LIMIT, PASSWORD_CHANGE_WINDOW_MS)) {
+        return { error: "Too many attempts. Please try again later" };
+    }
+
+    const row = await prisma.user.findUnique({ where: { id: user.id }, select: { passwordHash: true } });
+
+    if (!row) {
+        return { error: "You must be logged in" };
+    }
+
+    if (!(await verifyPassword(currentPassword, row.passwordHash))) {
+        await recordRateLimitHit(attemptKey, PASSWORD_CHANGE_WINDOW_MS);
+
+        return { error: "Your current password is incorrect" };
+    }
+
+    const problem = checkNewPassword(newPassword, confirmPassword);
+
+    if (problem) {
+        return { error: problem };
+    }
+
+    if (newPassword === currentPassword) {
+        return { error: "Choose a password different from your current one" };
+    }
+
+    const passwordHash = await hashPassword(newPassword);
+
+    await prisma.$transaction([
+        prisma.user.update({ where: { id: user.id }, data: { passwordHash, mustChangePassword: false } }),
+        prisma.session.deleteMany({ where: {userId: user.id } })
+    ]);
+
+    await clearRateLimit(attemptKey);
+    await createSession(user.id);
+
+    return { success: true };
 }
 
 export async function logout() {
