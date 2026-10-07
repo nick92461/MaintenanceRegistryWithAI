@@ -5,21 +5,22 @@ const anthropic = new Anthropic();
 export type ChatMessage = {
     role: "user" | "assistant";
     content: string;
-};
+}
 
 export type ClaudeTurn = {
     text: string;
     toolUses: Anthropic.ToolUseBlock[];
+    stopReason: string | null;
 };
 
 export async function askClaude(
     messages: Anthropic.MessageParam[],
-    options?: { system?: string; tools?: Anthropic.Tool[] },
+    options?: { system?: string; tools?: Anthropic.Tool[]; maxTokens?: number }
 ): Promise<ClaudeTurn> {
     const response = await anthropic.messages.create({
         model: "claude-sonnet-5",
         thinking: { type: "disabled" },
-        max_tokens: 16000,
+        max_tokens: options?.maxTokens ?? 16000,
         system: options?.system,
         tools: options?.tools,
         messages,
@@ -34,5 +35,5 @@ export async function askClaude(
         (block): block is Anthropic.ToolUseBlock => block.type === "tool_use",
     );
 
-    return { text, toolUses };
+    return { text, toolUses, stopReason: response.stop_reason };
 }

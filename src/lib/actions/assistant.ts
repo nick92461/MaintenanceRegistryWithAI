@@ -4,18 +4,19 @@ import type Anthropic from "@anthropic-ai/sdk";
 import { ASSISTANT_CONTEXTS, isAssistantContextKey, type AssistantContextKey } from "../ai/contexts";
 import { requirePropertyRole } from "../auth/access";
 import { LEAD_ROLES } from "../auth/propertyRole";
-import { askClaude, type ChatMessage } from "../ai/claude";
-import { countNewDrafts, executeTool, type Draft } from "../ai/drafts";
+import { askClaude, type ChatMessage, type ClaudeTurn } from "../ai/claude";
+import { countNewDrafts,executeTool, type Draft } from "../ai/drafts";
 import { rejectSavedDuplicate, renderReport, runDraftEdit, runLedgerTool, type LedgerEvent } from "../ai/ledger";
 import { withDraftList, formatRecords, type ExistingRecords } from "../ai/records";
 import { getActiveInventoryItems } from "../data/inventory";
 import { getActiveTools } from "../data/tools";
+import { getClientAddress } from "../auth/clientAddress";
+import { countDemoAssistantMessage, DEMO_MESSAGES, getAssistantSettings, hasOversizedUserMessage } from "../demo/assistantLimits";
+import { isDemoMode } from "../demo/demoMode";
 
 const MAX_MESSAGES = 50;
-const MAX_USER_MESSAGE_LENGTH = 50000;
-const MAX_TOOL_ROUNDS = 15;
 
-function isValidTranscript(messages: unknown): messages is ChatMessage[] {
+function isValidTranscript(messages: unknown, maxUserMessageLength: number): messages is ChatMessage[] {
 	if (!Array.isArray(messages) || messages.length === 0 || messages.length > MAX_MESSAGES) {
 		return false;
 	}
@@ -23,11 +24,11 @@ function isValidTranscript(messages: unknown): messages is ChatMessage[] {
 	const allWellFormed = messages.every(
 		(m) =>
 			typeof m === "object" &&
-			m !== null &&
-			(m.role === "user" || m.role === "assistant") &&
-			typeof m.content === "string" &&
-			m.content.trim().length > 0 &&
-			(m.role !== "user" || m.content.length <= MAX_USER_MESSAGE_LENGTH),
+		m !== null &&
+		(m.role === "user" || m.role === "assistant") &&
+		typeof m.content === "string" &&
+		m.content.trim().length > 0 &&
+		(m.role !== "user" || m.content.length <= maxUserMessageLength),
 	);
 
 	return allWellFormed && messages[messages.length - 1].role === "user";
@@ -47,8 +48,23 @@ export async function sendAssistantMessage(
 
 	const verifiedPropertyId = access.propertyId;
 
-	if (!isAssistantContextKey(context) || !isValidTranscript(messages)) {
+	const demo = isDemoMode();
+	const settings = getAssistantSettings(demo);
+
+	if (demo && hasOversizedUserMessage(messages, settings.maxUserMessageLength)) {
+		return { error: DEMO_MESSAGES.tooLong(settings.maxUserMessageLength) };
+	}
+
+	if (!isAssistantContextKey(context) || !isValidTranscript(messages, settings.maxUserMessageLength)) {
 		return { error: "Invalid conversation" };
+	}
+
+	if (demo) {
+		const limitMessage = await countDemoAssistantMessage(access.user.companyId, await getClientAddress());
+
+		if (limitMessage) {
+			return { error: limitMessage };
+		}
 	}
 
 	const contextDef = ASSISTANT_CONTEXTS[context];
@@ -98,8 +114,27 @@ export async function sendAssistantMessage(
 		}
 	}
 
-	for (let round = 0; round < MAX_TOOL_ROUNDS; round++) {
-		const turn = await askClaude(conversation, { system: systemPrompt, tools: contextDef.tools });
+	for (let round = 0; round < settings.maxToolRounds; round++) {
+		let turn: ClaudeTurn;
+
+		try {
+			turn = await askClaude(conversation, {
+				system: systemPrompt,
+				tools: contextDef.tools,
+				maxTokens: settings.maxOutputTokens,
+			});
+		} catch (err) {
+			console.error(err);
+
+			return {
+				error: demo ? DEMO_MESSAGES.unavailable : "The assistant couldn't respond right now. Please try again.",
+				drafts: workingDrafts,
+			};
+		}
+
+		if (turn.stopReason === "max_tokens") {
+			return { error: "That was too much to handle in one go. Try a shorter list.", drafts: workingDrafts };
+		}
 
 		if (turn.toolUses.length === 0) {
 			return { reply: renderReport(countNewDrafts(drafts, workingDrafts), events, turn.text), drafts: workingDrafts };
