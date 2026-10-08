@@ -1,0 +1,1474 @@
+[
+ {
+  "scenario": "A07",
+  "turn": 1,
+  "item": "gas-cans",
+  "key": "draft",
+  "auditor": {
+   "item": "gas can",
+   "status": "draft",
+   "kind": "either",
+   "quantity": 3,
+   "location": "Grounds shed",
+   "ambiguous": true,
+   "note": "Gas cans could be tracked as tools or as supplies. The count is 3 either way."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "A08",
+  "turn": 1,
+  "item": "hose-clamps",
+  "key": "draft",
+  "auditor": {
+   "item": "hose clamps",
+   "status": "draft",
+   "kind": "supply",
+   "quantity": 50,
+   "location": "Shop B",
+   "ambiguous": true,
+   "note": "Restated as 50, which most read as the same 50. A strict reader could see 100."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "A09",
+  "turn": 1,
+  "item": "filters-16x20",
+  "key": "draft",
+  "auditor": {
+   "item": "furnace filter 16x20x1",
+   "status": "draft",
+   "kind": "supply",
+   "quantity": 30,
+   "location": "Shop B",
+   "ambiguous": true,
+   "note": "20 + 10 = 30 in Shop B. The shelves could instead be treated as separate locations (20 on the bottom shelf, 10 up top)."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "A10",
+  "turn": 1,
+  "item": "drywall-screws",
+  "key": "ask",
+  "auditor": {
+   "item": "drywall screws",
+   "status": "ask",
+   "kind": "supply",
+   "quantity": null,
+   "location": "Shop A",
+   "ambiguous": true,
+   "note": "3 boxes with unknown units per box; unit count unknown. Recording 3 boxes with the package in the name would also be faithful."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "A10",
+  "turn": 1,
+  "item": "deck-screws",
+  "key": "ask",
+  "auditor": {
+   "item": "deck screws",
+   "status": "ask",
+   "kind": "supply",
+   "quantity": null,
+   "location": "Shop A",
+   "ambiguous": true,
+   "note": "2 boxes with unknown units per box; unit count unknown. Recording 2 boxes would also be faithful."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "A11",
+  "turn": 1,
+  "item": "ballasts",
+  "key": "draft",
+  "auditor": {
+   "item": "replacement ballasts",
+   "status": "draft",
+   "kind": "supply",
+   "quantity": 6,
+   "location": "Clubhouse",
+   "ambiguous": true,
+   "note": "Ballasts are consumable replacement parts, so they are treated as a supply; the type of ballast is unspecified."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "A12",
+  "turn": 1,
+  "item": "caulk",
+  "key": "draft",
+  "auditor": {
+   "item": "caulk",
+   "status": "draft",
+   "kind": "supply",
+   "quantity": 12,
+   "location": "Maintenance shop",
+   "ambiguous": true,
+   "note": "12 tubes, where each tube is a unit; the caulk type is unspecified."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "A04",
+  "turn": 1,
+  "item": "life-rings",
+  "key": "draft",
+  "auditor": {
+   "item": "life rings",
+   "status": "draft",
+   "kind": "tool",
+   "quantity": 4,
+   "location": "pool house",
+   "ambiguous": true,
+   "note": "Four life rings in the pool house. Life rings are reusable safety equipment, so they are most likely tools, but someone could also treat them as stocked items. That classification is the ambiguity."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "A06",
+  "turn": 1,
+  "item": "mulch",
+  "key": "draft",
+  "auditor": {
+   "item": "bags of mulch",
+   "status": "draft",
+   "kind": "supply",
+   "quantity": 20,
+   "location": "garage",
+   "ambiguous": true,
+   "note": "20 bags. Mulch is naturally counted by the bag, but a strict reader could say the units per bag are unknown. Recording 20 bags is faithful either way."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "A03",
+  "turn": 1,
+  "item": "mops",
+  "key": "draft",
+  "auditor": {
+   "item": "mops",
+   "status": "draft",
+   "kind": "either",
+   "quantity": 6,
+   "location": "clubhouse closet",
+   "ambiguous": true,
+   "note": "'like 6' is treated as an approximate number and recorded as 6, though it could be read as uncertainty. Mops could be tracked as tools or supplies."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "A03",
+  "turn": 1,
+  "item": "brooms",
+  "key": "draft",
+  "auditor": {
+   "item": "brooms",
+   "status": "draft",
+   "kind": "either",
+   "quantity": 4,
+   "location": "clubhouse closet",
+   "ambiguous": true,
+   "note": "The 'like' hedge may also apply here. Brooms could be tracked as tools or supplies."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "A03",
+  "turn": 1,
+  "item": "floor-cleaner",
+  "key": "draft",
+  "auditor": {
+   "item": "floor cleaner",
+   "status": "ask",
+   "kind": "supply",
+   "quantity": null,
+   "location": "clubhouse closet",
+   "ambiguous": true,
+   "note": "'maybe 10' admits uncertainty, so the quantity is unknown. Another reader could record 10 gallons as approximate."
+  },
+  "problem": "status: key says draft, auditor says ask"
+ },
+ {
+  "scenario": "A03",
+  "turn": 1,
+  "item": "floor-cleaner",
+  "key": "draft",
+  "auditor": {
+   "item": "floor cleaner",
+   "status": "ask",
+   "kind": "supply",
+   "quantity": null,
+   "location": "clubhouse closet",
+   "ambiguous": true,
+   "note": "'maybe 10' admits uncertainty, so the quantity is unknown. Another reader could record 10 gallons as approximate."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "A03",
+  "turn": 1,
+  "item": "dust-pans",
+  "key": "draft",
+  "auditor": {
+   "item": "dust pans",
+   "status": "draft",
+   "kind": "either",
+   "quantity": 2,
+   "location": "clubhouse closet",
+   "ambiguous": true,
+   "note": "'a couple' = 2. Dust pans could be tracked as tools or supplies."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "A17",
+  "turn": 1,
+  "item": "romex",
+  "key": "draft",
+  "auditor": {
+   "item": "12-2 romex wire (250 ft roll)",
+   "status": "draft",
+   "kind": "supply",
+   "quantity": 1,
+   "location": "Shop B",
+   "ambiguous": true,
+   "note": "Recorded as one 250 ft roll. Tracking by feet (250) would also be a reasonable reading."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "A18",
+  "turn": 1,
+  "item": "coil-cleaner",
+  "key": "draft",
+  "auditor": {
+   "item": "coil cleaner (gallon)",
+   "status": "draft",
+   "kind": "supply",
+   "quantity": 1,
+   "location": "boiler room",
+   "ambiguous": true,
+   "note": "Recorded as one gallon container. A reader might want the unit basis clarified."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "A19",
+  "turn": 1,
+  "item": "sds-bits",
+  "key": "draft",
+  "auditor": {
+   "item": "SDS drill bit",
+   "status": "ask",
+   "kind": "either",
+   "quantity": 10,
+   "location": "Shop A",
+   "ambiguous": true,
+   "note": "Bits could be tracked as tools or as supplies. The size and type are unspecified, so the assistant may need to ask. The count of 10 is clear."
+  },
+  "problem": "status: key says draft, auditor says ask"
+ },
+ {
+  "scenario": "A19",
+  "turn": 1,
+  "item": "sds-bits",
+  "key": "draft",
+  "auditor": {
+   "item": "SDS drill bit",
+   "status": "ask",
+   "kind": "either",
+   "quantity": 10,
+   "location": "Shop A",
+   "ambiguous": true,
+   "note": "Bits could be tracked as tools or as supplies. The size and type are unspecified, so the assistant may need to ask. The count of 10 is clear."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "A20",
+  "turn": 1,
+  "item": "grass-seed",
+  "key": "draft",
+  "auditor": {
+   "item": "grass seed (bags)",
+   "status": "draft",
+   "kind": "supply",
+   "quantity": 15,
+   "location": "Grounds shed",
+   "ambiguous": true,
+   "note": "A bag is effectively the unit, so recording 15 bags is faithful. Some readers would instead ask for the bag size or weight."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "A21",
+  "turn": 1,
+  "item": "bulbs-4000k",
+  "key": "draft",
+  "auditor": {
+   "item": "LED light bulb 4000K",
+   "status": "draft",
+   "kind": "supply",
+   "quantity": 12,
+   "location": "Shop B",
+   "ambiguous": true,
+   "note": "12 units. The base or wattage is unspecified, so some readers would ask about the type."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "A21",
+  "turn": 1,
+  "item": "smoke",
+  "key": "draft",
+  "auditor": {
+   "item": "smoke detector",
+   "status": "draft",
+   "kind": "supply",
+   "quantity": 6,
+   "location": "Shop B",
+   "ambiguous": true,
+   "note": "These are installed consumables, so most likely a supply. Some readers would classify them as tools or ask about the model."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "A22",
+  "turn": 1,
+  "item": "interior",
+  "key": "draft",
+  "auditor": {
+   "item": "interior white paint",
+   "status": "draft",
+   "kind": "supply",
+   "quantity": 15,
+   "location": "Paint closet",
+   "ambiguous": true,
+   "note": "'About 15' records 15. The unit is gallons; whether gallon cans count as units or a 5-gallon bucket could be involved is a minor question."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "A22",
+  "turn": 1,
+  "item": "exterior",
+  "key": "draft",
+  "auditor": {
+   "item": "exterior white paint",
+   "status": "draft",
+   "kind": "supply",
+   "quantity": 5,
+   "location": "Paint closet",
+   "ambiguous": true,
+   "note": "5 gallons may mean one 5-gallon bucket or five 1-gallon cans. Recording 5 gallons is faithful, but the container count is unclear."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "A22",
+  "turn": 1,
+  "item": "roller-covers",
+  "key": "draft",
+  "auditor": {
+   "item": "roller covers",
+   "status": "draft",
+   "kind": "supply",
+   "quantity": 24,
+   "location": "Paint closet",
+   "ambiguous": true,
+   "note": "'Roughly 2 dozen' is an approximate stated number, so 24 is recorded. Some readers might treat 'roughly' as uncertainty."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "A23",
+  "turn": 1,
+  "item": "co",
+  "key": "draft",
+  "auditor": {
+   "item": "CO detectors",
+   "status": "draft",
+   "kind": "either",
+   "quantity": 20,
+   "location": "Shop B",
+   "ambiguous": true,
+   "note": "The count of 20 is clear. Whether these are tracked as tools or supplies is unclear."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "A13",
+  "turn": 1,
+  "item": "ice-scrapers",
+  "key": "draft",
+  "auditor": {
+   "item": "ice scraper",
+   "status": "draft",
+   "kind": "either",
+   "quantity": 2,
+   "location": "garage",
+   "ambiguous": true,
+   "note": "Could be reusable tools or cheap consumables; quantity and location clear."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "A14",
+  "turn": 1,
+  "item": "putty-knives",
+  "key": "draft",
+  "auditor": {
+   "item": "putty knife",
+   "status": "draft",
+   "kind": "either",
+   "quantity": 8,
+   "location": "shop A",
+   "ambiguous": true,
+   "note": "Putty knives may be tracked as tools or as low-cost supplies."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "A14",
+  "turn": 1,
+  "item": "brushes",
+  "key": "draft",
+  "auditor": {
+   "item": "paint brush",
+   "status": "draft",
+   "kind": "either",
+   "quantity": 12,
+   "location": "shop B",
+   "ambiguous": true,
+   "note": "Brushes could be tools or consumables."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "A14",
+  "turn": 1,
+  "item": "trays",
+  "key": "draft",
+  "auditor": {
+   "item": "paint tray",
+   "status": "draft",
+   "kind": "either",
+   "quantity": 4,
+   "location": "shop B",
+   "ambiguous": true,
+   "note": "Trays could be tools or consumables."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "B01",
+  "turn": 1,
+  "item": "fuses",
+  "key": "draft",
+  "auditor": {
+   "item": "Fuses",
+   "status": "ask",
+   "kind": "supply",
+   "quantity": 100,
+   "location": "Shop 1",
+   "ambiguous": true,
+   "note": "New supply, 100 in Shop 1. Fuse type/amperage is unspecified; some readers would ask before drafting, others would draft generic fuses."
+  },
+  "problem": "status: key says draft, auditor says ask"
+ },
+ {
+  "scenario": "B01",
+  "turn": 1,
+  "item": "fuses",
+  "key": "draft",
+  "auditor": {
+   "item": "Fuses",
+   "status": "ask",
+   "kind": "supply",
+   "quantity": 100,
+   "location": "Shop 1",
+   "ambiguous": true,
+   "note": "New supply, 100 in Shop 1. Fuse type/amperage is unspecified; some readers would ask before drafting, others would draft generic fuses."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "B02",
+  "turn": 1,
+  "item": "drywall-nails",
+  "key": "draft",
+  "auditor": {
+   "item": "Drywall Nails",
+   "status": "draft",
+   "kind": "supply",
+   "quantity": 200,
+   "location": "Shop 3",
+   "ambiguous": true,
+   "note": "New supply, 200 in Shop 3. The size is unstated, so some readers might ask."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "B20",
+  "turn": 1,
+  "item": "mulch",
+  "key": "draft",
+  "auditor": {
+   "item": "Mulch",
+   "status": "draft",
+   "kind": "supply",
+   "quantity": 40,
+   "location": "Shop 5",
+   "ambiguous": true,
+   "note": "Bag size unknown. Recording 40 bags is faithful; one could instead argue the unit count should be asked."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "B21",
+  "turn": 1,
+  "item": "extinguishers",
+  "key": "draft",
+  "auditor": {
+   "item": "Fire Extinguishers",
+   "status": "draft",
+   "kind": "either",
+   "quantity": 2,
+   "location": "Leasing office",
+   "ambiguous": true,
+   "note": "Could be tracked as a tool (equipment) or a supply; either way the count is 2."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "B13",
+  "turn": 1,
+  "item": "can-openers",
+  "key": "draft",
+  "auditor": {
+   "item": "Paint Can Openers",
+   "status": "draft",
+   "kind": "either",
+   "quantity": 30,
+   "location": "Shop 4",
+   "ambiguous": true,
+   "note": "Could be cheap consumable supply or tools; location carries from Shop 4 context."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "B13",
+  "turn": 1,
+  "item": "shop-lights",
+  "key": "draft",
+  "auditor": {
+   "item": "Shop Lights",
+   "status": "draft",
+   "kind": "tool",
+   "quantity": 2,
+   "location": "Shop 4",
+   "ambiguous": true,
+   "note": "Likely portable work lights (tools), but could be fixtures/supply; location implied Shop 4."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "B14",
+  "turn": 1,
+  "item": "filters",
+  "key": "skip",
+  "auditor": {
+   "item": "Furnace Filters",
+   "status": "ask",
+   "kind": "supply",
+   "quantity": 24,
+   "location": "Boiler Room",
+   "ambiguous": true,
+   "note": "'More' implies restock of saved filters (skip), but two sizes exist in Boiler Room, so size unclear; either way nothing new unless clarified."
+  },
+  "problem": "status: key says skip, auditor says ask"
+ },
+ {
+  "scenario": "B14",
+  "turn": 1,
+  "item": "filters",
+  "key": "skip",
+  "auditor": {
+   "item": "Furnace Filters",
+   "status": "ask",
+   "kind": "supply",
+   "quantity": 24,
+   "location": "Boiler Room",
+   "ambiguous": true,
+   "note": "'More' implies restock of saved filters (skip), but two sizes exist in Boiler Room, so size unclear; either way nothing new unless clarified."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "B17",
+  "turn": 1,
+  "item": "brushes",
+  "key": "draft",
+  "auditor": {
+   "item": "2in Paint Brushes",
+   "status": "draft",
+   "kind": "either",
+   "quantity": 15,
+   "location": "Shop 4",
+   "ambiguous": true,
+   "note": "Paint brushes could be tracked as a consumable supply or as reusable tools; either way the count is 15 in Shop 4."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "B18",
+  "turn": 1,
+  "item": "exterior",
+  "key": "draft",
+  "auditor": {
+   "item": "Exterior White Paint (Gallon)",
+   "status": "draft",
+   "kind": "supply",
+   "quantity": 4,
+   "location": "Paint Room",
+   "ambiguous": true,
+   "note": "New item. The sheen is unspecified, so some readers might ask about it, but recording \"exterior white\" as stated is faithful."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "B31",
+  "turn": 1,
+  "item": "molly",
+  "key": "draft",
+  "auditor": {
+   "item": "Molly Bolts",
+   "status": "draft",
+   "kind": "supply",
+   "quantity": 15,
+   "location": "Shop 4",
+   "ambiguous": true,
+   "note": "No size is given for the molly bolts. One reader might ask for the size; another would draft them as generic molly bolts."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "B33",
+  "turn": 1,
+  "item": "2x4",
+  "key": "draft",
+  "auditor": {
+   "item": "2x4 Lumber",
+   "status": "draft",
+   "kind": "supply",
+   "quantity": 40,
+   "location": "Shed",
+   "ambiguous": true,
+   "note": "\"Like forty\" is an approximation, treated like \"about 40\". The board length is unspecified, so a reader might ask for it. \"Forty two by fours\" could also be misheard speech, e.g. 42 by fours."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "B33",
+  "turn": 1,
+  "item": "plywood",
+  "key": "draft",
+  "auditor": {
+   "item": "Plywood Sheets",
+   "status": "draft",
+   "kind": "supply",
+   "quantity": 12,
+   "location": "Shed",
+   "ambiguous": true,
+   "note": "A dozen means 12. Thickness is not given, so a reader might ask for it."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "B27",
+  "turn": 1,
+  "item": "bulbs-60w",
+  "key": "draft",
+  "auditor": {
+   "item": "60W Light Bulbs",
+   "status": "draft",
+   "kind": "supply",
+   "quantity": 6,
+   "location": "Leasing Office",
+   "ambiguous": true,
+   "note": "Six 60W bulbs in the leasing office. The bulb type (incandescent vs. LED equivalent, color temperature) is unspecified, so some readers would ask."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "B29",
+  "turn": 1,
+  "item": "pipe-straps",
+  "key": "draft",
+  "auditor": {
+   "item": "Pipe Straps",
+   "status": "draft",
+   "kind": "supply",
+   "quantity": 12,
+   "location": "Shop 4",
+   "ambiguous": true,
+   "note": "'A dozen or so' is like 'about 50', so 12 is recorded. A reader could treat 'or so' as uncertain and ask instead."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "B44",
+  "turn": 1,
+  "item": "wire-nuts",
+  "key": "draft",
+  "auditor": {
+   "item": "Wire Nuts",
+   "status": "ask",
+   "kind": "supply",
+   "quantity": 130,
+   "location": "Shop 4",
+   "ambiguous": true,
+   "note": "2x50+30=130 units in Shop 4 (new location). Saved record is Yellow Wire Nuts; color/size not given here, so a careful assistant may ask which type. Some readers would draft 130 'Wire Nuts' directly."
+  },
+  "problem": "status: key says draft, auditor says ask"
+ },
+ {
+  "scenario": "B44",
+  "turn": 1,
+  "item": "wire-nuts",
+  "key": "draft",
+  "auditor": {
+   "item": "Wire Nuts",
+   "status": "ask",
+   "kind": "supply",
+   "quantity": 130,
+   "location": "Shop 4",
+   "ambiguous": true,
+   "note": "2x50+30=130 units in Shop 4 (new location). Saved record is Yellow Wire Nuts; color/size not given here, so a careful assistant may ask which type. Some readers would draft 130 'Wire Nuts' directly."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "B45",
+  "turn": 1,
+  "item": "ladder",
+  "key": "absent",
+  "auditor": {
+   "item": "Ladder",
+   "status": "none",
+   "kind": "tool",
+   "quantity": null,
+   "location": "Shop 5",
+   "ambiguous": true,
+   "note": "Supervisor is unsure a ladder exists; not asserted as inventory. Some might ask to confirm, and the type is also unknown."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "B45",
+  "turn": 1,
+  "item": "extension-cords",
+  "key": "draft",
+  "auditor": {
+   "item": "Extension Cords",
+   "status": "draft",
+   "kind": "either",
+   "quantity": 6,
+   "location": "Shop 5",
+   "ambiguous": true,
+   "note": "6 extension cords in Shop 5; not in saved records. Could be tools (6 records) or a supply; kind unclear."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "B43",
+  "turn": 1,
+  "item": "tool-bags",
+  "key": "draft",
+  "auditor": {
+   "item": "Tool Bag",
+   "status": "draft",
+   "kind": "tool",
+   "quantity": 4,
+   "location": "Shop 5",
+   "ambiguous": true,
+   "note": "4 tool bags in Shop 5, a new location. Readers could reasonably classify a bag as a tool or as a container that is not tracked."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "B55",
+  "turn": 1,
+  "item": "hard-hats",
+  "key": "draft",
+  "auditor": {
+   "item": "Hard Hats",
+   "status": "draft",
+   "kind": "either",
+   "quantity": 6,
+   "location": "Shop 4",
+   "ambiguous": true,
+   "note": "Hard hats could be tracked as checkout tools (6 records) or as supplies (6 units). The count is 6 either way."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "B55",
+  "turn": 1,
+  "item": "vests",
+  "key": "draft",
+  "auditor": {
+   "item": "Safety Vests",
+   "status": "draft",
+   "kind": "either",
+   "quantity": 10,
+   "location": "Shop 4",
+   "ambiguous": true,
+   "note": "Safety vests could be tools or supplies. The count is 10 either way."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "B56",
+  "turn": 1,
+  "item": "door-stops",
+  "key": "draft",
+  "auditor": {
+   "item": "Door Stops",
+   "status": "ask",
+   "kind": "supply",
+   "quantity": 12,
+   "location": null,
+   "ambiguous": true,
+   "note": "No saved door stops exist, so this is new. No location was given, so it must be asked. 'More' might mean a restock of something unrecorded or 12 new units."
+  },
+  "problem": "status: key says draft, auditor says ask"
+ },
+ {
+  "scenario": "B56",
+  "turn": 1,
+  "item": "door-stops",
+  "key": "draft",
+  "auditor": {
+   "item": "Door Stops",
+   "status": "ask",
+   "kind": "supply",
+   "quantity": 12,
+   "location": null,
+   "ambiguous": true,
+   "note": "No saved door stops exist, so this is new. No location was given, so it must be asked. 'More' might mean a restock of something unrecorded or 12 new units."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "B51",
+  "turn": 1,
+  "item": "flashlights",
+  "key": "draft",
+  "auditor": {
+   "item": "Flashlights",
+   "status": "draft",
+   "kind": "either",
+   "quantity": 10,
+   "location": "Shop 4",
+   "ambiguous": true,
+   "note": "Flashlights could be tools (10 records) or supplies; either way the quantity is 10."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "B52",
+  "turn": 1,
+  "item": "zip-ties",
+  "key": "draft",
+  "auditor": {
+   "item": "Zip Ties",
+   "status": "ask",
+   "kind": "supply",
+   "quantity": 1500,
+   "location": "Shop 4",
+   "ambiguous": true,
+   "note": "Size is not given. The saved record is 8in, but assuming 8in would be a guess, so ask. Others might draft these as generic or 8in zip ties."
+  },
+  "problem": "status: key says draft, auditor says ask"
+ },
+ {
+  "scenario": "B52",
+  "turn": 1,
+  "item": "zip-ties",
+  "key": "draft",
+  "auditor": {
+   "item": "Zip Ties",
+   "status": "ask",
+   "kind": "supply",
+   "quantity": 1500,
+   "location": "Shop 4",
+   "ambiguous": true,
+   "note": "Size is not given. The saved record is 8in, but assuming 8in would be a guess, so ask. Others might draft these as generic or 8in zip ties."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "B57",
+  "turn": 1,
+  "item": "outlet-covers",
+  "key": "ask",
+  "auditor": {
+   "item": "Outlet Cover Plates",
+   "status": "ask",
+   "kind": "supply",
+   "quantity": 50,
+   "location": null,
+   "ambiguous": true,
+   "note": "No location given. Outlet Cover Plates are saved in Shop 1, but the supervisor didn't say these are there, so the location must be asked. Some readers may treat this as a restock of the Shop 1 record and skip it."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "B57",
+  "turn": 1,
+  "item": "switches",
+  "key": "ask",
+  "auditor": {
+   "item": "Single-Pole Light Switches",
+   "status": "ask",
+   "kind": "supply",
+   "quantity": 10,
+   "location": null,
+   "ambiguous": true,
+   "note": "No location given, and the switch type isn't stated. These could be the saved Single-Pole Light Switches in Shop 1 (a restock) or something new."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "B59",
+  "turn": 1,
+  "item": "gloves",
+  "key": "skip",
+  "auditor": {
+   "item": "Work Gloves",
+   "status": "skip",
+   "kind": "supply",
+   "quantity": 20,
+   "location": "Shop 3",
+   "ambiguous": true,
+   "note": "Work Gloves are already saved in Shop 3 (qty 24), so this restates or restocks an existing item and nothing new is drafted. It is ambiguous whether the saved quantity counts pairs or individual gloves (10 pairs could mean 20 units)."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "D01",
+  "turn": 1,
+  "item": "ext-cords",
+  "key": "draft",
+  "auditor": {
+   "item": "extension cord",
+   "status": "draft",
+   "kind": "either",
+   "quantity": 2,
+   "location": "Shop A",
+   "ambiguous": true,
+   "note": "Could be checked-out tool or supply."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "L01",
+  "turn": 1,
+  "item": "outlets",
+  "key": "draft",
+  "auditor": {
+   "item": "outlet",
+   "status": "draft",
+   "kind": "supply",
+   "quantity": 10,
+   "location": "Shop A",
+   "ambiguous": true,
+   "note": "Type unspecified; listed separately from GFCI."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "L01",
+  "turn": 1,
+  "item": "putty-knives",
+  "key": "draft",
+  "auditor": {
+   "item": "putty knife",
+   "status": "draft",
+   "kind": "tool",
+   "quantity": 5,
+   "location": "Shop A",
+   "ambiguous": true,
+   "note": "Could be tool or supply."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "L01",
+  "turn": 1,
+  "item": "safety-glasses",
+  "key": "draft",
+  "auditor": {
+   "item": "safety glasses (pair)",
+   "status": "draft",
+   "kind": "either",
+   "quantity": 4,
+   "location": "Shop A",
+   "ambiguous": true,
+   "note": "Tool vs supply unclear."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "L01",
+  "turn": 1,
+  "item": "ext-cords",
+  "key": "draft",
+  "auditor": {
+   "item": "extension cord",
+   "status": "draft",
+   "kind": "either",
+   "quantity": 3,
+   "location": "Shop A",
+   "ambiguous": true,
+   "note": "Tool vs supply unclear."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "L03",
+  "turn": 1,
+  "item": "interior",
+  "key": "draft",
+  "auditor": {
+   "item": "interior paint (gal)",
+   "status": "draft",
+   "kind": "supply",
+   "quantity": 5,
+   "location": "Shop B",
+   "ambiguous": true,
+   "note": "5 gallons vs 5 cans/5-gal buckets unclear; color unknown."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "L03",
+  "turn": 1,
+  "item": "primer",
+  "key": "draft",
+  "auditor": {
+   "item": "primer (gal)",
+   "status": "draft",
+   "kind": "supply",
+   "quantity": 3,
+   "location": "Shop B",
+   "ambiguous": true,
+   "note": "Gallons vs containers unclear."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "L03",
+  "turn": 1,
+  "item": "brushes",
+  "key": "draft",
+  "auditor": {
+   "item": "paint brush",
+   "status": "draft",
+   "kind": "either",
+   "quantity": 10,
+   "location": "Shop B",
+   "ambiguous": true,
+   "note": "Tool vs supply unclear."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "L03",
+  "turn": 1,
+  "item": "trays",
+  "key": "draft",
+  "auditor": {
+   "item": "paint tray",
+   "status": "draft",
+   "kind": "either",
+   "quantity": 4,
+   "location": "Shop B",
+   "ambiguous": true,
+   "note": "Tool vs supply unclear."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "M02",
+  "turn": 1,
+  "item": "screws",
+  "key": "ask",
+  "auditor": {
+   "item": "1-1/4in Drywall Screws",
+   "status": "ask",
+   "kind": "supply",
+   "quantity": null,
+   "location": "Shop 4",
+   "ambiguous": true,
+   "note": "The unit count per box is unknown. Recording 3 boxes with the package in the name would also be faithful. This differs from the saved 1-5/8in screws."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "M03",
+  "turn": 1,
+  "item": "bulbs",
+  "key": "draft",
+  "auditor": {
+   "item": "60W Light Bulbs",
+   "status": "draft",
+   "kind": "supply",
+   "quantity": 12,
+   "location": "Clubhouse",
+   "ambiguous": true,
+   "note": "New location. The bulb type (LED/incandescent, base) is unspecified, and some readers would ask about it."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "M03",
+  "turn": 2,
+  "item": "bulbs",
+  "key": "draft",
+  "auditor": {
+   "item": "60W Light Bulbs",
+   "status": "draft",
+   "kind": "supply",
+   "quantity": 18,
+   "location": "Clubhouse",
+   "ambiguous": true,
+   "note": "The correction replaces 12 with 18. The bulb type is still unspecified."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "M06",
+  "turn": 1,
+  "item": "hose-clamps",
+  "key": "draft",
+  "auditor": {
+   "item": "Hose Clamps",
+   "status": "draft",
+   "kind": "supply",
+   "quantity": 40,
+   "location": "Shop 4",
+   "ambiguous": true,
+   "note": "Size not given; could be asked, but 40 hose clamps is recordable."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "M06",
+  "turn": 2,
+  "item": "hose-clamps",
+  "key": "draft",
+  "auditor": {
+   "item": "Hose Clamps",
+   "status": "draft",
+   "kind": "supply",
+   "quantity": 40,
+   "location": "Shop 4",
+   "ambiguous": true,
+   "note": "Size not given."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "M06",
+  "turn": 3,
+  "item": "hose-clamps",
+  "key": "draft",
+  "auditor": {
+   "item": "Hose Clamps",
+   "status": "draft",
+   "kind": "supply",
+   "quantity": 40,
+   "location": "Shop 4",
+   "ambiguous": true,
+   "note": "Size not given."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "M07",
+  "turn": 1,
+  "item": "chlorine",
+  "key": "ask",
+  "auditor": {
+   "item": "Chlorine Tablets",
+   "status": "ask",
+   "kind": "supply",
+   "quantity": null,
+   "location": "Pool house",
+   "ambiguous": true,
+   "note": "4 buckets given, but tablets per bucket are unknown. Recording 4 with 'bucket' in the name would also be faithful."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "M07",
+  "turn": 2,
+  "item": "chlorine",
+  "key": "ask",
+  "auditor": {
+   "item": "Chlorine Tablets",
+   "status": "ask",
+   "kind": "supply",
+   "quantity": null,
+   "location": "Pool house",
+   "ambiguous": true,
+   "note": "Now 6 buckets in the Pool house, but the unit count is still unknown. Drafting 6 buckets would also be faithful."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "B10",
+  "turn": 1,
+  "item": "hose-clamps",
+  "key": "draft",
+  "auditor": {
+   "item": "Hose Clamps",
+   "status": "ask",
+   "kind": "supply",
+   "quantity": 20,
+   "location": "Shop 4",
+   "ambiguous": true,
+   "note": "The supervisor gave the quantity (20) and location (Shop 4), but not the size or type of hose clamp. Some readers would draft it as generic hose clamps; a strict reader would ask for the size."
+  },
+  "problem": "status: key says draft, auditor says ask"
+ },
+ {
+  "scenario": "B10",
+  "turn": 1,
+  "item": "hose-clamps",
+  "key": "draft",
+  "auditor": {
+   "item": "Hose Clamps",
+   "status": "ask",
+   "kind": "supply",
+   "quantity": 20,
+   "location": "Shop 4",
+   "ambiguous": true,
+   "note": "The supervisor gave the quantity (20) and location (Shop 4), but not the size or type of hose clamp. Some readers would draft it as generic hose clamps; a strict reader would ask for the size."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "B12",
+  "turn": 1,
+  "item": "ladders",
+  "key": "draft",
+  "auditor": {
+   "item": "Ladders",
+   "status": "ask",
+   "kind": "tool",
+   "quantity": 2,
+   "location": "Shop 5",
+   "ambiguous": true,
+   "note": "\"to ladders\" is read as two ladders in Shop 5. The type is not given (step vs. extension, or height), so a strict reader would ask; others might draft them as generic ladders."
+  },
+  "problem": "status: key says draft, auditor says ask"
+ },
+ {
+  "scenario": "B12",
+  "turn": 1,
+  "item": "ladders",
+  "key": "draft",
+  "auditor": {
+   "item": "Ladders",
+   "status": "ask",
+   "kind": "tool",
+   "quantity": 2,
+   "location": "Shop 5",
+   "ambiguous": true,
+   "note": "\"to ladders\" is read as two ladders in Shop 5. The type is not given (step vs. extension, or height), so a strict reader would ask; others might draft them as generic ladders."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "B12",
+  "turn": 1,
+  "item": "buckets",
+  "key": "draft",
+  "auditor": {
+   "item": "Buckets",
+   "status": "draft",
+   "kind": "either",
+   "quantity": 4,
+   "location": "Shop 5",
+   "ambiguous": true,
+   "note": "\"for buckets\" is read as four buckets in Shop 5. It is unclear whether buckets are tracked as tools or as supplies."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "B23",
+  "turn": 1,
+  "item": "screws-3in",
+  "key": "draft",
+  "auditor": {
+   "item": "3in Deck Screws",
+   "status": "draft",
+   "kind": "supply",
+   "quantity": 50,
+   "location": "Shop 5",
+   "ambiguous": true,
+   "note": "Half of a 100-count box is 50. Some readers might ask because 'half a box' could be an estimate rather than an exact count."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "B24",
+  "turn": 1,
+  "item": "toilet-seats",
+  "key": "draft",
+  "auditor": {
+   "item": "Toilet Seats",
+   "status": "draft",
+   "kind": "supply",
+   "quantity": 6,
+   "location": "Shop 2",
+   "ambiguous": true,
+   "note": "New item, 6 in Shop 2. Toilet seats are most naturally a consumable part (supply), though one could debate the kind or ask about size (round vs elongated)."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "B36",
+  "turn": 1,
+  "item": "wood-screws",
+  "key": "draft",
+  "auditor": {
+   "item": "Assorted Wood Screws",
+   "status": "draft",
+   "kind": "supply",
+   "quantity": 200,
+   "location": "Shop 5",
+   "ambiguous": true,
+   "note": "'Roughly 200' is treated like 'about 200', so record 200. It is a new location. However, 'assorted' could lead one reader to ask for the size or type instead of drafting."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "D02",
+  "turn": 1,
+  "item": "bulbs",
+  "key": "draft",
+  "auditor": {
+   "item": "60W Light Bulbs",
+   "status": "draft",
+   "kind": "supply",
+   "quantity": 12,
+   "location": "Clubhouse",
+   "ambiguous": true,
+   "note": "Bulb type/base unspecified; some would ask."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "D02",
+  "turn": 1,
+  "item": "mops",
+  "key": "draft",
+  "auditor": {
+   "item": "Mops",
+   "status": "draft",
+   "kind": "either",
+   "quantity": 4,
+   "location": "Clubhouse",
+   "ambiguous": true,
+   "note": "Could be tool or supply."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "D02",
+  "turn": 1,
+  "item": "brooms",
+  "key": "draft",
+  "auditor": {
+   "item": "Brooms",
+   "status": "draft",
+   "kind": "either",
+   "quantity": 4,
+   "location": "Clubhouse",
+   "ambiguous": true,
+   "note": "Could be tool or supply."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "L02",
+  "turn": 1,
+  "item": "putty-knives",
+  "key": "draft",
+  "auditor": {
+   "item": "Putty Knives",
+   "status": "draft",
+   "kind": "tool",
+   "quantity": 6,
+   "location": "Shop 4",
+   "ambiguous": true,
+   "note": "Could be treated as supply."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "L02",
+  "turn": 1,
+  "item": "voltage-testers",
+  "key": "draft",
+  "auditor": {
+   "item": "Voltage Testers",
+   "status": "draft",
+   "kind": "tool",
+   "quantity": 2,
+   "location": "Shop 1",
+   "ambiguous": true,
+   "note": "'New' implies additional to the 2 saved; difference reading could give 0."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "M12",
+  "turn": 1,
+  "item": "bulbs",
+  "key": "ask",
+  "auditor": {
+   "item": "60 Watt Bulbs",
+   "status": "ask",
+   "kind": "supply",
+   "quantity": null,
+   "location": "Shop 4",
+   "ambiguous": true,
+   "note": "Units per case unknown; recording 2 cases with the package in the name would also be faithful. Bulb type (LED vs incandescent, base) is unspecified."
+  },
+  "problem": "auditor marked this ambiguous"
+ },
+ {
+  "scenario": "M12",
+  "turn": 2,
+  "item": "bulbs",
+  "key": "draft",
+  "auditor": {
+   "item": "60 Watt Bulbs",
+   "status": "draft",
+   "kind": "supply",
+   "quantity": 48,
+   "location": "Shop 4",
+   "ambiguous": true,
+   "note": "2 cases x 24 = 48 units. Bulb type is still unspecified, so some readers would ask. Not a saved item, since the saved bulbs are LED A19s in Shop 1."
+  },
+  "problem": "auditor marked this ambiguous"
+ }
+]

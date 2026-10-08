@@ -1,0 +1,704 @@
+{
+ "generated_at": "2026-10-08T20:31:49.684Z",
+ "scenarios": 101,
+ "planned_runs": 300,
+ "runs_scored": 300,
+ "runs_app_error": 0,
+ "app_errors": [],
+ "infra_errors_unresolved": 0,
+ "run_pass": {
+  "k": 297,
+  "n": 300,
+  "rate": 0.99,
+  "ci95": {
+   "lo": 0.9710159953649372,
+   "hi": 0.9965934432372819
+  },
+  "failure_upper95": 0.028984004635062833
+ },
+ "item_checks": {
+  "n": 976,
+  "inaccurate": 3,
+  "unplaced_rows": 0,
+  "rate_ok": 0.9969262295081968
+ },
+ "records_final": {
+  "rows": 1589,
+  "inaccurate": 0,
+  "failure_upper95": 0.0018835180171269394
+ },
+ "records_all_checkpoints": 1649,
+ "unnecessary_questions": {
+  "derivable_item_checks": 821,
+  "asked_instead": 33,
+  "unnecessary": 23,
+  "rate": 0.028014616321559074
+ },
+ "outcome_counts": {
+  "ok_draft": 785,
+  "ok_absent": 24,
+  "ok_ask": 53,
+  "ok_asked_instead": 33,
+  "ok_skip": 78,
+  "omitted": 3
+ },
+ "consistency": {
+  "scenarios_with_reps": 101,
+  "same_verdict": 101,
+  "same_item_outcomes": 93,
+  "identical_final_tables": 76
+ },
+ "database": {
+  "saved": 1589,
+  "failed": 0,
+  "mismatches": 0,
+  "failed_reasons": []
+ },
+ "cost_usd_chatbot": 11.768439999999991,
+ "latency_s": {
+  "median": 5.686,
+  "p95": 15.3,
+  "max": 39.785
+ },
+ "by_fluency": {
+  "spoken": {
+   "runs": 32,
+   "pass": 32,
+   "items": 127,
+   "bad": 0
+  },
+  "precise": {
+   "runs": 39,
+   "pass": 39,
+   "items": 144,
+   "bad": 0
+  },
+  "casual": {
+   "runs": 185,
+   "pass": 182,
+   "items": 526,
+   "bad": 3
+  },
+  "typos": {
+   "runs": 15,
+   "pass": 15,
+   "items": 39,
+   "bad": 0
+  },
+  "terse": {
+   "runs": 29,
+   "pass": 29,
+   "items": 140,
+   "bad": 0
+  }
+ },
+ "by_group": {
+  "A": {
+   "runs": 72,
+   "pass": 72,
+   "items": 204,
+   "bad": 0
+  },
+  "B": {
+   "runs": 180,
+   "pass": 177,
+   "items": 351,
+   "bad": 3
+  },
+  "M": {
+   "runs": 36,
+   "pass": 36,
+   "items": 111,
+   "bad": 0
+  },
+  "D": {
+   "runs": 6,
+   "pass": 6,
+   "items": 114,
+   "bad": 0
+  },
+  "L": {
+   "runs": 6,
+   "pass": 6,
+   "items": 196,
+   "bad": 0
+  }
+ },
+ "by_tag": {
+  "homophone": {
+   "runs": 6,
+   "pass": 6,
+   "items": 15,
+   "bad": 0
+  },
+  "self-correction": {
+   "runs": 17,
+   "pass": 17,
+   "items": 94,
+   "bad": 0
+  },
+  "arithmetic": {
+   "runs": 27,
+   "pass": 27,
+   "items": 57,
+   "bad": 0
+  },
+  "approximate": {
+   "runs": 12,
+   "pass": 12,
+   "items": 30,
+   "bad": 0
+  },
+  "a-couple": {
+   "runs": 9,
+   "pass": 9,
+   "items": 27,
+   "bad": 0
+  },
+  "clean": {
+   "runs": 12,
+   "pass": 12,
+   "items": 42,
+   "bad": 0
+  },
+  "repeat-consistent": {
+   "runs": 6,
+   "pass": 6,
+   "items": 12,
+   "bad": 0
+  },
+  "misspelling": {
+   "runs": 12,
+   "pass": 12,
+   "items": 30,
+   "bad": 0
+  },
+  "retraction": {
+   "runs": 9,
+   "pass": 9,
+   "items": 33,
+   "bad": 0
+  },
+  "missing-pack-size": {
+   "runs": 12,
+   "pass": 12,
+   "items": 24,
+   "bad": 0
+  },
+  "repeat-additive": {
+   "runs": 3,
+   "pass": 3,
+   "items": 3,
+   "bad": 0
+  },
+  "range": {
+   "runs": 6,
+   "pass": 6,
+   "items": 12,
+   "bad": 0
+  },
+  "vague-quantity": {
+   "runs": 6,
+   "pass": 6,
+   "items": 15,
+   "bad": 0
+  },
+  "multi-location": {
+   "runs": 13,
+   "pass": 13,
+   "items": 207,
+   "bad": 0
+  },
+  "location-change": {
+   "runs": 3,
+   "pass": 3,
+   "items": 12,
+   "bad": 0
+  },
+  "units": {
+   "runs": 3,
+   "pass": 3,
+   "items": 6,
+   "bad": 0
+  },
+  "abbreviation": {
+   "runs": 6,
+   "pass": 6,
+   "items": 15,
+   "bad": 0
+  },
+  "unresolved-conflict": {
+   "runs": 3,
+   "pass": 3,
+   "items": 6,
+   "bad": 0
+  },
+  "tool-numbering": {
+   "runs": 3,
+   "pass": 3,
+   "items": 9,
+   "bad": 0
+  },
+  "non-native": {
+   "runs": 3,
+   "pass": 3,
+   "items": 9,
+   "bad": 0
+  },
+  "saved-duplicate": {
+   "runs": 26,
+   "pass": 26,
+   "items": 112,
+   "bad": 0
+  },
+  "synonym": {
+   "runs": 3,
+   "pass": 3,
+   "items": 6,
+   "bad": 0
+  },
+  "near-miss-item": {
+   "runs": 18,
+   "pass": 18,
+   "items": 45,
+   "bad": 0
+  },
+  "reworded": {
+   "runs": 3,
+   "pass": 3,
+   "items": 9,
+   "bad": 0
+  },
+  "same-item-new-location": {
+   "runs": 15,
+   "pass": 15,
+   "items": 27,
+   "bad": 0
+  },
+  "restock-out-of-scope": {
+   "runs": 17,
+   "pass": 17,
+   "items": 88,
+   "bad": 0
+  },
+  "saved-overlap-count": {
+   "runs": 6,
+   "pass": 6,
+   "items": 9,
+   "bad": 0
+  },
+  "additional-tools": {
+   "runs": 6,
+   "pass": 3,
+   "items": 9,
+   "bad": 3
+  },
+  "tools": {
+   "runs": 6,
+   "pass": 6,
+   "items": 18,
+   "bad": 0
+  },
+  "usage-out-of-scope": {
+   "runs": 6,
+   "pass": 6,
+   "items": 9,
+   "bad": 0
+  },
+  "question-mixed-in": {
+   "runs": 9,
+   "pass": 9,
+   "items": 15,
+   "bad": 0
+  },
+  "not-inventory": {
+   "runs": 6,
+   "pass": 6,
+   "items": 15,
+   "bad": 0
+  },
+  "missing-type": {
+   "runs": 6,
+   "pass": 6,
+   "items": 6,
+   "bad": 0
+  },
+  "location-carry": {
+   "runs": 3,
+   "pass": 3,
+   "items": 12,
+   "bad": 0
+  },
+  "mixed-kinds": {
+   "runs": 6,
+   "pass": 6,
+   "items": 18,
+   "bad": 0
+  },
+  "number-words": {
+   "runs": 9,
+   "pass": 9,
+   "items": 15,
+   "bad": 0
+  },
+  "similar-items": {
+   "runs": 14,
+   "pass": 14,
+   "items": 98,
+   "bad": 0
+  },
+  "reference-same": {
+   "runs": 9,
+   "pass": 9,
+   "items": 27,
+   "bad": 0
+  },
+  "filler": {
+   "runs": 6,
+   "pass": 6,
+   "items": 15,
+   "bad": 0
+  },
+  "slang": {
+   "runs": 3,
+   "pass": 3,
+   "items": 6,
+   "bad": 0
+  },
+  "different-count": {
+   "runs": 6,
+   "pass": 6,
+   "items": 6,
+   "bad": 0
+  },
+  "hedged-existence": {
+   "runs": 3,
+   "pass": 3,
+   "items": 6,
+   "bad": 0
+  },
+  "implied-count": {
+   "runs": 3,
+   "pass": 3,
+   "items": 9,
+   "bad": 0
+  },
+  "notation": {
+   "runs": 6,
+   "pass": 6,
+   "items": 12,
+   "bad": 0
+  },
+  "no-location": {
+   "runs": 6,
+   "pass": 6,
+   "items": 9,
+   "bad": 0
+  },
+  "possible-saved-duplicate": {
+   "runs": 3,
+   "pass": 3,
+   "items": 6,
+   "bad": 0
+  },
+  "multi-turn": {
+   "runs": 36,
+   "pass": 36,
+   "items": 111,
+   "bad": 0
+  },
+  "answer-question": {
+   "runs": 3,
+   "pass": 3,
+   "items": 6,
+   "bad": 0
+  },
+  "correction": {
+   "runs": 6,
+   "pass": 6,
+   "items": 12,
+   "bad": 0
+  },
+  "additive-update": {
+   "runs": 3,
+   "pass": 3,
+   "items": 6,
+   "bad": 0
+  },
+  "move-location": {
+   "runs": 3,
+   "pass": 3,
+   "items": 6,
+   "bad": 0
+  },
+  "partial-answers": {
+   "runs": 3,
+   "pass": 3,
+   "items": 27,
+   "bad": 0
+  },
+  "long-list": {
+   "runs": 12,
+   "pass": 12,
+   "items": 310,
+   "bad": 0
+  },
+  "demo-limit": {
+   "runs": 6,
+   "pass": 6,
+   "items": 114,
+   "bad": 0
+  }
+ },
+ "adjudications": [],
+ "failures": [
+  {
+   "scenario": "B04",
+   "rep": 0,
+   "turn": 1,
+   "item": "multimeter",
+   "outcome": "omitted",
+   "detail": "not drafted and not asked about",
+   "said": "We just bought 2 more impact drivers for shop 1 and a new multimeter for shop 1 too.",
+   "rows": [],
+   "reply": "2 items added to the draft. Use the table below to confirm/edit or tell me what edits to make.\n\nAlready saved, not added: Multimeter (Shop 1)."
+  },
+  {
+   "scenario": "B04",
+   "rep": 1,
+   "turn": 1,
+   "item": "multimeter",
+   "outcome": "omitted",
+   "detail": "not drafted and not asked about",
+   "said": "We just bought 2 more impact drivers for shop 1 and a new multimeter for shop 1 too.",
+   "rows": [],
+   "reply": "2 items added to the draft. Use the table below to confirm/edit or tell me what edits to make.\n\nAlready saved, not added: Multimeter (Shop 1)."
+  },
+  {
+   "scenario": "B04",
+   "rep": 2,
+   "turn": 1,
+   "item": "multimeter",
+   "outcome": "omitted",
+   "detail": "not drafted and not asked about",
+   "said": "We just bought 2 more impact drivers for shop 1 and a new multimeter for shop 1 too.",
+   "rows": [],
+   "reply": "2 items added to the draft. Use the table below to confirm/edit or tell me what edits to make.\n\nAlready saved, not added: Multimeter (Shop 1)."
+  }
+ ],
+ "unnecessary_list": [
+  {
+   "scenario": "A20",
+   "rep": 0,
+   "turn": 1,
+   "item": "grass-seed",
+   "questions": [
+    "1. grass seed bags: How many pounds (or lbs) are in each bag of grass seed?"
+   ]
+  },
+  {
+   "scenario": "B12",
+   "rep": 0,
+   "turn": 1,
+   "item": "buckets",
+   "questions": [
+    "1. buckets: What size/type of buckets are these (e.g. 5-gallon plain buckets), and should they be tracked as a supply count of 4?"
+   ]
+  },
+  {
+   "scenario": "B33",
+   "rep": 0,
+   "turn": 1,
+   "item": "2x4",
+   "questions": [
+    "1. 2x4s: Are the \"forty 2x4s\" individual boards, and what length are they (e.g. 8ft)?"
+   ]
+  },
+  {
+   "scenario": "B37",
+   "rep": 0,
+   "turn": 1,
+   "item": "levels",
+   "questions": [
+    "Could you rephrase it with the location and items you'd like to add?"
+   ]
+  },
+  {
+   "scenario": "B37",
+   "rep": 0,
+   "turn": 1,
+   "item": "speed-squares",
+   "questions": [
+    "Could you rephrase it with the location and items you'd like to add?"
+   ]
+  },
+  {
+   "scenario": "B46",
+   "rep": 0,
+   "turn": 1,
+   "item": "filters-20x20",
+   "questions": [
+    "1. 20x20x1 and 16x25x1 Furnace Filters, Shop 4: These filters already exist under Boiler Room — is Shop 4 the same place, or do you want separate stock tracked at Shop 4?"
+   ]
+  },
+  {
+   "scenario": "B46",
+   "rep": 0,
+   "turn": 1,
+   "item": "filters-16x25",
+   "questions": [
+    "1. 20x20x1 and 16x25x1 Furnace Filters, Shop 4: These filters already exist under Boiler Room — is Shop 4 the same place, or do you want separate stock tracked at Shop 4?"
+   ]
+  },
+  {
+   "scenario": "M01",
+   "rep": 0,
+   "turn": 2,
+   "item": "pvc-cement",
+   "questions": [
+    "1. PVC cement: What size are the 6 cans of PVC cement (e.g. 8oz, quart)?",
+    "8oz, quart, gallon)?"
+   ]
+  },
+  {
+   "scenario": "D02",
+   "rep": 0,
+   "turn": 1,
+   "item": "aa",
+   "questions": [
+    "1. AA batteries (clubhouse, 24): Shop 1 already has AA batteries on record - should these 24 be added there, or is the clubhouse a separate stock location to track on its own?",
+    "2. light bulbs (60 watt), clubhouse: Are these standard incandescent/CFL 60-watt bulbs, and is there a color temperature (like soft white or daylight) I should note?"
+   ]
+  },
+  {
+   "scenario": "D02",
+   "rep": 0,
+   "turn": 1,
+   "item": "bulbs",
+   "questions": [
+    "1. AA batteries (clubhouse, 24): Shop 1 already has AA batteries on record - should these 24 be added there, or is the clubhouse a separate stock location to track on its own?",
+    "2. light bulbs (60 watt), clubhouse: Are these standard incandescent/CFL 60-watt bulbs, and is there a color temperature (like soft white or daylight) I should note?"
+   ]
+  },
+  {
+   "scenario": "A20",
+   "rep": 1,
+   "turn": 1,
+   "item": "grass-seed",
+   "questions": [
+    "1. grass seed bags: How many pounds (or lbs per bag) is each bag of grass seed, so I can log total quantity correctly?",
+    "Want me to just log it as \"15 bags\"?"
+   ]
+  },
+  {
+   "scenario": "B12",
+   "rep": 1,
+   "turn": 1,
+   "item": "buckets",
+   "questions": [
+    "1. buckets: How many buckets, and what size/type (e.g. 5-gallon)?"
+   ]
+  },
+  {
+   "scenario": "A04",
+   "rep": 2,
+   "turn": 1,
+   "item": "chlorine",
+   "questions": [
+    "1. chlorine jugs: How many gallons/lbs per jug, so I can set a good reorder level?"
+   ]
+  },
+  {
+   "scenario": "A20",
+   "rep": 2,
+   "turn": 1,
+   "item": "grass-seed",
+   "questions": [
+    "1. grass seed bags: How many pounds (or lbs) per bag, so I can log total quantity correctly?"
+   ]
+  },
+  {
+   "scenario": "B12",
+   "rep": 2,
+   "turn": 1,
+   "item": "buckets",
+   "questions": [
+    "1. buckets: What size/type of buckets are these (e.g. 5-gallon utility buckets), and how many total?"
+   ]
+  },
+  {
+   "scenario": "B33",
+   "rep": 2,
+   "turn": 1,
+   "item": "2x4",
+   "questions": [
+    "1. 2x4s: Are the \"forty\" 2x4s individual boards, and what length are they (e.g. 8ft)?"
+   ]
+  },
+  {
+   "scenario": "B37",
+   "rep": 2,
+   "turn": 1,
+   "item": "levels",
+   "questions": [
+    "Could you clarify what \"sh4 10 lvl 2ft, 5 spd sq\" refers to—what item(s) and location did you mean?"
+   ]
+  },
+  {
+   "scenario": "B37",
+   "rep": 2,
+   "turn": 1,
+   "item": "speed-squares",
+   "questions": [
+    "Could you clarify what \"sh4 10 lvl 2ft, 5 spd sq\" refers to—what item(s) and location did you mean?"
+   ]
+  },
+  {
+   "scenario": "B46",
+   "rep": 2,
+   "turn": 1,
+   "item": "filters-20x20",
+   "questions": [
+    "1. 20x20x1 and 16x25x1 Furnace Filters (Shop 4): We already have these filter sizes stored under \"Boiler Room\" - is Shop 4 the same location renamed, a separate stock location, or did you mean to add to the existing Boiler Room stock?",
+    "Quick question: is \"Shop 4\" the same place as your existing \"Boiler Room\" filter stock, a different location entirely, or did you want these added to the existing stock there?"
+   ]
+  },
+  {
+   "scenario": "B46",
+   "rep": 2,
+   "turn": 1,
+   "item": "filters-16x25",
+   "questions": [
+    "1. 20x20x1 and 16x25x1 Furnace Filters (Shop 4): We already have these filter sizes stored under \"Boiler Room\" - is Shop 4 the same location renamed, a separate stock location, or did you mean to add to the existing Boiler Room stock?",
+    "Quick question: is \"Shop 4\" the same place as your existing \"Boiler Room\" filter stock, a different location entirely, or did you want these added to the existing stock there?"
+   ]
+  },
+  {
+   "scenario": "M01",
+   "rep": 2,
+   "turn": 2,
+   "item": "pvc-cement",
+   "questions": [
+    "1. PVC cement: What size are the 6 cans (e.g. quart, pint, half-pint)?"
+   ]
+  },
+  {
+   "scenario": "B37",
+   "rep": 1,
+   "turn": 1,
+   "item": "levels",
+   "questions": [
+    "1. sh4 10 lvl 2ft, 5 spd sq: Could you clarify this item? It looks like it may have been garbled by speech-to-text — what tool or supply did you mean?"
+   ]
+  },
+  {
+   "scenario": "B37",
+   "rep": 1,
+   "turn": 1,
+   "item": "speed-squares",
+   "questions": [
+    "1. sh4 10 lvl 2ft, 5 spd sq: Could you clarify this item? It looks like it may have been garbled by speech-to-text — what tool or supply did you mean?"
+   ]
+  }
+ ]
+}
