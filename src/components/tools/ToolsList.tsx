@@ -33,14 +33,16 @@ export default function ToolsList({ propertyId, tools, canManage }: { propertyId
             );
 
     return (
-        <div className="flex flex-col gap-2">
-            <input
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search by name, category, location, or status"
-                className="rounded border p-2 text-sm"
-            />
+        <div className="flex flex-col gap-2 min-h-screen mb-10">
+            <div className="flex justify-center">
+                <input
+                    type="text"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="Search by name, category, location, or status"
+                    className="rounded border p-2 text-sm w-full text-center max-w-sm"
+                />
+            </div>
 
             {tools.length === 0 && <p className="text-gray-500">No tools yet</p>}
 
@@ -54,8 +56,8 @@ export default function ToolsList({ propertyId, tools, canManage }: { propertyId
                         key={tool.id}
                         className={
                             tool.isCheckedOut
-                                ? "flex items-center justify-between rounded border bg-gray-100 p-3 opacity-60"
-                                : "flex items-center justify-between rounded border p-3"
+                                ? "flex items-center justify-between rounded-xl border bg-gray-100 p-3 opacity-60"
+                                : "flex items-center justify-between rounded-xl border p-3"
                         }
                     >
                         <div>

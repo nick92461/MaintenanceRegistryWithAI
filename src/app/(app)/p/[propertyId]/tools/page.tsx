@@ -44,11 +44,16 @@ export default async function ToolsPage({ params }: { params: Promise<{ property
 
     return (
         <div className="flex flex-col gap-2">
-            <h1 className="text-xl font-semibold">Tools</h1>
+            <h1 className="text-5xl font-semibold mb-5 text-center pl-5">Tools</h1>
 
-            {canManage && <AddToolForm propertyId={access.property.id} />}
+            <div className="mb-10">
+                {canManage && <AddToolForm propertyId={access.property.id} />}
+            </div>
 
-            <ToolsList propertyId={access.property.id} tools={tools} canManage={canManage} />
+            <div>
+                <h2 className="text-xl font-semibold mb-2">Tools List</h2>
+                <ToolsList propertyId={access.property.id} tools={tools} canManage={canManage} />
+            </div>
         </div>
     );
 }

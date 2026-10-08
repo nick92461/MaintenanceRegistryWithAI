@@ -40,11 +40,16 @@ export default async function InventoryPage({ params }: { params: Promise<{ prop
 
 	return (
 		<div className="flex flex-col gap-4">
-			<h1 className="text-xl font-semibold">Inventory</h1>
+			<h1 className="text-5xl font-semibold mb-5 text-center pl-5">Inventory</h1>
 
-			{canManage && <AddItemForm propertyId={access.property.id} />}
+			<div className="mb-10">
+				{canManage && <AddItemForm propertyId={access.property.id} />}
+			</div>
 
-			<InventoryList propertyId={access.property.id} items={items} canManage={canManage} />
+			<div>
+				<h2 className="text-xl font-semibold mb-2">Inventory List</h2>
+				<InventoryList propertyId={access.property.id} items={items} canManage={canManage} />
+			</div>
 		</div>
 	);
 }

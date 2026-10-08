@@ -29,18 +29,21 @@ export default async function PropertyLayout({ children, params }: { children: R
     const properties = await getAccessibleProperties();
 
     return (
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b pb-3">
-            <div>
-                <p className="text-lg font-semibold">{access.property.name}</p>
-                <p className="text-sm text-gray-500">{access.role}</p>
+        <div className="mx-auto max-w-5xl flex flex-col flex-wrap gap-2 pb-3">
+            <div className="flex justify-between border rounded-xl p-3 mb-10">
+                <div className="flex flex-col">
+                    <p className="text-lg font-semibold">{access.property.name}</p>
+                    <p className="text-sm text-gray-500">{access.role}</p>
+                </div>
+                <div className="flex items-center gap-3">
+                    <PropertySwitcher properties={properties} currentId={propertyId} />
+                    <Link href={`/p/${propertyId}`} className="text-sm text-blue-600 underline">
+                        Property home
+                    </Link>
+                </div>
             </div>
 
-            <div className="flex items-center gap-3">
-                <PropertySwitcher properties={properties} currentId={propertyId} />
-                <Link href={`/p/${propertyId}`} className="text-sm text-blue-600 underline">
-                    Property home
-                </Link>
-            </div>
+            
 
             {children}
         </div>
