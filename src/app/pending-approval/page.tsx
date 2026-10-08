@@ -33,7 +33,7 @@ export default async function PendingApprovalPage() {
                 {names
                     ? `Your request to join ${names} is waiting for a supervisor or manager to approve it.`
                     : "You don't have access to a property yet."}{" "}
-                You'll be able to use the app once that happens.
+                You&apos;ll be able to use the app once that happens.
             </p>
             <form action={logout}>
                 <button type="submit" className="text-sm text-blue-600 underline">

@@ -8,7 +8,7 @@ import Link from "next/link";
 const initialState: AuthActionState = {};
 
 
-export default function LoginForm() {
+export default function LoginForm({ showSignup = true }: { showSignup?: boolean }) {
     const [state, formAction, isPending] = useActionState(login, initialState);
 
     return (
@@ -36,12 +36,14 @@ export default function LoginForm() {
             >
                 {isPending ? "Signing in..." : "Sign in"}
             </button>
-            <Link
-                href="/signup"
-                className="text-center text-sm text-blue-600 underline"
-            >
-                Create an account
-            </Link>
+            {showSignup && (
+                <Link
+                    href="/signup"
+                    className="text-center text-sm text-blue-600 underline"
+                >
+                    Create an account
+                </Link>
+            )}
         </form>
-    )
+    );
 }

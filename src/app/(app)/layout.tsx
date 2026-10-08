@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth/sessions";
 import { getAccessibleProperties } from "@/lib/auth/pageAccess";
 import { logout } from "@/lib/actions/auth";
@@ -14,6 +15,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     if (user.mustChangePassword) {
         redirect("/change-password");
     }
+
+    const company = await prisma.company.findUnique({ where: { id: user.companyId }, select: { isDemo: true } });
 
     const properties = await getAccessibleProperties();
 
@@ -43,6 +46,13 @@ export default async function AppLayout({ children }: { children: React.ReactNod
                     </Link>
                 </div>
             </header>
+
+            {company?.isDemo && (
+                <p className="border-b bg-yellow-100 px-6 py-2 text-sm text-yellow-900">
+                    This is a private demo with sample data that only you can see. It&apos;s deleted automatically a day after you started it.
+                </p>
+            )}
+
             <main className="p-6">{children}</main>
         </div>
     );

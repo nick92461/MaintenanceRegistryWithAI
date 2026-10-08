@@ -4,9 +4,10 @@ import { prisma } from "@/lib/prisma";
 import { hashPassword, verifyPassword } from "../auth/passwords";
 import { getCurrentUserAndRenewSession, createSession, destroySession } from "../auth/sessions";
 import { clearRateLimit, isRateLimited, recordRateLimitHit } from "../auth/rateLimit";
+import { getClientAddress } from "../auth/clientAddress";
+import { isDemoMode } from "../demo/demoMode";
 import { checkNewPassword } from "../auth/passwordRules";
 import { Role } from "@/generated/prisma/enums";
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 const JOIN_CODE_ATTEMPT_LIMIT = 10;
@@ -22,13 +23,11 @@ export type AuthActionState = {
     success?: boolean;
 };
 
-async function getClientAddress(): Promise<string> {
-    const forwarded = (await headers()).get("x-forwarded-for");
-
-    return forwarded?.split(",")[0].trim() || "unknown";
-}
-
 export async function createAccount(prevState: unknown, formData: FormData): Promise<AuthActionState> {
+    if (isDemoMode()) {
+        return { error: "Sign-up is turned off on the demo site." };
+    }
+    
     const name = formData.get("name");
     const email = formData.get("email");
     const password = formData.get("password");

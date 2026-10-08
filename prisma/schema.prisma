@@ -24,12 +24,16 @@ enum ToolStatus {
 }
 
 model Company {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   name      String
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
+  isDemo    Boolean   @default(false)
+  expiresAt DateTime?
 
   properties Property[]
   users      User[]
+
+  @@index([isDemo, expiresAt])
 }
 
 model Property {
