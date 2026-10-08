@@ -44,32 +44,57 @@ Next.js 16 (App Router, Server Actions), React 19, TypeScript, Tailwind CSS, Pri
 
 ## Getting started
 
-1. Install dependencies (this also generates the Prisma client):
+You'll need [Node.js](https://nodejs.org) 20.9 or newer, [Docker Desktop](https://www.docker.com/products/docker-desktop/) (for the database), and, only if you want to try the AI assistant, an [Anthropic API key](https://console.anthropic.com). Everything else works without a key.
+
+1. Clone the repository and switch to the `dev` branch:
+   ```bash
+   git clone https://github.com/nick92461/MaintenanceRegistryWithAI.git
+   ```
+   ```bash
+   cd MaintenanceRegistryWithAI
+   ```
+   ```bash
+   git checkout dev
+   ```
+2. Install dependencies (this also generates the Prisma client):
    ```bash
    npm install
    ```
-2. Start the local PostgreSQL database (Docker):
+3. Start the local PostgreSQL database (Docker must be running):
    ```bash
    docker compose up -d
    ```
-3. Create a `.env` file in the project root with:
-   - `DATABASE_URL`: your PostgreSQL connection string. For the Docker database above: `postgresql://capstone:capstone_dev_password@localhost:5432/capstone`
-   - `ANTHROPIC_API_KEY`: your Anthropic API key (only the assistant needs it)
-4. Create the tables:
-   ```bash
-   npx prisma migrate dev
+4. Create a file named `.env` in the project root containing these three lines. **`DEMO_MODE=true` is required** to get the "Try the live demo" button:
    ```
-5. Load demo data (three companies, six properties, two years of history):
-   ```bash
-   npx tsx prisma/seed.ts
+   DATABASE_URL=postgresql://capstone:capstone_dev_password@localhost:5432/capstone
+   DEMO_MODE=true
+   ANTHROPIC_API_KEY=your key here
    ```
-   It prints every demo account and each property's join code. All demo accounts use the password `Password123!`.
-6. Run the app:
+   Replace `your key here` with your own key (or leave the line out to skip the assistant). The `DATABASE_URL` above matches the Docker database from step 3.
+5. Create the tables:
+   ```bash
+   npx prisma migrate deploy
+   ```
+6. Run the app, then open http://localhost:3000:
    ```bash
    npm run dev
    ```
+7. On the login page, click **Try the live demo**. It creates a private sandbox company filled with sample tools, inventory, and two years of history, and signs you in as its administrator. Nothing you do there touches anyone else's data, and the sandbox is deleted after 24 hours.
 
-Good accounts to try: `summit.regional@example.com` (Manager at two properties, with the property switcher), `summit.admin@example.com` (company admin), `floating.tech@example.com` (Technician at two properties), and `willows.admin@example.com` (a standalone property).
+Notes on demo mode:
+
+- Public signup is switched off while `DEMO_MODE=true`. Remove the line (or set it to anything other than `true`) to run the app normally, with signup enabled and no demo button. Restart the dev server after changing `.env`.
+- The assistant is limited in demo mode to keep costs down: 10 messages per sandbox, 15 per day from one address, 40 per day across the whole site, and 1,500 characters per message.
+
+### Optional: seeded sample accounts
+
+To explore the multi-property and multi-company features with fixed logins instead of a sandbox, load the seed data (three companies, six properties, two years of history):
+
+```bash
+npx tsx prisma/seed.ts
+```
+
+It prints every account and each property's join code. All of them use the password `Password123!`. Good ones to try: `summit.regional@example.com` (Manager at two properties, with the property switcher), `summit.admin@example.com` (company admin), `floating.tech@example.com` (Technician at two properties), and `willows.admin@example.com` (a standalone property). To work on the code itself, use `npx prisma migrate dev` in step 5 instead of `migrate deploy`.
 
 ## Creating a real company
 
@@ -110,7 +135,7 @@ Note: `src/lib/ai/claude.test.ts` calls the real Anthropic API and costs a small
 - No "forgot password" flow or email verification yet, because the app doesn't send email. A locked-out user needs someone to reset their account.
 - Signup tells people when an email is already registered.
 - The UI is functional but unpolished.
-- Not deployed yet.
+- Not deployed yet. Until then, the demo runs locally (see Getting started).
 
 ## Roadmap
 
