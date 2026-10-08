@@ -6,6 +6,7 @@ import { LEAD_ROLES, STAFF_ROLES } from "../auth/propertyRole";
 import { Role } from "@/generated/prisma/enums";
 import { revalidatePath } from "next/cache";
 import { InventoryItem } from "../domain/InventoryItem";
+import { DEMO_MAX_NOTE_LENGTH, DEMO_TEXT_TOO_LONG, demoRowCapMessage, hasOverlongDemoText } from "../demo/rowCaps";
 
 export async function createInventoryItem(prevState: unknown, formData: FormData) {
     const access = await requirePropertyRole(formData.get("propertyId"), LEAD_ROLES);
@@ -44,6 +45,17 @@ export async function createInventoryItem(prevState: unknown, formData: FormData
     if (!Number.isInteger(reorderThresholdNumber) || reorderThresholdNumber < 0) {
         return { error: "Reorder threshold must be a whole number 0 or greater" };
     }
+
+    if (hasOverlongDemoText([name, category, location])) {
+        return { error: DEMO_TEXT_TOO_LONG };
+    }
+
+    const capMessage = await demoRowCapMessage(access.user.companyId, "inventoryItems");
+
+    if (capMessage) {
+        return { error: capMessage };
+    }
+
 
     await prisma.inventoryItem.create({
         data: {
@@ -106,6 +118,17 @@ export async function adjustInventoryQuantity(propertyId: string, itemId: string
     if (access.role === Role.TECHNICIAN && amount > 0) {
         return { error: "You may only remove quantity from an item" };
     }
+
+    if (hasOverlongDemoText([note], DEMO_MAX_NOTE_LENGTH)) {
+        return { error: DEMO_TEXT_TOO_LONG };
+    }
+
+    const capMessage = await demoRowCapMessage(access.user.companyId, "adjustments");
+
+    if (capMessage) {
+        return { error: capMessage };
+    }
+
 
     const row = await prisma.inventoryItem.findFirst({ where: { id: itemId, propertyId: access.propertyId } });
 

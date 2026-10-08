@@ -5,6 +5,7 @@ import { requirePropertyRole } from "../auth/access";
 import { LEAD_ROLES } from "../auth/propertyRole";
 import { revalidatePath } from "next/cache";
 import type { Draft } from "../ai/drafts";
+import { DEMO_TEXT_TOO_LONG, demoRowCapMessage, hasOverlongDemoText } from "../demo/rowCaps";
 
 export type ConfirmDraftsResult = 
     | { error: string }
@@ -14,6 +15,8 @@ function validateDraft(draft: Draft): string | undefined {
     if (draft.name.trim().length === 0) return "Name is required.";
     if (draft.category.trim().length === 0) return "Category is required.";
     if (draft.location.trim().length === 0) return "Location is required.";
+
+    if (hasOverlongDemoText([draft.name, draft.category, draft.location])) return DEMO_TEXT_TOO_LONG;
 
     if (draft.kind === "inventory") {
         if (!Number.isInteger(draft.quantity) || draft.quantity < 0) {
@@ -58,6 +61,15 @@ export async function confirmDrafts(propertyId: string, drafts: Draft[]): Promis
 
     const inventoryDrafts = valid.filter((d): d is Extract<Draft, { kind: "inventory" }> => d.kind === "inventory");
     const toolDrafts = valid.filter((d): d is Extract<Draft, { kind: "tool" }> => d.kind === "tool");
+
+    const itemCapMessage = inventoryDrafts.length > 0 ? await demoRowCapMessage(access.user.companyId, "inventoryItems", inventoryDrafts.length) : null;
+    const toolCapMessage = toolDrafts.length > 0 ? await demoRowCapMessage(access.user.companyId, "tools", toolDrafts.length) : null;
+    const capMessage = itemCapMessage ?? toolCapMessage;
+
+    if (capMessage) {
+        return { error: capMessage };
+    }
+
 
     await prisma.$transaction(async (tx) => {
         if (inventoryDrafts.length > 0) {

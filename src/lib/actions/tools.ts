@@ -5,6 +5,7 @@ import { requirePropertyRole } from "../auth/access";
 import { LEAD_ROLES, STAFF_ROLES } from "../auth/propertyRole";
 import { Tool } from "../domain/Tool";
 import { revalidatePath } from "next/cache";
+import { DEMO_TEXT_TOO_LONG, demoRowCapMessage, hasOverlongDemoText } from "../demo/rowCaps";
 
 function getCheckoutDueDate(): Date {
     const due = new Date();
@@ -34,6 +35,16 @@ export async function createTool(prevState: unknown, formData: FormData) {
 
     if (name.trim().length === 0 || category.trim().length === 0 || location.trim().length === 0) {
         return { error: "Missing required fields" };
+    }
+
+    if (hasOverlongDemoText([name, category, location])) {
+        return { error: DEMO_TEXT_TOO_LONG };
+    }
+
+    const capMessage = await demoRowCapMessage(access.user.companyId, "tools");
+
+    if (capMessage) {
+        return { error: capMessage };
     }
 
     await prisma.tool.create({
@@ -88,6 +99,12 @@ export async function checkOutTool(propertyId: string, toolId: string) {
 
     if ("error" in access) {
         return { error: access.error };
+    }
+
+    const capMessage = await demoRowCapMessage(access.user.companyId, "checkouts");
+
+    if (capMessage) {
+        return { error: capMessage };
     }
 
     const row = await prisma.tool.findFirst({ where: { id: toolId, propertyId: access.propertyId } });
