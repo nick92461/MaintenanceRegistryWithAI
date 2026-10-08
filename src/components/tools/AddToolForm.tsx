@@ -11,7 +11,7 @@ export default function AddToolForm({ propertyId }: { propertyId: string }) {
     const [state, formAction, isPending] = useActionState(createTool, initialState);
 
     return (
-        <form action={formAction} className="flex flex-col gap-3 rounded border p-4">
+        <form action={formAction} className="flex flex-col gap-3 rounded-xl border p-4">
             <input type="hidden" name="propertyId" value={propertyId} />
             <h2 className="font-semibold">Add Tool</h2>
 

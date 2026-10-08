@@ -30,14 +30,16 @@ export default function InventoryList({ propertyId, items, canManage }: { proper
             );
 
     return (
-        <div className="flex flex-col gap-2">
-            <input
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search by name, category, location, or status"
-                className="rounded border p-2 text-sm"
-            />
+        <div className="flex flex-col gap-2 min-h-screen mb-10">
+            <div className="flex justify-center">
+                <input
+                    type="text"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="Search by name, category, location, or status"
+                    className="rounded border p-2 text-sm w-full text-center max-w-sm"
+                />
+            </div>
 
             {items.length === 0 && <p className="text-gray-500">No inventory items yet.</p>}
 
@@ -49,7 +51,7 @@ export default function InventoryList({ propertyId, items, canManage }: { proper
                 {filteredItems.map((item) => (
                     <li
                         key={item.id}
-                        className="flex items-center justify-between rounded border p-3"
+                        className="flex items-center justify-between rounded-xl border p-3"
                     >
                         <div>
                             <p className="font-medium">{item.name}</p>

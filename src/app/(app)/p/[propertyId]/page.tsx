@@ -16,7 +16,7 @@ export default async function PropertyHomePage({ params }: { params: Promise<{ p
     const access = await requirePageRole(propertyId, STAFF_ROLES);
 
     return (
-        <div className="flex flex-col gap-4 sm:mx-[100px] text-center sm:text-left max-w-[700px]">
+        <div className="flex flex-col gap-4 text-center sm:text-left">
             <h1 className="text-3xl font-display">Dashboard</h1>
 
             <ul className="grid grid-cols-2 gap-2 sm:flex sm:flex-col">
@@ -24,7 +24,7 @@ export default async function PropertyHomePage({ params }: { params: Promise<{ p
                     <li key={tile.label}>
                         <Link
                             href={`/p/${propertyId}/${tile.path}`}
-                            className="flex items-center justify-center rounded-xl border p-3 aspect-square sm:aspect-auto sm:justify-between sm:max-w-[700px] hover:border-black sm:hover:translate-x-5 hover:translate-x-2 transition hover:text-background hover:bg-foreground"
+                            className="flex items-center justify-center rounded-xl border p-3 aspect-square sm:aspect-auto sm:justify-between hover:border-black sm:hover:translate-x-5 hover:translate-x-2 transition hover:text-background hover:bg-foreground"
                         >
                             <div>
                                 <p className="font-body text-lg xs:text-2xl sm:text-lg">{tile.label}</p>
