@@ -50,6 +50,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             {company?.isDemo && (
                 <p className="border-b bg-yellow-100 px-6 py-2 text-sm text-yellow-900">
                     This is a private demo with sample data that only you can see. It&apos;s deleted automatically a day after you started it.
+                    The assistant is AI, and its messages are processed by Anthropic, so please don&apos;t enter real personal or confidential information.
                 </p>
             )}
 

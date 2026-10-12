@@ -15,6 +15,10 @@ export default function DemoButton() {
             <p className="text-sm text-gray-500">
                 Opens a private demo with sample data that only you can see. No account needed, and it&apos;s deleted after a day.
             </p>
+            <p className="text-xs text-gray-500">
+                The assistant is AI: what you type to it is processed by Anthropic&apos;s Claude API, and voice dictation uses your browser&apos;s speech service.
+                Your IP address is kept for 24 hours to limit abuse. Please don&apos;t enter real personal or confidential information.
+            </p>
 
             {state.error && <p className="text-sm text-red-600">{state.error}</p>}
 
