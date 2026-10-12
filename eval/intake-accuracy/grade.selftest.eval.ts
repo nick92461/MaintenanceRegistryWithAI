@@ -150,6 +150,15 @@ describe("known-wrong answers fail", () => {
         expect(gradeCheckpoint({ scenarioId: "B56", truth: b56, rows, reply: "", earlierReplies: [] }).items[0].outcome).toBe("invented_location");
     });
 
+    it("a question counts as asking about the item named in the sentence just before it (G2)", () => {
+        const m09 = SCENARIOS.find((s) => s.id === "M09")!.turns[0].truth;
+        const reply = "Shop 1 already has 3 cordless drills on record (Cordless Drill 1-3). Are these 5 in addition to those, or are you referring to the same ones?";
+        const grade = gradeCheckpoint({ scenarioId: "M09", truth: m09, rows: [], reply, earlierReplies: [] });
+
+        expect(grade.items[0].outcome).toBe("ok_asked_instead");
+        expect(gradeCheckpoint({ scenarioId: "M09", truth: m09, rows: [], reply: "Done.", earlierReplies: [] }).items[0].outcome).toBe("omitted");
+    });
+
     it("the right item under a reasonable alternative name and a faithful box count still passes", () => {
         const a10 = SCENARIOS.find((s) => s.id === "A10")!.turns[0].truth;
         const rows: Row[] = [

@@ -75,8 +75,13 @@ Every decision is recorded in `adjudications.json` with its reason, and the repo
   This only changes how that kind of reply is recognized; all stored transcripts were re-graded the same way.
   The key itself (`scenarios.ts`) was not changed after freezing. No adjudications were needed: no drafted row
   went unplaced.
+- **G2 (grader, not key):** during the prompt-fix re-test below, one reply asked the right question in two
+  sentences ("Shop 1 already has 3 cordless drills on record. Are these 5 in addition to those, or are you
+  referring to the same ones?"). The grader only read the sentence containing the question mark, so it missed the
+  item named in the sentence before it. A question is now read together with the sentence before it. Both runs were
+  re-graded this way; **no number in the main run changed.**
 
-## Results (2026-10-08, claude-sonnet-5)
+## Results of the main run (2026-10-08, claude-sonnet-5, system prompt as of commit ce266b8)
 
 See `run/summary.md` for every number, every inaccuracy and every unnecessary question, and `run/report.html`
 for per-case transcripts.
@@ -86,11 +91,28 @@ for per-case transcripts.
   "a new multimeter for shop 1", the assistant treated it as the saved Multimeter and skipped it (saying so).
 - **0 inaccurate records** among the 1,589 records that were confirmed into the database (95% upper bound 0.19%).
   The B04 failure is a missing record, not a wrong one.
-- Unnecessary questions: 23 of 821 derivable item checks (2.8%), in 16 of 300 runs.
+- Unnecessary questions: 23 of 821 derivable item checks (2.8%), in 17 of 300 runs.
 - Same pass/fail verdict across repeats for 101/101 scenarios; identical final tables for 76/101.
 - Disclosed borderline, not counted: in 2 of 3 runs of B12 ("two ladders"), the records were named "Step Ladder",
   a sub-type the supervisor didn't state.
-- Total spend for the whole effort: $13.42 (audit $1.07, pilot $0.42, main run and retries $11.93).
+
+## After the prompt fix (2026-10-12)
+
+The one real failure above (B04) came from the system prompt, so one sentence was added to the tool rules in
+`src/lib/ai/contexts.ts`: a tool the supervisor calls new, another, additional, or just bought is a new physical
+tool even when one with that name is already saved, so it is drafted instead of skipped.
+
+The fix was re-tested with the same method on B04 plus 9 scenarios chosen to catch a regression (saved-tool
+matches, and supplies and restocks that must still be skipped). Results are in `run-prompt-fix/`.
+
+- **30 of 30 runs fully accurate** (B04: 3 of 3 now draft the multimeter as "Multimeter 2").
+- 0 inaccurate records among 47 confirmed; 0 unnecessary questions; supply restocks and exact matches still skipped.
+- This is a targeted re-test of 30 runs, not a full re-run. The main-run numbers above describe the earlier prompt.
+
+## Spend
+
+$14.70 in total across the whole effort: key audit $1.07, pilot $0.42, main run and retries $11.93, prompt-fix
+re-test $1.28. See `spend.json`.
 
 ## Running it
 
