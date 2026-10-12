@@ -1,0 +1,51 @@
+{
+  "metrics": [
+    {
+      "id": "accurate",
+      "label": "Run accurate",
+      "kind": "binary"
+    },
+    {
+      "id": "item_accuracy",
+      "label": "Item accuracy",
+      "kind": "float",
+      "scale": 1
+    },
+    {
+      "id": "unneeded_q",
+      "label": "Unneeded asks",
+      "kind": "float",
+      "scale": 3,
+      "better": "lower"
+    },
+    {
+      "id": "bad_rows",
+      "label": "Bad records",
+      "kind": "float",
+      "scale": 3,
+      "better": "lower"
+    }
+  ],
+  "perf_fields": [
+    {
+      "id": "cost_usd",
+      "label": "Cost",
+      "unit": "$"
+    },
+    {
+      "id": "latency_s",
+      "label": "Latency",
+      "unit": "s"
+    },
+    {
+      "id": "tool_calls",
+      "label": "Tool calls"
+    }
+  ],
+  "prices": {
+    "claude-sonnet-5": {
+      "in": 2,
+      "out": 10
+    }
+  }
+}

@@ -100,11 +100,15 @@ export function extractQuestions(reply: string): string[] {
             continue;
         }
 
-        for (const sentence of line.replace(/([.!?])\s+/g, "$1\n").split("\n")) {
+        // A question is read together with the sentence before it, which often names the item
+        // ("Shop 1 already has 3 cordless drills on record. Are these 5 in addition?"). Grader correction G2.
+        const sentences = line.replace(/([.!?])\s+/g, "$1\n").split("\n");
+
+        sentences.forEach((sentence, i) => {
             if (sentence.includes("?")) {
-                out.push(sentence.trim());
+                out.push(`${i > 0 ? `${sentences[i - 1].trim()} ` : ""}${sentence.trim()}`);
             }
-        }
+        });
     }
 
     return out;

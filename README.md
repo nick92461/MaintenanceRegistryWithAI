@@ -2,6 +2,16 @@
 
 A multi-tenant web app for tracking apartment maintenance tools and consumable inventory, with per-property role-based access and an AI assistant that turns spoken or typed stock descriptions into draft records.
 
+## Live demo
+
+**https://maintenance-registry-with-ai.vercel.app**: visit the site and click **Try the live demo**. It creates a private sandbox with sample tools, inventory, and two years of history, signs you in as its administrator, and deletes it a day later. No account is needed, and nothing you do touches anyone else's data. Open the **Assistant** page and describe some stock ("shop 4 has 12 hacksaw blades and two cordless drills") to see the draft table.
+
+A few things to know about the public demo:
+
+- The assistant is AI. What you type to it is processed by Anthropic's Claude API, and voice dictation uses your browser's speech service. Please don't enter real personal or confidential information.
+- To keep it safe to leave public, each sandbox is limited in size, the assistant is limited to 10 messages per sandbox, and your IP address is kept for 24 hours for rate limiting.
+- To run it yourself, see Getting started below.
+
 ## What it does
 
 - **Inventory:** consumable items with quantity, category, location, and a reorder threshold. Quantity changes are logged.
@@ -37,6 +47,7 @@ A Supervisor or Manager describes stock in plain language (for example, "twelve 
 - **Scoped to the property:** the assistant can only see and draft for the property it's opened from.
 - **Voice input:** a microphone button fills the same editable text box using the browser's Web Speech API (Chrome, Edge, and Safari). It never sends on its own.
 - **Model:** Claude Sonnet 5 via the Anthropic Messages API.
+- **Evaluated:** 300 runs of 101 scenarios (speech-to-text errors, self-corrections, package arithmetic, duplicates of saved records, multi-message conversations, long lists) against an answer key written before testing and independently audited. Result: 0 inaccurate records among 1,589 saved to the database, 99% of runs fully accurate, and 2.8% unnecessary clarifying questions. The one real weakness it found was then fixed and re-tested (30 of 30 runs accurate). Method and results are in [eval/intake-accuracy](eval/intake-accuracy/README.md).
 
 ## Tech stack
 
@@ -135,12 +146,11 @@ Note: `src/lib/ai/claude.test.ts` calls the real Anthropic API and costs a small
 - No "forgot password" flow or email verification yet, because the app doesn't send email. A locked-out user needs someone to reset their account.
 - Signup tells people when an email is already registered.
 - The UI is functional but unpolished.
-- Not deployed yet. Until then, the demo runs locally (see Getting started).
+- The live demo runs on free hosting tiers: the first visit after a quiet period can take a few seconds while the database wakes up.
 
 ## Roadmap
 
-1. Deploy a demo
-2. Company admin tools in the app: create properties, manage join codes, add an existing employee to another property
-3. A permanent isolation test suite that runs against a test database
-4. Forgot-password and email verification
-5. Chat-based edits to existing records (restock, check in/out), then a general assistant that can perform any action the signed-in user is permitted to, with user management always excluded
+1. Company admin tools in the app: create properties, manage join codes, add an existing employee to another property
+2. A permanent isolation test suite that runs against a test database
+3. Forgot-password and email verification
+4. Chat-based edits to existing records (restock, check in/out), then a general assistant that can perform any action the signed-in user is permitted to, with user management always excluded

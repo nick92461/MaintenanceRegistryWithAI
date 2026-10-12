@@ -94,21 +94,21 @@ Scored runs: **300** of 300 planned (0 app errors, 0 unresolved infra errors).
 - A20 rep 0 msg 1 (grass-seed): 1. grass seed bags: How many pounds (or lbs) are in each bag of grass seed?
 - B12 rep 0 msg 1 (buckets): 1. buckets: What size/type of buckets are these (e.g. 5-gallon plain buckets), and should they be tracked as a supply count of 4?
 - B33 rep 0 msg 1 (2x4): 1. 2x4s: Are the "forty 2x4s" individual boards, and what length are they (e.g. 8ft)?
-- B37 rep 0 msg 1 (levels): Could you rephrase it with the location and items you'd like to add?
-- B37 rep 0 msg 1 (speed-squares): Could you rephrase it with the location and items you'd like to add?
+- B37 rep 0 msg 1 (levels): I'd like to help, but I couldn't understand that message. Could you rephrase it with the location and items you'd like to add?
+- B37 rep 0 msg 1 (speed-squares): I'd like to help, but I couldn't understand that message. Could you rephrase it with the location and items you'd like to add?
 - B46 rep 0 msg 1 (filters-20x20): 1. 20x20x1 and 16x25x1 Furnace Filters, Shop 4: These filters already exist under Boiler Room — is Shop 4 the same place, or do you want separate stock tracked at Shop 4?
 - B46 rep 0 msg 1 (filters-16x25): 1. 20x20x1 and 16x25x1 Furnace Filters, Shop 4: These filters already exist under Boiler Room — is Shop 4 the same place, or do you want separate stock tracked at Shop 4?
-- M01 rep 0 msg 2 (pvc-cement): 1. PVC cement: What size are the 6 cans of PVC cement (e.g. 8oz, quart)? / 8oz, quart, gallon)?
+- M01 rep 0 msg 2 (pvc-cement): 1. PVC cement: What size are the 6 cans of PVC cement (e.g. 8oz, quart)? / What size are the cans (e.g. 8oz, quart, gallon)?
 - D02 rep 0 msg 1 (aa): 1. AA batteries (clubhouse, 24): Shop 1 already has AA batteries on record - should these 24 be added there, or is the clubhouse a separate stock location to track on its own? / 2. light bulbs (60 watt), clubhouse: Are these standard incandescent/CFL 60-watt bulbs, and is there a color temperature (like soft white or daylight) I should note?
 - D02 rep 0 msg 1 (bulbs): 1. AA batteries (clubhouse, 24): Shop 1 already has AA batteries on record - should these 24 be added there, or is the clubhouse a separate stock location to track on its own? / 2. light bulbs (60 watt), clubhouse: Are these standard incandescent/CFL 60-watt bulbs, and is there a color temperature (like soft white or daylight) I should note?
-- A20 rep 1 msg 1 (grass-seed): 1. grass seed bags: How many pounds (or lbs per bag) is each bag of grass seed, so I can log total quantity correctly? / Want me to just log it as "15 bags"?
+- A20 rep 1 msg 1 (grass-seed): 1. grass seed bags: How many pounds (or lbs per bag) is each bag of grass seed, so I can log total quantity correctly? / I'll treat each bag as one unit unless you want weight tracked separately. Want me to just log it as "15 bags"?
 - B12 rep 1 msg 1 (buckets): 1. buckets: How many buckets, and what size/type (e.g. 5-gallon)?
 - A04 rep 2 msg 1 (chlorine): 1. chlorine jugs: How many gallons/lbs per jug, so I can set a good reorder level?
 - A20 rep 2 msg 1 (grass-seed): 1. grass seed bags: How many pounds (or lbs) per bag, so I can log total quantity correctly?
 - B12 rep 2 msg 1 (buckets): 1. buckets: What size/type of buckets are these (e.g. 5-gallon utility buckets), and how many total?
 - B33 rep 2 msg 1 (2x4): 1. 2x4s: Are the "forty" 2x4s individual boards, and what length are they (e.g. 8ft)?
-- B37 rep 2 msg 1 (levels): Could you clarify what "sh4 10 lvl 2ft, 5 spd sq" refers to—what item(s) and location did you mean?
-- B37 rep 2 msg 1 (speed-squares): Could you clarify what "sh4 10 lvl 2ft, 5 spd sq" refers to—what item(s) and location did you mean?
+- B37 rep 2 msg 1 (levels): I can only help with setting up your maintenance inventory. Could you clarify what "sh4 10 lvl 2ft, 5 spd sq" refers to—what item(s) and location did you mean?
+- B37 rep 2 msg 1 (speed-squares): I can only help with setting up your maintenance inventory. Could you clarify what "sh4 10 lvl 2ft, 5 spd sq" refers to—what item(s) and location did you mean?
 - B46 rep 2 msg 1 (filters-20x20): 1. 20x20x1 and 16x25x1 Furnace Filters (Shop 4): We already have these filter sizes stored under "Boiler Room" - is Shop 4 the same location renamed, a separate stock location, or did you mean to add to the existing Boiler Room stock? / Quick question: is "Shop 4" the same place as your existing "Boiler Room" filter stock, a different location entirely, or did you want these added to the existing stock there?
 - B46 rep 2 msg 1 (filters-16x25): 1. 20x20x1 and 16x25x1 Furnace Filters (Shop 4): We already have these filter sizes stored under "Boiler Room" - is Shop 4 the same location renamed, a separate stock location, or did you mean to add to the existing Boiler Room stock? / Quick question: is "Shop 4" the same place as your existing "Boiler Room" filter stock, a different location entirely, or did you want these added to the existing stock there?
 - M01 rep 2 msg 2 (pvc-cement): 1. PVC cement: What size are the 6 cans (e.g. quart, pint, half-pint)?

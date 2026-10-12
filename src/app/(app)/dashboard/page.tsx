@@ -25,7 +25,7 @@ export default async function DashboardPage() {
     const counts = await getPropertyCounts(properties.map((property) => property.id));
 
     return (
-        <div className="flex flex-col gap-4 sm:mx-[100px] max-w-[700px]">
+        <div className="mx-auto max-w-5xl flex flex-col gap-4">
             <h1 className="text-3xl font-display">Your properties</h1>
 
             <ul className="flex flex-col gap-2">

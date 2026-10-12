@@ -1,0 +1,153 @@
+{
+ "generated_at": "2026-10-12T13:30:24.366Z",
+ "scenarios": 101,
+ "planned_runs": 300,
+ "runs_scored": 30,
+ "runs_app_error": 0,
+ "app_errors": [],
+ "infra_errors_unresolved": 0,
+ "run_pass": {
+  "k": 30,
+  "n": 30,
+  "rate": 1,
+  "ci95": {
+   "lo": 0.886482908609522,
+   "hi": 1
+  },
+  "failure_upper95": 0.09503385285530419
+ },
+ "item_checks": {
+  "n": 66,
+  "inaccurate": 0,
+  "unplaced_rows": 0,
+  "rate_ok": 1
+ },
+ "records_final": {
+  "rows": 47,
+  "inaccurate": 0,
+  "failure_upper95": 0.06175013471082447
+ },
+ "records_all_checkpoints": 47,
+ "unnecessary_questions": {
+  "derivable_item_checks": 33,
+  "asked_instead": 8,
+  "unnecessary": 0,
+  "rate": 0
+ },
+ "outcome_counts": {
+  "ok_draft": 25,
+  "ok_skip": 33,
+  "ok_asked_instead": 8
+ },
+ "consistency": {
+  "scenarios_with_reps": 10,
+  "same_verdict": 10,
+  "same_item_outcomes": 9,
+  "identical_final_tables": 9
+ },
+ "database": {
+  "saved": 47,
+  "failed": 0,
+  "mismatches": 0,
+  "failed_reasons": []
+ },
+ "cost_usd_chatbot": 1.28086,
+ "latency_s": {
+  "median": 6.459,
+  "p95": 8.631,
+  "max": 10.236
+ },
+ "by_fluency": {
+  "casual": {
+   "runs": 24,
+   "pass": 24,
+   "items": 48,
+   "bad": 0
+  },
+  "spoken": {
+   "runs": 3,
+   "pass": 3,
+   "items": 9,
+   "bad": 0
+  },
+  "terse": {
+   "runs": 3,
+   "pass": 3,
+   "items": 9,
+   "bad": 0
+  }
+ },
+ "by_group": {
+  "B": {
+   "runs": 27,
+   "pass": 27,
+   "items": 60,
+   "bad": 0
+  },
+  "M": {
+   "runs": 3,
+   "pass": 3,
+   "items": 6,
+   "bad": 0
+  }
+ },
+ "by_tag": {
+  "additional-tools": {
+   "runs": 3,
+   "pass": 3,
+   "items": 6,
+   "bad": 0
+  },
+  "saved-duplicate": {
+   "runs": 9,
+   "pass": 9,
+   "items": 27,
+   "bad": 0
+  },
+  "tools": {
+   "runs": 6,
+   "pass": 6,
+   "items": 18,
+   "bad": 0
+  },
+  "saved-overlap-count": {
+   "runs": 6,
+   "pass": 6,
+   "items": 9,
+   "bad": 0
+  },
+  "restock-out-of-scope": {
+   "runs": 9,
+   "pass": 9,
+   "items": 21,
+   "bad": 0
+  },
+  "not-inventory": {
+   "runs": 3,
+   "pass": 3,
+   "items": 6,
+   "bad": 0
+  },
+  "near-miss-item": {
+   "runs": 9,
+   "pass": 9,
+   "items": 21,
+   "bad": 0
+  },
+  "arithmetic": {
+   "runs": 3,
+   "pass": 3,
+   "items": 6,
+   "bad": 0
+  },
+  "multi-turn": {
+   "runs": 3,
+   "pass": 3,
+   "items": 6,
+   "bad": 0
+  }
+ },
+ "adjudications": [],
+ "failures": [],
+ "unnecessary_list": []
+}

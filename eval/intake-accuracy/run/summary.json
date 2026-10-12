@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-08T20:31:49.684Z",
+ "generated_at": "2026-10-12T13:30:22.033Z",
  "scenarios": 101,
  "planned_runs": 300,
  "runs_scored": 300,
@@ -520,7 +520,7 @@
    "turn": 1,
    "item": "levels",
    "questions": [
-    "Could you rephrase it with the location and items you'd like to add?"
+    "I'd like to help, but I couldn't understand that message. Could you rephrase it with the location and items you'd like to add?"
    ]
   },
   {
@@ -529,7 +529,7 @@
    "turn": 1,
    "item": "speed-squares",
    "questions": [
-    "Could you rephrase it with the location and items you'd like to add?"
+    "I'd like to help, but I couldn't understand that message. Could you rephrase it with the location and items you'd like to add?"
    ]
   },
   {
@@ -557,7 +557,7 @@
    "item": "pvc-cement",
    "questions": [
     "1. PVC cement: What size are the 6 cans of PVC cement (e.g. 8oz, quart)?",
-    "8oz, quart, gallon)?"
+    "What size are the cans (e.g. 8oz, quart, gallon)?"
    ]
   },
   {
@@ -587,7 +587,7 @@
    "item": "grass-seed",
    "questions": [
     "1. grass seed bags: How many pounds (or lbs per bag) is each bag of grass seed, so I can log total quantity correctly?",
-    "Want me to just log it as \"15 bags\"?"
+    "I'll treat each bag as one unit unless you want weight tracked separately. Want me to just log it as \"15 bags\"?"
    ]
   },
   {
@@ -641,7 +641,7 @@
    "turn": 1,
    "item": "levels",
    "questions": [
-    "Could you clarify what \"sh4 10 lvl 2ft, 5 spd sq\" refers to—what item(s) and location did you mean?"
+    "I can only help with setting up your maintenance inventory. Could you clarify what \"sh4 10 lvl 2ft, 5 spd sq\" refers to—what item(s) and location did you mean?"
    ]
   },
   {
@@ -650,7 +650,7 @@
    "turn": 1,
    "item": "speed-squares",
    "questions": [
-    "Could you clarify what \"sh4 10 lvl 2ft, 5 spd sq\" refers to—what item(s) and location did you mean?"
+    "I can only help with setting up your maintenance inventory. Could you clarify what \"sh4 10 lvl 2ft, 5 spd sq\" refers to—what item(s) and location did you mean?"
    ]
   },
   {

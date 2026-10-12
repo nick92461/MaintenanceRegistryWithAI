@@ -9,10 +9,12 @@ import type { AssistantContextKey } from "@/lib/ai/contexts";
 export default function AssistantChat({ propertyId, greeting, context }: { propertyId: string, greeting: string, context: AssistantContextKey }) {
     const { messages, drafts, confirmErrors, isPending, isConfirming, error, send, updateDraft, removeDraft, confirm } = useAssistantChat(propertyId, context);
     const [input, setInput] = useState("");
-    const bottomRef = useRef<HTMLDivElement>(null);
+    const scrollRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+        const box = scrollRef.current;
+
+        box?.scrollTo({ top: box.scrollHeight, behavior: "smooth" });
     }, [messages, isPending]);
 
     async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
@@ -44,7 +46,7 @@ export default function AssistantChat({ propertyId, greeting, context }: { prope
             <div className="flex h-[60vh] min-h-0 flex-col gap-4">
                 <p className="text-sm text-gray-500">{greeting}</p>
 
-                <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto">
+                <div ref={scrollRef} className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto">
                     {messages.map((message, index) => (
                         <div
                             key={index}
@@ -58,7 +60,6 @@ export default function AssistantChat({ propertyId, greeting, context }: { prope
                         </div>
                     ))}
                     {isPending && <p className="self-start text-sm text-gray-500">Thinking...</p>}
-                    <div ref={bottomRef} />
                 </div>
 
                 {error && <p className="text-sm text-red-600">{error}</p>}
