@@ -4,7 +4,16 @@ import { useEffect, useRef, useState} from "react";
 import { useAssistantChat } from "./useAssistantChat";
 import DraftTable from "./DraftTable";
 import MicButton from "./MicButton";
+import { ChatIcon, SendIcon } from "@/components/layout/icons";
 import type { AssistantContextKey } from "@/lib/ai/contexts";
+
+function AssistantAvatar() {
+    return (
+        <span className="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-lg bg-accent-soft text-accent">
+            <ChatIcon className="h-4 w-4" />
+        </span>
+    );
+}
 
 export default function AssistantChat({ propertyId, greeting, context }: { propertyId: string, greeting: string, context: AssistantContextKey }) {
     const { messages, drafts, confirmErrors, isPending, isConfirming, error, send, updateDraft, removeDraft, confirm } = useAssistantChat(propertyId, context);
@@ -29,7 +38,7 @@ export default function AssistantChat({ propertyId, greeting, context }: { prope
             setInput(text);
         }
     }
-    
+
     function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
@@ -42,49 +51,67 @@ export default function AssistantChat({ propertyId, greeting, context }: { prope
     }
 
     return (
-        <div className="flex flex-col gap-4">
-            <div className="flex h-[60vh] min-h-0 flex-col gap-4">
-                <p className="text-sm text-gray-500">{greeting}</p>
+        <div className="grid items-start gap-5 lg:grid-cols-2">
+            <section aria-label="Conversation" className="card flex h-[70vh] min-h-[480px] flex-col">
+                <div ref={scrollRef} className="flex min-h-0 flex-1 flex-col gap-3.5 overflow-y-auto p-5">
+                    <div className="flex max-w-[90%] items-start gap-2.5">
+                        <AssistantAvatar />
+                        <p className="rounded-[4px_14px_14px_14px] bg-canvas px-3.5 py-3 text-sm leading-relaxed">{greeting}</p>
+                    </div>
 
-                <div ref={scrollRef} className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto">
-                    {messages.map((message, index) => (
-                        <div
-                            key={index}
-                            className={
-                                message.role === "user"
-                                    ? "max-w-[85%] self-end whitespace-pre-wrap rounded-xl text-black bg-gray-200 px-3 py-2"   
-                                    : "max-w-[85%] self-start whitespace-pre-wrap rounded-xl border px-3 py-2"
-                            }
-                        >
-                            {message.content}
+                    {messages.map((message, index) =>
+                        message.role === "user" ? (
+                            <div
+                                key={index}
+                                className="max-w-[85%] self-end whitespace-pre-wrap rounded-[14px_4px_14px_14px] bg-ink px-3.5 py-3 text-sm leading-relaxed text-white"
+                            >
+                                {message.content}
+                            </div>
+                        ) : (
+                            <div key={index} className="flex max-w-[90%] items-start gap-2.5">
+                                <AssistantAvatar />
+                                <div className="whitespace-pre-wrap rounded-[4px_14px_14px_14px] bg-canvas px-3.5 py-3 text-sm leading-relaxed">
+                                    {message.content}
+                                </div>
+                            </div>
+                        ),
+                    )}
+
+                    {isPending && (
+                        <div className="flex items-start gap-2.5">
+                            <AssistantAvatar />
+                            <p className="rounded-[4px_14px_14px_14px] bg-canvas px-3.5 py-3 text-sm text-muted">Thinking...</p>
                         </div>
-                    ))}
-                    {isPending && <p className="self-start text-sm text-gray-500">Thinking...</p>}
+                    )}
                 </div>
 
-                {error && <p className="text-sm text-red-600">{error}</p>}
+                {error && <p className="px-5 pb-2 text-sm text-red-600">{error}</p>}
 
-                <form onSubmit={handleSubmit} className="flex items-end gap-2">
-                    <textarea 
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        onKeyDown={handleKeyDown}
-                        rows={3}
-                        placeholder="Type a message"
-                        className="flex-1 resize-none rounded border px-3 py-2"
-                    />
+                <form onSubmit={handleSubmit} className="flex items-end gap-2.5 border-t border-line p-3.5">
+                    <label className="flex min-w-0 flex-1">
+                        <span className="sr-only">Message</span>
+                        <textarea
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                            rows={2}
+                            placeholder="Type a message, or tap the mic and talk"
+                            className="input min-h-0 flex-1 resize-none py-2.5 leading-relaxed"
+                        />
+                    </label>
                     <MicButton onResult={handleVoiceResult} />
                     <button
                         type="submit"
                         disabled={isPending}
-                        className="rounded bg-gray-700 px-4 py-2 text-white disabled:opacity-50"
+                        className="btn btn-primary shrink-0"
                     >
                         Send
+                        <SendIcon className="h-4 w-4" />
                     </button>
                 </form>
-            </div>
+            </section>
 
-            <DraftTable 
+            <DraftTable
                 drafts={drafts}
                 confirmErrors={confirmErrors}
                 isPending={isConfirming}

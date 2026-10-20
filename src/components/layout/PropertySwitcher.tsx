@@ -19,7 +19,7 @@ export default function PropertySwitcher({ properties, currentId }: { properties
             value={currentId}
             onChange={handleChange}
             aria-label="Switch property"
-            className="rounded border px-2 py-1 text-sm"
+            className="min-h-11 cursor-pointer rounded-xl border border-line-strong bg-white px-3 text-sm font-medium text-ink hover:bg-canvas"
         >
             {properties.map((property) => (
                 <option key={property.id} value={property.id}>

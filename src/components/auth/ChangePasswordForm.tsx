@@ -9,13 +9,13 @@ export default function ChangePasswordForm() {
     const [state, formAction, isPending] = useActionState(changePassword, initialState);
 
     return (
-        <form action={formAction} className="flex w-full max-w-sm flex-col gap-4">
-            <h1 className="text-xl font-semibold">Choose a new password</h1>
-            <p className="text-sm text-gray-500">
+        <form action={formAction} className="card flex w-full max-w-sm flex-col gap-4 p-6">
+            <h1 className="text-xl font-bold">Choose a new password</h1>
+            <p className="text-sm text-muted">
                 You signed in with a temporary password. Pick your own to continue.
             </p>
 
-            <div className="flex flex-col gap-1">
+            <div className="field">
                 <label htmlFor="newPassword">New password</label>
                 <input
                     id="newPassword"
@@ -23,11 +23,11 @@ export default function ChangePasswordForm() {
                     type="password"
                     required
                     autoComplete="new-password"
-                    className="rounded border px-3 py-2"
+                    className="input"
                 />
             </div>
 
-            <div className="flex flex-col gap-1">
+            <div className="field">
                 <label htmlFor="confirmPassword">Confirm new password</label>
                 <input
                     id="confirmPassword"
@@ -35,7 +35,7 @@ export default function ChangePasswordForm() {
                     type="password"
                     required
                     autoComplete="new-password"
-                    className="rounded border px-3 py-2"
+                    className="input"
                 />
             </div>
 
@@ -44,7 +44,7 @@ export default function ChangePasswordForm() {
             <button
                 type="submit"
                 disabled={isPending}
-                className="rounded bg-blue-600 px-4 py-2 text-white disabled:opacity-50"
+                className="btn btn-primary"
             >
                 {isPending ? "Saving..." : "Save password"}
             </button>

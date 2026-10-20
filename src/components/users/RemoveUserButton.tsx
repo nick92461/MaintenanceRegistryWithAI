@@ -28,7 +28,7 @@ export default function RemoveUserButton({ propertyId, userId, scope }: { proper
             <button
                 onClick={handleClick}
                 disabled={isPending}
-                className="rounded bg-red-600 px-3 py-1 text-sm text-white disabled:opacity-50"
+                className="btn btn-sm btn-danger"
             >
                 {isPending ? "Working..." : scope === "company" ? "Remove from company" : "Remove from property"}
             </button>

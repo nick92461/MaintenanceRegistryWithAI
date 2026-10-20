@@ -10,12 +10,10 @@ export default async function AccountPage() {
     }
 
     return (
-        <div className="flex flex-col gap-4">
-            <h1 className="text-xl font-semibold">Account</h1>
-
+        <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 p-6">
             <div>
-                <p className="font-medium">{user.name}</p>
-                <p className="text-sm text-gray-500">{user.email}</p>
+                <h1 className="page-title">Account</h1>
+                <p className="page-sub">{user.name} · {user.email}</p>
             </div>
 
             <AccountPasswordForm />

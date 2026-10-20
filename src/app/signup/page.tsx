@@ -1,6 +1,7 @@
 import { connection } from "next/server";
 import { redirect } from "next/navigation";
 import SignupForm from "@/components/signup/SignupForm";
+import Brand from "@/components/layout/Brand";
 import { isDemoMode } from "@/lib/demo/demoMode";
 
 export default async function SignupPage() {
@@ -11,7 +12,8 @@ export default async function SignupPage() {
     }
 
     return (
-        <main className="flex min-h-screen items-center justify-center p-8">
+        <main className="flex min-h-screen flex-col items-center justify-center gap-6 p-8">
+            <Brand />
             <SignupForm />
         </main>
     );

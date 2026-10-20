@@ -9,8 +9,11 @@ export default async function AssistantPage({ params }: { params: Promise<{ prop
     const itemLimit = isDemoMode() ? "about 20 items per message in this demo" : "100 items per message";
 
     return (
-        <div className="flex max-w-[700px] flex-col gap-4 mx-auto">
-            <h1 className="text-xl font-semibold">Assistant</h1>
+        <div className="flex flex-col gap-6">
+            <div>
+                <h1 className="page-title">Assistant</h1>
+                <p className="page-sub">Describe your stock by typing or talking. Drafts appear next to the chat, and nothing is saved until you confirm.</p>
+            </div>
             <AssistantChat propertyId={access.property.id} context="inventory-intake" greeting={`Hi! I'm an AI assistant. Tell me about the tools and supplies you have. I suggest starting with one location at a time, like 'shop 1', and tell me everything that's in that location before moving on to another location. Be specific when items are similar (like different color lightbulbs), and I'll ask if I have a question. I am limited to ${itemLimit}.`} />
         </div>
     );

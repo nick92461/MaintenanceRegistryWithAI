@@ -22,16 +22,18 @@ export default function ToolActionButton({ propertyId, toolId, status }: { prope
         setIsPending(false);
     }
 
+    const isOut = status === ToolStatus.CHECKED_OUT;
+
     return (
         <div className="flex flex-col items-end gap-1">
             <button
                 onClick={handleClick}
                 disabled={isPending || status === ToolStatus.MAINTENANCE}
-                className="rounded bg-blue-600 px-3 py-1 text-sm text-white disabled:opacity-50"
+                className={`btn btn-sm min-w-[104px] ${isOut ? "btn-secondary" : "btn-dark"}`}
             >
-                {isPending ? "Working..." : status === ToolStatus.CHECKED_OUT ? "Check In" : "Check Out"}
+                {isPending ? "Working..." : status === ToolStatus.MAINTENANCE ? "Unavailable" : isOut ? "Check in" : "Check out"}
             </button>
-            {error && <p className="text-xs text-red-600">{error}</p>}
+            {error && <p className="max-w-52 text-right text-xs text-red-600">{error}</p>}
         </div>
     );
 }

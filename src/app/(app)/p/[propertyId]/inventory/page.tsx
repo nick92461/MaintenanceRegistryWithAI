@@ -4,6 +4,7 @@ import { LEAD_ROLES, STAFF_ROLES } from "@/lib/auth/propertyRole";
 import { requirePageRole } from "@/lib/auth/pageAccess";
 import AddItemForm from "@/components/inventory/AddItemForm";
 import InventoryList, { type InventoryListItem } from "@/components/inventory/InventoryList";
+import { PlusIcon } from "@/components/layout/icons";
 
 export default async function InventoryPage({ params }: { params: Promise<{ propertyId: string }> }) {
 	const { propertyId } = await params;
@@ -33,23 +34,39 @@ export default async function InventoryPage({ params }: { params: Promise<{ prop
 			category: item.getCategory(),
 			location: item.getLocation(),
 			quantity: item.getQuantity(),
+			reorderThreshold: row.reorderThreshold,
 			statusLabel: item.getStatusLabel(),
 			isLowStock: item.isLowStock(),
 		};
 	});
 
+	const lowStockCount = items.filter((item) => item.isLowStock).length;
+
 	return (
-		<div className="flex flex-col gap-4">
-			<h1 className="text-5xl font-semibold mb-5 text-center pl-5">Inventory</h1>
-
-			<div className="mb-10">
-				{canManage && <AddItemForm propertyId={access.property.id} />}
-			</div>
-
+		<div className="flex flex-col gap-6">
 			<div>
-				<h2 className="text-xl font-semibold mb-2">Inventory List</h2>
-				<InventoryList propertyId={access.property.id} items={items} canManage={canManage} />
+				<h1 className="page-title">Inventory</h1>
+				<p className="page-sub">
+					{items.length} {items.length === 1 ? "supply" : "supplies"}, {lowStockCount} at or below their reorder level
+				</p>
 			</div>
+
+			{canManage && (
+				<details className="card group">
+					<summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-4 [&::-webkit-details-marker]:hidden">
+						<span className="text-sm font-semibold">Add an inventory item</span>
+						<span className="btn btn-primary btn-sm pointer-events-none">
+							<PlusIcon className="h-4 w-4" />
+							Add item
+						</span>
+					</summary>
+					<div className="border-t border-line p-4">
+						<AddItemForm propertyId={access.property.id} />
+					</div>
+				</details>
+			)}
+
+			<InventoryList propertyId={access.property.id} items={items} canManage={canManage} />
 		</div>
 	);
 }
