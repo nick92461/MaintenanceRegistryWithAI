@@ -50,7 +50,7 @@ export default function PromoteUserButton({ propertyId, userId, currentRole }: {
             <button
                 onClick={handleClick}
                 disabled={isPending}
-                className="rounded bg-green-600 px-3 py-1 text-sm text-white disabled:opacity-50"
+                className="btn btn-sm btn-success"
             >
                 {isPending ? "Promoting..." : "Promote"}
             </button>

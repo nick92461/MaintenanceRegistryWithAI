@@ -41,14 +41,19 @@ export default async function UsersPage({ params }: { params: Promise<{ property
             : [];
 
     return (
-        <div className="flex flex-col gap-4">
-            <h1 className="text-xl font-semibold">Users</h1>
+        <div className="flex flex-col gap-6">
+            <div>
+                <h1 className="page-title">Users</h1>
+                <p className="page-sub">
+                    {members.length} {members.length === 1 ? "person has" : "people have"} access to this property.
+                </p>
+            </div>
 
             {members.length === 0 && (
-                <p className="text-gray-500">No users.</p>
+                <p className="text-muted">No users.</p>
             )}
 
-            <ul className="flex flex-col gap-2">
+            <ul className="flex flex-col gap-3">
                 {members.map(({ role, user }) => {
                     const isSelf = access.user.id === user.id;
                     const canRemoveEverywhere =
@@ -62,14 +67,24 @@ export default async function UsersPage({ params }: { params: Promise<{ property
                     return (
                         <li
                             key={user.id}
-                            className="flex items-center justify-between rounded border p-3"
+                            className="card flex flex-wrap items-center justify-between gap-3 p-4"
                         >
-                            <div>
-                                <p className="font-medium">{user.name}</p>
-                                <p className="text-sm text-gray-500">{role}</p>
-                                <p className="text-sm text-gray-500">{user.email}</p>
+                            <div className="flex items-center gap-3.5">
+                                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-canvas text-sm font-semibold text-muted">
+                                    {user.name.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0].toUpperCase()).join("")}
+                                </span>
+                                <div>
+                                    <p className="font-semibold">
+                                        {user.name}
+                                        {isSelf && <span className="ml-2 text-xs font-normal text-muted">(you)</span>}
+                                    </p>
+                                    <p className="text-[13px] text-muted">{user.email}</p>
+                                </div>
+                                <span className={role === Role.GUEST ? "badge badge-amber" : role === Role.MANAGER ? "badge badge-slate" : "badge badge-blue"}>
+                                    {role === Role.GUEST ? "Pending approval" : role.charAt(0) + role.slice(1).toLowerCase()}
+                                </span>
                             </div>
-                            <div className="flex items-center gap-2">
+                            <div className="flex flex-wrap items-start gap-2">
                                 {isManager && !isSelf && role !== Role.GUEST && (
                                     <DemoteUserButton propertyId={propertyId} userId={user.id} currentRole={role} />
                                 )}

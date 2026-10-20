@@ -84,13 +84,13 @@ export default function ReportForm({ propertyId }: { propertyId: string }) {
 
     return (
         <div className="flex flex-col gap-4">
-            <form onSubmit={handleSubmit} className="flex flex-col gap-3 rounded border p-4">
-                <div className="flex flex-col gap-1">
-                    <label className="text-sm font-medium">Report</label>
+            <form onSubmit={handleSubmit} className="card flex max-w-2xl flex-col gap-4 p-5">
+                <div className="field">
+                    <label>Report</label>
                     <select
                         value={reportType}
                         onChange={(e) => setReportType(e.target.value as ReportType)}
-                        className="rounded border p-2"
+                        className="input"
                     >
                         <option value="TOOLS">Tool Usage Report</option>
                         <option value="INVENTORY">Inventory Usage Report</option>
@@ -103,8 +103,8 @@ export default function ReportForm({ propertyId }: { propertyId: string }) {
                         onClick={() => setTimeframeMode("month")}
                         className={
                             timeframeMode === "month"
-                                ? "rounded bg-blue-600 px-3 py-1 text-sm text-white"
-                                : "rounded border px-3 py-1 text-sm"
+                                ? "btn btn-sm btn-dark"
+                                : "btn btn-sm btn-secondary"
                         }
                     >
                         Select A Month
@@ -114,8 +114,8 @@ export default function ReportForm({ propertyId }: { propertyId: string }) {
                         onClick={() => setTimeframeMode("custom")}
                         className={
                             timeframeMode === "custom"
-                                ? "rounded bg-blue-600 px-3 py-1 text-sm text-white"
-                                : "rounded border px-3 py-1 text-sm"
+                                ? "btn btn-sm btn-dark"
+                                : "btn btn-sm btn-secondary"
                         }
                     >
                         Custom Range
@@ -123,33 +123,33 @@ export default function ReportForm({ propertyId }: { propertyId: string }) {
                 </div>
 
                 {timeframeMode === "month" ? (
-                    <div className="flex flex-col gap-1">
-                        <label className="text-sm font-medium">Month</label>
+                    <div className="field">
+                        <label>Month</label>
                         <input
                             type="month"
                             value={month}
                             onChange={(e) => setMonth(e.target.value)}
-                            className="rounded border p-2 text-sm"
+                            className="input"
                         />
                     </div>
                 ) : (
-                    <div className="flex gap-2">
-                        <div className="flex flex-col gap-1">
-                            <label className="text-sm font-medium">Start date</label>
+                    <div className="flex flex-wrap gap-3">
+                        <div className="field">
+                            <label>Start date</label>
                             <input
                                 type="date"
                                 value={startDateInput}
                                 onChange={(e) => setStartDateInput(e.target.value)}
-                                className="rounded border p-2 text-sm"
+                                className="input"
                             />
                         </div>
-                        <div className="flex flex-col gap-1">
-                            <label className="text-sm font-medium">End date</label>
+                        <div className="field">
+                            <label>End date</label>
                             <input
                                 type="date"
                                 value={endDateInput}
                                 onChange={(e) => setEndDateInput(e.target.value)}
-                                className="rounded border py-2 text-sm"
+                                className="input"
                             />
                         </div>
                     </div>
@@ -158,7 +158,7 @@ export default function ReportForm({ propertyId }: { propertyId: string }) {
                 <button
                     type="submit"
                     disabled={isPending}
-                    className="rounded bg-blue-600 px-3 py-1 text-sm text-white disabled:opacity-50"
+                    className="btn btn-primary self-start"
                 >
                     {isPending ? "Generating report..." : "Generate Report"}
                 </button>
@@ -167,72 +167,72 @@ export default function ReportForm({ propertyId }: { propertyId: string }) {
             </form>
 
             {result && (
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-3">
                     <div>
                         <h2 className="text-lg font-semibold">
                             {result.type === "TOOLS" ? "Tool Usage Report" : "Inventory Usage Report"}
                         </h2>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-muted">
                             {result.startDate.toLocaleDateString()} - {result.endDate.toLocaleDateString()} · Generated{" "}
                             {result.generatedAt.toLocaleString()}
                         </p>
                     </div>
 
-                    <div className="overflow-x-auto rounded border">
+                    <div className="card overflow-x-auto">
                         {result.type === "TOOLS" ? (
-                            <table className="w-full text-left text-sm">
+                            <table className="w-full min-w-[640px] border-collapse text-left text-sm">
                                 <thead>
-                                    <tr className="border-b bg-gray-50 text-black">
-                                        <th className="p-3 font-medium">User</th>
-                                        <th className="p-3 font-medium">Tool</th>
-                                        <th className="p-3 font-medium">Times Used</th>
-                                        <th className="p-3 font-medium">Avg. Checkout Length (hrs)</th>
-                                        <th className="p-3 font-medium">Late Returns</th>
+                                    <tr className="border-b border-line bg-canvas text-xs uppercase tracking-wide text-muted">
+                                        <th className="px-4 py-3 font-semibold">User</th>
+                                        <th className="px-4 py-3 font-semibold">Tool</th>
+                                        <th className="px-4 py-3 font-semibold">Times Used</th>
+                                        <th className="px-4 py-3 font-semibold">Avg. Checkout Length (hrs)</th>
+                                        <th className="px-4 py-3 font-semibold">Late Returns</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {result.rows.length === 0 && (
                                         <tr>
-                                            <td colSpan={5} className="p-3 text-gray-500">
+                                            <td colSpan={5} className="px-4 py-6 text-center text-muted">
                                                 No data for this period.
                                             </td>
                                         </tr>
                                     )}
                                     {result.rows.map((row) => (
-                                        <tr key={`${row.userName}|${row.toolName}`} className="border-b last:border-0">
-                                            <td className="p-3">{row.userName}</td>
-                                            <td className="p-3">{row.toolName}</td>
-                                            <td className="p-3">{row.timesUsed}</td>
-                                            <td className="p-3">{row.avgCheckoutLengthHours}</td>
-                                            <td className="p-3">{row.lateReturns}</td>
+                                        <tr key={`${row.userName}|${row.toolName}`} className="border-b border-line last:border-0">
+                                            <td className="px-4 py-3">{row.userName}</td>
+                                            <td className="px-4 py-3">{row.toolName}</td>
+                                            <td className="px-4 py-3">{row.timesUsed}</td>
+                                            <td className="px-4 py-3">{row.avgCheckoutLengthHours}</td>
+                                            <td className="px-4 py-3">{row.lateReturns}</td>
                                         </tr>
                                     ))}
                                 </tbody>
                             </table>
                         ) : (
-                            <table className="w-full text-left text-sm">
+                            <table className="w-full min-w-[640px] border-collapse text-left text-sm">
                                 <thead>
-                                    <tr className="border-b bg-gray-50 text-black">
-                                        <th className="p-3 font-medium">Item</th>
-                                        <th className="p-3 font-medium">Total Used</th>
-                                        <th className="p-3 font-medium"># of Withdrawals</th>
-                                        <th className="p-3 font-medium">Avg Quantity Withdrawn</th>
+                                    <tr className="border-b border-line bg-canvas text-xs uppercase tracking-wide text-muted">
+                                        <th className="px-4 py-3 font-semibold">Item</th>
+                                        <th className="px-4 py-3 font-semibold">Total Used</th>
+                                        <th className="px-4 py-3 font-semibold"># of Withdrawals</th>
+                                        <th className="px-4 py-3 font-semibold">Avg Quantity Withdrawn</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {result.rows.length === 0 && (
                                         <tr>
-                                            <td colSpan={4} className="p-3 text-gray-500">
+                                            <td colSpan={4} className="px-4 py-6 text-center text-muted">
                                                 No data for this period.
                                             </td>
                                         </tr>
                                     )}
                                     {result.rows.map((row) => (
-                                        <tr key={row.itemName} className="border-b last:border-0">
-                                            <td className="p-3">{row.itemName}</td>
-                                            <td className="p-3">{row.totalUsed}</td>
-                                            <td className="p-3">{row.eventCount}</td>
-                                            <td className="p-3">{row.avgPerEvent}</td>
+                                        <tr key={row.itemName} className="border-b border-line last:border-0">
+                                            <td className="px-4 py-3">{row.itemName}</td>
+                                            <td className="px-4 py-3">{row.totalUsed}</td>
+                                            <td className="px-4 py-3">{row.eventCount}</td>
+                                            <td className="px-4 py-3">{row.avgPerEvent}</td>
                                         </tr>
                                     ))}
                                 </tbody>

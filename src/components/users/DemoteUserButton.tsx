@@ -49,7 +49,7 @@ export default function DemoteUserButton({propertyId, userId, currentRole }: { p
             <button
                 onClick={handleClick}
                 disabled={isPending}
-                className="rounded bg-red-600 px-3 py-1 text-sm text-white disabled:opacity-50"
+                className="btn btn-sm btn-danger"
             >
                 {isPending ? "Demoting..." : "Demote"}
             </button>

@@ -1,9 +1,8 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth/sessions";
 import { getAccessibleProperties } from "@/lib/auth/pageAccess";
-import { logout } from "@/lib/actions/auth";
+import AppTopBar from "@/components/layout/AppTopBar";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
     const user = await getCurrentUser();
@@ -26,35 +25,16 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
     return (
         <div className="min-h-screen">
-            <header className="flex items-center justify-between border-b px-6 py-4">
-                <div>
-                    <p className="font-semibold">{user.name}</p>
-                    {user.isCompanyAdmin && <p className="text-sm text-gray-500">Company admin</p>}
-                </div>
-
-                <div className="flex flex-col gap-1">
-                    <form action={logout}>
-                        <button type="submit" className="text-sm text-blue-600 underline">
-                            Log out
-                        </button>
-                    </form>
-                    <Link href="/dashboard" className="text-sm text-blue-600 underline">
-                        Dashboard
-                    </Link>
-                    <Link href="/account" className="text-sm text-blue-600 underline">
-                        Account
-                    </Link>
-                </div>
-            </header>
-
             {company?.isDemo && (
-                <p className="border-b bg-yellow-100 px-6 py-2 text-sm text-yellow-900">
+                <p className="border-b border-orange-200 bg-orange-50 px-6 py-2.5 text-[13px] text-orange-900">
                     This is a private demo with sample data that only you can see. It&apos;s deleted automatically a day after you started it.
                     The assistant is AI, and its messages are processed by Anthropic, so please don&apos;t enter real personal or confidential information.
                 </p>
             )}
 
-            <main className="p-6">{children}</main>
+            <AppTopBar userName={user.name} isCompanyAdmin={user.isCompanyAdmin} />
+
+            {children}
         </div>
     );
 }

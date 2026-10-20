@@ -9,9 +9,20 @@ export default async function LoginPage() {
     const demo = isDemoMode();
 
     return (
-        <main className="flex min-h-screen flex-col items-center justify-center gap-6 p-8">
-            {demo && <DemoButton />}
-            <LoginForm showSignup={!demo} />
+        <main className="flex min-h-screen items-center justify-center px-6 py-12">
+            <div className="flex w-full max-w-md flex-col gap-6">
+                {demo && (
+                    <>
+                        <DemoButton />
+                        <div className="flex items-center gap-3 text-[13px] text-muted">
+                            <span className="h-px flex-1 bg-line" />
+                            or sign in
+                            <span className="h-px flex-1 bg-line" />
+                        </div>
+                    </>
+                )}
+                <LoginForm showSignup={!demo} />
+            </div>
         </main>
     );
 }

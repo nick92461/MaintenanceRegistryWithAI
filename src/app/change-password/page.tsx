@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/sessions";
 import ChangePasswordForm from "@/components/auth/ChangePasswordForm";
+import Brand from "@/components/layout/Brand";
 
 export default async function ChangePasswordPage() {
     const user = await getCurrentUser();
@@ -14,7 +15,8 @@ export default async function ChangePasswordPage() {
     }
 
     return (
-        <main className="flex min-h-screen items-center justify-center p-8">
+        <main className="flex min-h-screen flex-col items-center justify-center gap-6 p-8">
+            <Brand />
             <ChangePasswordForm />
         </main>
     );

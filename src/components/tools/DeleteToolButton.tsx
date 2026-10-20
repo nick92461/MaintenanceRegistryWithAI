@@ -25,11 +25,11 @@ export default function DeleteToolButton({ propertyId, toolId }: { propertyId: s
             <button
                 onClick={handleClick}
                 disabled={isPending}
-                className="rounded bg-blue-600 px-3 py-1 text-sm text-white disabled:opacity-50"
+                className="btn btn-sm btn-danger"
             >
-                {isPending ? "Working..." : "Delete tool" }
+                {isPending ? "Working..." : "Delete" }
             </button>
-            {error && <p className="text-xs text-red-600">{error}</p>}
+            {error && <p className="max-w-52 text-right text-xs text-red-600">{error}</p>}
         </div>
     );
 }
